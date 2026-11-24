@@ -115,6 +115,7 @@ function enterDemo(){
 function exitDemo(){ NOSAVE=1; try{ localStorage.removeItem(DEMO_KEY); }catch(e){} location.replace(location.pathname); }
 function demoBar(){
   var b=$('#demoBar');
+  document.body.classList.toggle('tk-demo', !!S.demo); /* PS1.3.58: dải demo ở đầu màn */
   if(S.demo){ if(!b){ b=document.createElement('div'); b.id='demoBar'; b.className='demobar noprint'; b.innerHTML='<span>Demo giáo viên</span><button data-act="demoExit">Thoát demo</button>'; document.body.appendChild(b); } }
   else if(b) b.remove();
 }
@@ -250,8 +251,8 @@ function brag(){
 var TOUR=[
   {q:'.vdx', t:'Đây là văn điệp thông quan. Qua mỗi ải, văn điệp có thêm một con dấu đỏ.'},
   {q:'.dmap', t:'Bản đồ du ký: từ Đất Việt vượt biển sang xứ Phù Tang. Mây mù che những ải chưa tới, đi đến đâu mây tan đến đó.'},
-  {q:'#psnav', t:'Nút dấu hỏi là "Hỏi nhanh Chú Tanaka": tra cứu những câu học viên hay hỏi, bất cứ lúc nào.'},
-  {q:'#psnav', t:'Giờ bạn thử nhé: bấm vào nút Sổ tay (hình quyển sách) để xem điểm và bài làm của mình.', tap:1}
+  {q:'#psnav [data-act="ask"]', nav:1, t:'Nút "Hỏi nhanh" ở thanh dưới: hỏi Chú Tanaka những câu học viên hay hỏi, bất cứ lúc nào.'},
+  {q:'#psnav .psnav__nb', nav:1, t:'Giờ bạn thử nhé: bấm Sổ tay (ảnh đại diện của bạn, góc dưới bên phải) để xem điểm và bài làm của mình.', tap:1}
 ];
 var tourI=-1;
 function startTour(){ if(S.d.tour || S.demo) return; tourI=0; window.scrollTo(0,0); showTour(); }
@@ -260,13 +261,14 @@ function showTour(){
   var b=$('#tourBox'); if(b) b.remove();
   if(tourI<0 || tourI>=TOUR.length){ endTour(); return; }
   var st=TOUR[tourI], el=$(st.q);
-  if(el){ el.classList.add('tour-hl'); if(st.q!=='#psnav') el.scrollIntoView({behavior:noMotion()?'auto':'smooth',block:'center'}); else el.classList.remove('psnav--hide'); }
+  var pn=$('#psnav'); if(pn) pn.style.zIndex=st.nav?96:'';
+  if(el){ el.classList.add('tour-hl'); if(!st.nav) el.scrollIntoView({behavior:noMotion()?'auto':'smooth',block:'center'}); else if(pn){ pn.classList.remove('psnav--hide'); document.documentElement.classList.remove('ps-bbh'); } }
   b=document.createElement('div'); b.id='tourBox'; b.className='tourbox';
   b.innerHTML='<div class="tourbox__c"><div style="width:44px;flex:none">'+av('hau',st.tap?'think':'hi')+'</div><p>'+esc(st.t)+'</p></div><div class="tourbox__b"><span class="small muted">'+(tourI+1)+'/'+TOUR.length+'</span><span>'+
     '<button class="btn btn--link" data-act="tourSkip">Bỏ qua</button>'+(st.tap?'':'<button class="btn btn--sm" data-act="tourNext">Đã hiểu</button>')+'</span></div>';
   document.body.appendChild(b);
 }
-function endTour(){ tourI=-1; $$('.tour-hl').forEach(function(e){ e.classList.remove('tour-hl'); }); var b=$('#tourBox'); if(b) b.remove(); S.d.tour=1; save(); }
+function endTour(){ tourI=-1; var pn=$('#psnav'); if(pn) pn.style.zIndex=''; $$('.tour-hl').forEach(function(e){ e.classList.remove('tour-hl'); }); var b=$('#tourBox'); if(b) b.remove(); S.d.tour=1; save(); }
 
 /* ---------- Lời nhắc học: lịch điện thoại / Google Calendar ---------- */
 var DAYS=[['MO','T2'],['TU','T3'],['WE','T4'],['TH','T5'],['FR','T6'],['SA','T7'],['SU','CN']];

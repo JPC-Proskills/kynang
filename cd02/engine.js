@@ -240,15 +240,19 @@
      ========================================================= */
   var APP = D.getElementById('app');
   var V = { v: 'home' }, nbOpen = false, NBTAB = 'cd', QUIET = false, mapMode = 'ben', openR = {};
-  /* PS1.3.55 (ý 25): thanh trên chung · ‹ về một cấp | tên màn | Sổ tay */
+  /* PS1.3.58 (PA3): thanh đáy chung · Trang chủ | Hải đồ (vòng tiến độ bến đang học) | Sổ tay; trong chặng: ‹ bến | n/t | Sổ tay */
   function navName(b) { return b === PORT || b === GOAL_PORT ? b.n : benLabel(b); }
+  function navRing() {
+    var n = nextAct(), b = n && ACTS[n] ? benOf(ACTS[n].st) : null, k = 0;
+    if (!b) return { ring: 1, ok: 1 };
+    b.acts.forEach(function (x) { if (S.done[x]) k++; });
+    return { ring: b.acts.length ? k / b.acts.length : 0, ok: 0 };
+  }
   function topnav() {
-    var bk = 'Proskills', t = 'Career Design 2', b, a;
-    if (V.v === 'ben' && (b = benOf(V.st))) { bk = 'Hải đồ'; t = b === PORT || b === GOAL_PORT ? b.n : benLabel(b) + ' · ' + b.n; }
-    else if (V.v === 'act' && (a = ACTS[V.id])) { b = benOf(a.st); bk = navName(b); t = (b.acts.indexOf(V.id) + 1) + '/' + b.acts.length; }
-    else if (V.v === 'isle' && isleOf(V.id)) { bk = 'Hải đồ'; t = isleOf(V.id).n; }
-    else if (V.v === 'sp' && spOf(V.id)) { bk = V.from && isleOf(V.from) ? isleOf(V.from).n : 'Hải đồ'; t = 'Chuyện Senpai'; }
-    return PS.navHTML({ back: bk, title: t });
+    var a, b, r;
+    if (V.v === 'act' && (a = ACTS[V.id])) { b = benOf(a.st); return PS.navHTML({ act: 1, back: navName(b), step: [b.acts.indexOf(V.id) + 1, b.acts.length] }); }
+    r = navRing();
+    return PS.navHTML({ map: { t: 'Hải đồ', ic: 'compass', ring: r.ring, ok: r.ok, on: 1 } });
   }
   function demoStrip() { return S.demo ? '<div class="demo-strip"><span>Bản demo giáo viên · học viên giả định</span><button type="button" data-act="demoExit">Thoát demo</button></div>' : ''; }
   function shinSays(mood, html, sz) { return '<div class="say">' + shin2(mood, sz || 64) + '<div class="say__b">' + html + '</div></div>'; }

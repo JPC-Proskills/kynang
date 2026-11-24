@@ -48,8 +48,9 @@
 
   /* ---------- giao diện ---------- */
   var APP = D.getElementById('app'), nbOpen = false;
-  /* PS1.3.55 (ý 25): thanh trên chung · ‹ về một cấp | tên màn | Sổ tay. Module nhiều cấp: xem PS.nav trong core.js (cd02/engine.js là ví dụ đầy đủ). */
-  function bar() { return PS.navHTML({ back: 'Proskills', title: MOD.code + ' · ' + MOD.title }); }
+  /* PS1.3.58 (PA3): thanh đáy chung · Trang chủ | Bản đồ khóa | Sổ tay. Trong hoạt động: PS.navHTML({ act: 1, back, step: [n, t] }).
+     Module nhiều cấp: xem PS.nav trong core.js (cd02/engine.js là ví dụ đầy đủ). */
+  function bar() { return PS.navHTML({ map: { t: 'Bản đồ', ic: 'map', ring: 0, on: 1 } }); }
   var NAV = PS.nav({ mod: ID, tag: 'mau', get: function () { return { v: 'home' }; }, parent: function () { return null; }, depth: function () { return 0; },
     ser: function (v) { return { v: v.v }; }, de: function () { return { v: 'home' }; }, show: function () { render(); },
     intercept: function () { if (nbOpen) { closeNb(); return 1; } return 0; }, beforeLeave: function () { save(true); } });

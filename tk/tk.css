@@ -36,7 +36,9 @@ button{font-family:inherit;color:inherit}
 .jp{font-family:var(--jp);font-weight:700}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .wrap{max-width:720px;margin:0 auto;padding:0 18px}
-main{padding:76px 0 56px;min-height:100vh}
+main{padding:calc(20px + env(safe-area-inset-top,0px)) 0 56px;min-height:100vh}
+html.ps-bb main{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))} /* PS1.3.58: chừa chỗ thanh đáy */
+body.tk-demo main{padding-top:calc(64px + env(safe-area-inset-top,0px))}
 h1,h2,h3{font-family:var(--h);letter-spacing:-.015em;line-height:1.15;margin:0}
 h1{font-size:clamp(30px,8vw,46px);font-weight:800}
 h2{font-size:24px;font-weight:700}
@@ -535,7 +537,7 @@ details.qa[open] summary svg{transform:rotate(90deg)}
 /* Demo */
 .demobar{position:fixed;z-index:88;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:var(--y);color:#3B2A00;border-radius:999px;padding:5px 5px 5px 14px;font-weight:700;font-size:14px;box-shadow:0 3px 0 var(--y-d),0 10px 20px -12px rgba(0,0,0,.4)}
 .demobar button{border:0;background:#fff;border-radius:999px;padding:7px 12px;font-weight:700;color:#3B2A00;cursor:pointer}
-@media (max-width:520px){ .demobar{top:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:12px;transform:none;font-size:13px} }
+@media (max-width:520px){ .demobar{left:12px;right:12px;transform:none;justify-content:space-between;font-size:13px} } /* PS1.3.58: giữ ở đầu màn, thanh đáy chiếm phía dưới */
 /* Hướng dẫn lần đầu */
 .tour-hl{position:relative;z-index:96;box-shadow:0 0 0 4px var(--y),0 0 0 100vmax rgba(10,14,40,.62)!important;border-radius:22px}
 .nav.tour-hl{position:fixed;z-index:96;border-radius:999px}
@@ -911,7 +913,7 @@ details.tip summary::-webkit-details-marker{display:none}
 .nav.holding::after{animation:holdbar 1.8s linear forwards}
 @keyframes holdbar{to{transform:scaleX(1)}}
 .nav{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-@media (max-width:520px){ .demobar{left:12px;right:auto} }
+@media (max-width:520px){ .demobar{left:12px;right:12px} } /* PS1.3.58 */
 /* Cài đặt dạng danh sách */
 .slist{background:#fff;border:1px solid var(--rule);border-radius:20px;overflow:hidden}
 .srow{border-bottom:1px solid var(--rule)}.srow:last-of-type{border-bottom:0}
@@ -1009,7 +1011,7 @@ div.srow__h{cursor:default;grid-template-columns:34px 1fr auto}
 @keyframes bob{0%,100%{transform:translate(0,0)}50%{transform:translate(5px,-1.5px)}}
 
 /* Thông báo */
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:90;opacity:0;pointer-events:none;
+.toast{position:fixed;left:50%;bottom:calc(var(--psbb,0px) + 18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:90;opacity:0;pointer-events:none;
   display:flex;align-items:center;gap:8px;width:max-content;max-width:calc(100vw - 28px);background:var(--ink);color:#fff;border-radius:999px;padding:10px 16px;font-size:14.5px;font-weight:500;
   box-shadow:0 14px 30px -14px rgba(0,0,0,.5);transition:opacity .45s var(--ease),transform .45s var(--ease)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
@@ -1027,7 +1029,8 @@ div.srow__h{cursor:default;grid-template-columns:34px 1fr auto}
 .foot{text-align:center;font-size:12.5px;color:var(--muted);padding:26px 18px 10px}
 
 @media (min-width:700px){
-  main{padding-top:88px}
+  main{padding-top:calc(28px + env(safe-area-inset-top,0px))}
+  body.tk-demo main{padding-top:calc(68px + env(safe-area-inset-top,0px))}
   .ccard{flex-basis:60%}
 }
 @media (prefers-reduced-motion:reduce){
@@ -1071,6 +1074,6 @@ body{background-color:#F4F6FE}
     @media(max-width:400px){.street-invite-box{padding:22px 19px 20px}.street-invite h2{font-size:24px}.street-invite-art{height:86px}.street-invite-art>svg{width:78px;height:78px}}
     @media(prefers-reduced-motion:reduce){.street-game-busy{animation:none}}
   
-/* PS1.3.55 (ý 25): thanh điều hướng chung (core.css .psnav); main đã chừa 76px phía trên */
-.psnav.tour-hl{position:fixed;border-radius:20px}
-.psnav__x.on{background:var(--c-t)}
+/* PS1.3.58: thanh đáy chung (core.css .psnav); hướng dẫn lần đầu chiếu sáng từng nút trong thanh */
+.psnav .tour-hl{border-radius:18px}
+html.ps-bb .tourbox{bottom:calc(var(--psbb,0px) + 14px + env(safe-area-inset-bottom,0px))}

@@ -1,7 +1,7 @@
 /* =========================================================
    PROSKILLS · TRANG CHỦ (hub.js)
    Màn hình: Chào mừng + nhập thông tin (lần đầu) → Trang chủ
-   PS1.3.28: thanh trên (chuỗi ngày, ảnh đại diện = Cài đặt) → lời chào → khối Shin Routine (nút Check-in mở routine/?ci=1#checkin)
+   PS1.3.28: thanh trên (chuỗi ngày; PS1.3.58: ảnh đại diện = ô Sổ tay ở thanh đáy, mở Cài đặt) → lời chào → khối Shin Routine (nút Check-in mở routine/?ci=1#checkin)
              → Lịch học → Khóa học (XP, Insight, phút hôm nay + băng chuyền thẻ kiểu labs.google: KC, kcLayout, kcGo) → Hướng dẫn
    PS1.3.54: trang chủ chia 3 thẻ ở thanh đáy (TAB): Hôm nay (lời chào, khối Shin, Học tiếp) · Khóa học (3 ô số, băng chuyền, Hướng dẫn) · Lịch học.
              Thẻ đang xem nhớ trong phiên (sessionStorage ps.tab); nút Back Android ở thẻ 2, 3 về Hôm nay.
@@ -327,11 +327,16 @@
     course: '<svg class="ps-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="15" rx="3"/><path d="M8 3h10a3 3 0 0 1 3 3v11"/></svg>',
     lich: '<svg class="ps-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
   };
+  /* PS1.3.58: ô thứ 4 = ảnh đại diện “Sổ tay” (mở Cài đặt), cùng vị trí với ô Sổ tay trong các khóa và Shin */
+  function navAvHTML() {
+    var h = W.PSAvatar ? W.PSAvatar.html(30) : '<span class="ps-av" style="width:30px;height:30px;background:#FFE08F;color:#6A4A00;font-size:14px">' + esc(shortName().split(' ').pop().charAt(0).toUpperCase()) + '</span>';
+    return h.replace(/avc-/g, 'psnavc-');
+  }
   function navHTML() {
     return '<nav class="bnav" aria-label="Trang chủ">' + TABS.map(function (t) {
       var on = TAB === t[0];
       return '<button type="button" class="bnav__b' + (on ? ' is-on' : '') + '" data-act="tab" data-t="' + t[0] + '"' + (on ? ' aria-current="page"' : '') + '><span class="bnav__i">' + TAB_IC[t[0]] + '</span><small>' + t[1] + '</small></button>';
-    }).join('') + '</nav>';
+    }).join('') + '<button type="button" class="bnav__b bnav__nb" data-act="settings" aria-label="Sổ tay: hồ sơ và cài đặt"><span class="bnav__i"><span class="psnav__avw"><span class="psnav__av">' + navAvHTML() + '</span></span></span><small>Sổ tay</small></button></nav>';
   }
   function setTab(t, fromBack) {
     if (t === TAB) { if (!fromBack) W.scrollTo(0, 0); return; }
@@ -373,7 +378,7 @@
     var head = '<header class="hbar"><div class="hbar__brand">' + logo(32) + '<b>' + esc(CFG.APP) + '</b></div>' +
       '<div class="hbar__btns"><button type="button" class="hbar__btn hub-install" data-pwa="install" aria-label="Cài ứng dụng">' + icon('phone', 19) + '<span data-pwa-label>Cài ứng dụng</span></button>' +
       '<span class="hbar__fire" title="Chuỗi ngày học" aria-label="Chuỗi ' + t.streak + ' ngày">' + icon('flame', 16) + '<b>' + t.streak + '</b> ngày</span>' +
-      '<button type="button" class="hbar__av" data-act="settings" aria-label="Cài đặt">' + (W.PSAvatar ? W.PSAvatar.html(40) : esc(nm.split(' ').pop().charAt(0).toUpperCase())) + '</button></div></header>' +
+      '</div></header>' + /* PS1.3.58: ảnh đại diện chuyển xuống ô Sổ tay ở thanh đáy */
       '<div class="hdeco" aria-hidden="true"><i class="hd hd--a">' + icon('bulb', 64, 1.6) + '</i><i class="hd hd--b">' + icon('rail', 58, 1.6) + '</i><i class="hd hd--c">' + icon('star', 46, 1.6) + '</i><i class="hd hd--d">' + icon('dumbbell', 52, 1.8) + '</i></div>';
     var body;
     if (TAB === 'course') {

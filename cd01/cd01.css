@@ -25,7 +25,8 @@ body{margin:0;color:var(--ink);font-family:var(--f);font-size:16px;line-height:1
   background-attachment:fixed;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,0)}
 b,strong{font-weight:600}
 button{font-family:inherit}
-.wrap{max-width:560px;margin:0 auto;padding:calc(76px + env(safe-area-inset-top,0px)) 16px 40px}
+.wrap{max-width:560px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top,0px)) 16px 40px}
+html.ps-bb .wrap{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))} /* PS1.3.58: chừa chỗ thanh đáy */
 .jp{font-family:var(--jp)}
 .nm{color:var(--c-d);font-weight:600}
 .hide{display:none!important}
@@ -44,7 +45,7 @@ button{font-family:inherit}
 .tn-btn{width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--c-d);display:grid;place-items:center;cursor:pointer}
 .tn-btn.on{background:var(--c-t)}
 .tn-btn:active{transform:scale(.94)}
-.demo-strip{position:fixed;left:0;right:0;bottom:0;z-index:31;background:#18203F;color:#fff;font-size:13px;display:flex;justify-content:center;gap:12px;align-items:center;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
+.demo-strip{position:fixed;left:0;right:0;top:0;z-index:31;background:#18203F;color:#fff;font-size:13px;display:flex;justify-content:center;gap:12px;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px}
 .demo-strip button{border:0;background:var(--go);color:#3B2A00;border-radius:12px;padding:6px 10px;font-weight:600;font-size:13px;cursor:pointer}
 
 /* ---------- nút ---------- */
@@ -405,7 +406,7 @@ button{font-family:inherit}
 .twinsum b{display:inline-block;font-size:12px;border-radius:7px;padding:0 7px;margin-right:6px}
 .twinsum .tg{background:var(--ok-t);color:var(--ok)}
 .twinsum .tx{background:#FFF1E3;color:#A55A0A}
-.wrap--demo{padding-bottom:90px}
+.wrap.wrap--demo{padding-top:calc(60px + env(safe-area-inset-top,0px))}
 
 /* ---------- CD01.0.2: Ga 2–3 ---------- */
 .grp{margin:12px 0 6px;font-size:12.5px;font-weight:700;color:var(--c-d);letter-spacing:.02em}
@@ -1114,6 +1115,7 @@ button{font-family:inherit}
 .tourbox__b{display:flex;justify-content:space-between;align-items:center;margin-top:8px;color:var(--muted);font-size:13px}
 .tourbox__b span:last-child{display:flex;gap:12px;align-items:center}
 .tourbox--tap{border:2px solid var(--go)}
+html.ps-bb .tourbox{bottom:calc(var(--psbb,0px) + 14px + env(safe-area-inset-bottom,0px))} /* PS1.3.58: nằm trên thanh đáy */
 .nb-again{display:flex;flex-wrap:wrap;gap:4px 18px;margin:10px 0 0}
 @media print{.tourbox{display:none!important}}
 

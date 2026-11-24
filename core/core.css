@@ -156,18 +156,44 @@ html.ps-sv-err [data-act="nb"]::after,html.ps-sv-err .hbar__av::after,html.ps-sv
 /* Cài đặt · Học được khi không có internet */
 .ps-offbar{display:block;height:7px;border-radius:9px;background:#E8EBF2;overflow:hidden;margin:4px 0 10px}.ps-offbar i{display:block;height:100%;border-radius:9px;background:#2E9D5B;transition:width .4s}
 
-/* ---- PS1.3.55 · Thanh điều hướng chung trong khóa (ý 25): ‹ về một cấp | tên màn | Sổ tay ---- */
-.psnav{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:0;right:0;z-index:30;pointer-events:none;transition:transform .3s cubic-bezier(.32,.72,0,1),opacity .3s}
-.psnav--hide{transform:translateY(-130%);opacity:0}
-.psnav__in{position:relative;box-sizing:border-box;max-width:560px;height:56px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:8px}
-.psnav__in::before{content:"";position:absolute;inset:0 12px;border-radius:20px;background:rgba(255,255,255,.95);box-shadow:0 1px 0 rgba(20,24,60,.05),0 6px 18px -10px rgba(20,24,60,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.psnav__in>*{position:relative;pointer-events:auto}
-.psnav__bk{flex:none;display:inline-flex;align-items:center;gap:2px;max-width:55%;height:40px;padding:0 14px 0 8px;border:0;border-radius:999px;background:var(--c-t,#ECEEFA);color:var(--c-d,#151D52);font:700 14.5px/1 var(--f,"Be Vietnam Pro",system-ui,sans-serif);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+/* ---- PS1.3.58 · Thanh đáy chung trong khóa (PA3): cùng khuôn thanh trang chủ; phía trên để trống ----
+   --psbb: khoảng chừa phía dưới cho nút dính đáy, thông báo (0 khi thanh ẩn) */
+html.ps-bb{--psbb:84px}
+html.ps-bb.ps-bbh,html.ps-bb.ps-kb{--psbb:0px}
+.psnav{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:30;pointer-events:none;transition:transform .3s cubic-bezier(.32,.72,0,1),opacity .3s}
+.psnav--hide,html.ps-kb .psnav{transform:translateY(calc(100% + 30px));opacity:0}
+.psnav__in{position:relative;box-sizing:border-box;width:calc(100% - 28px);max-width:420px;height:66px;margin:0 auto;display:flex;align-items:center;justify-content:space-around;border-radius:26px;pointer-events:auto;
+  background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 12px 30px -14px rgba(30,30,50,.45),0 0 0 1px rgba(30,30,50,.05);font-family:var(--f,"Be Vietnam Pro",system-ui,sans-serif)}
+.psnav__b{flex:1 1 0;min-width:0;display:grid;justify-items:center;gap:2px;border:0;background:none;padding:6px 0;color:#6E717C;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.psnav__b i{position:relative;width:58px;height:30px;border-radius:15px;display:grid;place-items:center;font-style:normal;transition:background .2s,transform .15s}
+.psnav__b i img{display:block}
+.psnav__b small{max-width:92%;font-size:12px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psnav__b.on{color:var(--c-d,#151D52)}.psnav__b.on i{background:var(--c-t,#ECEEFA)}
+.psnav__b:active i,.psnav__ic:active,.psnav__bk:active{transform:scale(.94)}
+.psnav__ring{position:absolute;left:-3px;top:-3px;width:64px;height:36px;pointer-events:none;overflow:visible}
+.psnav__rg0{stroke:var(--c-d,#151D52);stroke-opacity:.14;stroke-width:2.4}
+.psnav__rg1{stroke:#F4B63B;stroke-width:2.6;stroke-linecap:round;transition:stroke-dasharray .5s}
+.psnav__rg1.ok{stroke:#2E9D5B}
+.psnav__avw{position:relative;display:grid;place-items:center}
+.psnav__av{width:30px;height:30px;border-radius:50%;overflow:hidden;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--c-d,#151D52)}
+.psnav__av svg,.psnav__av .ps-av{display:block;width:30px!important;height:30px!important;border-radius:50%}
+.psnav__av .ps-av{display:grid;place-items:center;font-weight:900}
+.psnav__dot{position:absolute;top:-3px;right:-4px;width:9px;height:9px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 2px #fff}
+/* chế độ tập trung (trong hoạt động): ‹ nơi về | tiến độ | Sổ tay */
+.psnav--act .psnav__in{height:60px;border-radius:24px;justify-content:flex-start;gap:6px;padding:0 8px 0 10px}
+.psnav__bk{flex:none;display:inline-flex;align-items:center;gap:2px;max-width:46%;height:40px;padding:0 14px 0 8px;border:0;border-radius:999px;background:var(--c-t,#ECEEFA);color:var(--c-d,#151D52);font:700 14.5px/1 var(--f,"Be Vietnam Pro",system-ui,sans-serif);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
 .psnav__bk span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.psnav__t{flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font:700 15px/1.2 var(--f,"Be Vietnam Pro",system-ui,sans-serif);color:var(--ink,#18203F)}
-.psnav__x{flex:none;width:40px;height:40px;border:0;border-radius:12px;background:transparent;color:var(--c-d,#151D52);display:grid;place-items:center;cursor:pointer}
-.psnav__nb{flex:none;width:42px;height:40px;border:0;border-radius:12px;background:var(--c-t,#ECEEFA);color:var(--c-d,#151D52);display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
-.psnav__bk:active,.psnav__nb:active,.psnav__x:active{transform:scale(.94)}
-.psnav__dot{position:absolute;top:5px;right:6px;width:8px;height:8px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 2px #fff}
-@media (min-width:900px){.psnav__in{max-width:620px}}
-@media (prefers-reduced-motion:reduce){.psnav{transition:none}}
+.psnav__pg{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px}
+.psnav__pg em{flex:0 1 20px;min-width:8px;height:6px;border-radius:3px;background:rgba(20,24,60,.1)}
+.psnav__pg em.dn{background:var(--c-d,#151D52);opacity:.45}.psnav__pg em.cu{background:var(--c-d,#151D52)}
+.psnav__pg small{margin-left:4px;font-size:13px;font-weight:800;color:#555A66;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psnav__ic{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--c-d,#151D52);display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.psnav__ic.on{background:var(--c-t,#ECEEFA)}
+/* chấm lưu bài nằm ở ảnh đại diện */
+html.ps-sv .psnav__nb::after,html.ps-sv-err .psnav__nb::after{display:none}
+html.ps-sv .psnav__avw::after,html.ps-sv-err .psnav__avw::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#2E9D5B;box-shadow:0 0 0 2px #fff;pointer-events:none}
+html.ps-sv-err .psnav__avw::after{background:#E5484D}
+/* thông báo, thẻ cập nhật nằm trên thanh */
+html.ps-bb .ps-toast{bottom:calc(var(--psbb,0px) + 18px + env(safe-area-inset-bottom,0px))}
+html.ps-bb .ps-update,html.ps-bb .ps-upd{bottom:calc(var(--psbb,0px) + 14px + env(safe-area-inset-bottom,0px))}
+@media (prefers-reduced-motion:reduce){.psnav,.psnav__b i,.psnav__rg1{transition:none}}

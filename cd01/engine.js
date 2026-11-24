@@ -272,12 +272,17 @@
       svg: '<svg class="tn-ring" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="none" class="tn-ring__bg"/>' +
         (f > 0 ? '<circle cx="20" cy="20" r="18.5" fill="none" class="tn-ring__v' + (full ? ' ok' : '') + '" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 20 20)"/>' : '') + '</svg>' };
   }
-  /* PS1.3.55 (ý 25): thanh trên chung · ‹ về một cấp | tên màn | Sổ tay */
+  /* PS1.3.58 (PA3): thanh đáy chung · Trang chủ | Sơ đồ tuyến (vòng tiến độ hôm nay = dayRing) | Sổ tay; trong chặng: ‹ ga | n/t | Sổ tay */
   function topnav() {
-    var bk = 'Proskills', t = 'Career Design 1', st, a;
-    if (V.v === 'st' && (st = stById(V.st))) { bk = 'Sơ đồ tuyến'; t = st === START ? 'Sân ga' : stLabel(st) + ' · ' + st.vn; }
-    else if (V.v === 'act' && (a = ACTS[V.id])) { st = stById(a.st); bk = stShort(st); t = a.warm ? 'Khởi động' : (st === START ? 'Xuất phát' : (st.acts.indexOf(V.id) + 1) + '/' + st.acts.length); }
-    return PS.navHTML({ back: bk, title: t });
+    var st, a, r;
+    if (V.v === 'act' && (a = ACTS[V.id])) {
+      st = stById(a.st);
+      if (a.warm) return PS.navHTML({ act: 1, back: stShort(st), title: 'Khởi động' });
+      if (st === START) return PS.navHTML({ act: 1, back: stShort(st), title: 'Xuất phát' });
+      return PS.navHTML({ act: 1, back: stShort(st), step: [st.acts.indexOf(V.id) + 1, st.acts.length] });
+    }
+    r = dayRing();
+    return PS.navHTML({ map: { t: 'Sơ đồ tuyến', ic: 'rail', ring: r.n ? r.nd / r.n : 0, ok: r.full, on: 1 } });
   }
   function demoStrip() { return S.demo ? '<div class="demo-strip"><span>Bản demo giáo viên · học viên giả định</span><button type="button" data-act="demoExit">Thoát demo</button></div>' : ''; }
   var QUIET = false;
@@ -1876,7 +1881,7 @@
     var stp = TOUR[tourI], el = D.querySelector(stp[0]), nav = D.getElementById('psnav');
     if (el) {
       el.classList.add('tour-hl');
-      if (stp[2]) { if (nav) { nav.classList.remove('psnav--hide'); nav.style.zIndex = 97; } }
+      if (stp[2]) { if (nav) { nav.classList.remove('psnav--hide'); D.documentElement.classList.remove('ps-bbh'); nav.style.zIndex = 97; } }
       else if (!again) { try { el.scrollIntoView(RM ? true : { behavior: 'smooth', block: stp[0] === '.route .stop' ? 'start' : 'center' }); } catch (e) { el.scrollIntoView(true); } }
     }
     b = D.createElement('div'); b.id = 'tourBox'; b.className = 'tourbox' + (stp[2] ? ' tourbox--tap' : ''); b.setAttribute('role', 'dialog'); b.setAttribute('aria-live', 'polite');

@@ -155,7 +155,7 @@
        depth: fn(v) → 0,1,2…, ser: fn(v) → object, de: fn(obj) → view | null, show: fn(v, y) vẽ lại,
        intercept: fn() → 0 | 1 (đã đóng lớp phủ, cần bù mục) | 2 (đã xử lý, không bù) });
      Gọi NAV.start(url) một lần khi khởi động; NAV.go(v) trước khi đổi V; NAV.save() khi đổi bước trong cùng màn.
-     Thanh trên: PS.navHTML({ back, title, extra }). Nút ‹ có data-psnav="up"; nút Sổ tay data-act="nb". */
+     Thanh đáy: PS.navHTML (xem dưới, PS1.3.58). Nút ‹ có data-psnav="up"; nút Sổ tay data-act="nb". */
   var NAVC = null, NAVQ = 0; /* NAVQ: lúc vừa đổi màn, bỏ qua cuộn do trang tự đặt để thanh trên không ẩn */
   PS.nav = function (o) {
     var N = { d: 0, fh: 0 };
@@ -184,6 +184,14 @@
       if (N.d > 0) { try { W.history.back(); return; } catch (e) {} }
       NAVQ = +new Date(); rep(p, 0); o.show(p, 0);
     };
+    /* PS1.3.58: ô bản đồ ở thanh đáy → về màn gốc của khóa (bản đồ). Đang ở gốc thì cuộn lên đầu. */
+    function rootOf(v) { var p = v, q; while ((q = o.parent(p))) p = q; return p; }
+    N.top = function () {
+      var v = o.get(), r = rootOf(v);
+      if (!o.parent(v)) { try { W.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { W.scrollTo(0, 0); } return; }
+      if (N.d > 0) { N.toTop = 1; try { W.history.go(-N.d); return; } catch (e) { N.toTop = 0; } }
+      NAVQ = +new Date(); rep(r, 0); o.show(r, 0);
+    };
     N.leave = function () {
       if (o.beforeLeave) o.beforeLeave();
       var t = setTimeout(function () { W.location.replace(PS.url('index.html')); }, 900);
@@ -192,6 +200,7 @@
       clearTimeout(t); W.location.replace(PS.url('index.html'));
     };
     W.addEventListener('popstate', function (e) {
+      if (N.toTop) { N.toTop = 0; var hs = e.state && e.state[o.tag] ? e.state : null; N.d = hs && typeof hs.d === 'number' ? hs.d : 0; var rv = rootOf(o.get()); NAVQ = +new Date(); rep(rv, 0); o.show(rv, 0); return; }
       var h = e.state && e.state[o.tag] ? e.state : null, ic = dlgStack.length ? (dlgStack[dlgStack.length - 1](), 1) : (o.intercept ? o.intercept() : 0); /* Back đóng hộp thoại trước */
       if (ic) { if (ic === 1) { try { W.history.pushState(st(o.get(), N.d, W.pageYOffset || 0), ''); } catch (er) {} } else if (h && typeof h.d === 'number') N.d = h.d; return; }
       if (h && typeof h.d === 'number' && h.d > N.d) { N.d = h.d; var fv = o.de(h); if (fv) { NAVQ = +new Date(); o.show(fv, h.y || 0); return; } } /* nút Tiến (máy tính) */
@@ -204,21 +213,75 @@
     NAVC = N;
     return N;
   };
+  /* ---------- PS1.3.58 · Thanh đáy chung trong khóa (PA3) ----------
+     Phía trên để trống; thanh nổi ở đáy, cùng khuôn thanh trang chủ.
+     Chế độ ô (bản đồ, ga/bến/ải/bài): Trang chủ | Bản đồ khóa (vòng tiến độ) | ô thêm | Sổ tay (ảnh đại diện).
+     Chế độ tập trung (o.act, trong hoạt động): ‹ nơi về | tiến độ n/t | ô thêm (chỉ icon) | ảnh đại diện.
+     PS.navHTML({ back, title, act, step:[n, t], map:{ t, ic, ring, ok, on }, items:[{ act, ic, t, on, label }], dot })
+     data-psnav="home" → PS.home(); "map" → NAV.top(); "up" → NAV.up(); Sổ tay data-act="nb". */
+  function navAv() {
+    var h = W.PSAvatar ? W.PSAvatar.html(30) : '<span class="ps-av" style="width:30px;height:30px;background:#FFE08F;color:#6A4A00;font-size:14px">' + esc(PS.given().charAt(0).toUpperCase()) + '</span>';
+    return h.replace(/avc-/g, 'psnavc-'); /* tránh trùng id clipPath với ảnh trong Cài đặt */
+  }
+  function navRing(m) {
+    var f = Math.max(0, Math.min(1, +m.ring || 0)), P = 159.7; /* chu vi viên thuốc 61×33, bo 16.5 */
+    if (m.ring == null) return '';
+    return '<svg class="psnav__ring" viewBox="0 0 64 36" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="33" rx="16.5" fill="none" class="psnav__rg0"/>' +
+      (f > 0 ? '<rect x="1.5" y="1.5" width="61" height="33" rx="16.5" fill="none" class="psnav__rg1' + (m.ok || f >= 1 ? ' ok' : '') + '" stroke-dasharray="' + (P * f).toFixed(1) + ' ' + P + '" stroke-dashoffset="-14"/>' : '') + '</svg>';
+  }
   PS.navHTML = function (o) {
-    return '<nav class="psnav" id="psnav" aria-label="Điều hướng"><div class="psnav__in">' +
-      '<button type="button" class="psnav__bk" data-psnav="up" aria-label="Về ' + esc(o.back) + '">' + PS.icon('back', 18, 2.6) + '<span>' + esc(o.back) + '</span></button>' +
-      '<b class="psnav__t">' + esc(o.title || '') + '</b>' + (o.extra || '') +
-      '<button type="button" class="psnav__nb" data-act="nb" aria-label="Sổ tay" title="Sổ tay">' + PS.icon('book', 21) + (o.dot ? '<span class="psnav__dot"></span>' : '') + '</button></div></nav>';
+    o = o || {};
+    try { D.documentElement.classList.add('ps-bb'); D.documentElement.classList.remove('ps-bbh'); } catch (e) {}
+    var items = o.items || [], dot = o.dot ? '<span class="psnav__dot" aria-label="Có điểm mới"></span>' : '', h;
+    if (o.act) {
+      var st = o.step, pg = '';
+      if (st && st[1] > 1) {
+        for (var i = 1; i <= st[1]; i++) pg += '<em class="' + (i < st[0] ? 'dn' : (i === st[0] ? 'cu' : '')) + '"></em>';
+        pg += '<small>' + st[0] + '/' + st[1] + '</small>';
+      } else if (o.title) pg = '<small>' + esc(o.title) + '</small>';
+      h = '<button type="button" class="psnav__bk" data-psnav="up" aria-label="Về ' + esc(o.back) + '">' + PS.icon('back', 18, 2.6) + '<span>' + esc(o.back) + '</span></button>' +
+        '<div class="psnav__pg" aria-label="Tiến độ">' + pg + '</div>' +
+        items.map(function (it) { return '<button type="button" class="psnav__ic' + (it.on ? ' on' : '') + '" data-act="' + it.act + '" aria-label="' + esc(it.label || it.t) + '" title="' + esc(it.label || it.t) + '">' + PS.icon(it.ic, 22) + '</button>'; }).join('') +
+        '<button type="button" class="psnav__ic psnav__nb" data-act="nb" aria-label="Sổ tay" title="Sổ tay"><span class="psnav__avw"><span class="psnav__av">' + navAv() + '</span>' + dot + '</span></button>';
+      return '<nav class="psnav psnav--act" id="psnav" aria-label="Điều hướng"><div class="psnav__in">' + h + '</div></nav>';
+    }
+    var m = o.map;
+    h = '<button type="button" class="psnav__b" data-psnav="home" aria-label="Về trang chủ Proskills"><i><img src="' + PS.url('icons/logo.svg') + '" width="25" height="25" alt=""></i><small>Trang chủ</small></button>' +
+      (m ? '<button type="button" class="psnav__b' + (m.on ? ' on' : '') + '" data-psnav="map"' + (m.on ? ' aria-current="page"' : '') + '><i>' + PS.icon(m.ic || 'compass', 23) + navRing(m) + '</i><small>' + esc(m.t) + '</small></button>' : '') +
+      items.map(function (it) { return '<button type="button" class="psnav__b' + (it.on ? ' on' : '') + '" data-act="' + it.act + '" aria-label="' + esc(it.label || it.t) + '"><i>' + PS.icon(it.ic, 23) + '</i><small>' + esc(it.t) + '</small></button>'; }).join('') +
+      '<button type="button" class="psnav__b psnav__nb" data-act="nb" aria-label="Sổ tay"><i><span class="psnav__avw"><span class="psnav__av">' + navAv() + '</span>' + dot + '</span></i><small>Sổ tay</small></button>';
+    return '<nav class="psnav" id="psnav" aria-label="Điều hướng"><div class="psnav__in">' + h + '</div></nav>';
   };
-  D.addEventListener('click', function (e) { var b = PS.closest(e.target, '[data-psnav="up"]'); if (b && NAVC) { e.preventDefault(); NAVC.up(); } });
-  /* thanh trên ẩn khi cuộn xuống, hiện lại khi cuộn lên */
+  D.addEventListener('click', function (e) {
+    var b = PS.closest(e.target, '[data-psnav]'); if (!b) return;
+    var k = b.getAttribute('data-psnav'); e.preventDefault();
+    if (k === 'home') { PS.home(); return; }
+    if (!NAVC) return;
+    if (k === 'up') NAVC.up(); else if (k === 'map') NAVC.top();
+  });
+  /* đổi ảnh đại diện thì thanh đổi theo */
+  W.addEventListener('ps:change', function (e) {
+    if (!e.detail || (e.detail.field !== 'av' && e.detail.field !== 'profile')) return;
+    var a = D.querySelectorAll('.psnav__av'); for (var i = 0; i < a.length; i++) a[i].innerHTML = navAv();
+  });
+  /* bàn phím mở (điện thoại) thì ẩn thanh để không che ô viết */
+  (function () {
+    var coarse = false; try { coarse = W.matchMedia('(pointer:coarse)').matches; } catch (e) {}
+    if (!coarse) return;
+    var T = null;
+    function isTxt(el) { if (!el || !el.tagName) return false; var t = el.tagName; if (t === 'TEXTAREA' || el.isContentEditable) return true; if (t !== 'INPUT') return false; return !/^(checkbox|radio|button|submit|range|color|file)$/i.test(el.type || ''); }
+    D.addEventListener('focusin', function (e) { if (isTxt(e.target)) { clearTimeout(T); D.documentElement.classList.add('ps-kb'); } });
+    D.addEventListener('focusout', function () { clearTimeout(T); T = setTimeout(function () { if (!isTxt(D.activeElement)) D.documentElement.classList.remove('ps-kb'); }, 120); });
+  })();
+  /* thanh đáy ẩn khi cuộn xuống, hiện lại khi cuộn lên (PS1.3.58) */
   (function () {
     var lastY = 0;
     W.addEventListener('scroll', function () {
       var n = D.getElementById('psnav'); if (!n) return;
       var y = W.pageYOffset || 0;
-      if (+new Date() - NAVQ < 600) { lastY = y; n.classList.remove('psnav--hide'); return; }
-      if (y > lastY + 6 && y > 80) n.classList.add('psnav--hide'); else if (y < lastY - 6 || y < 80) n.classList.remove('psnav--hide');
+      if (+new Date() - NAVQ < 600) { lastY = y; n.classList.remove('psnav--hide'); D.documentElement.classList.remove('ps-bbh'); return; }
+      if (y > lastY + 6 && y > 80) { n.classList.add('psnav--hide'); D.documentElement.classList.add('ps-bbh'); }
+      else if (y < lastY - 6 || y < 80) { n.classList.remove('psnav--hide'); D.documentElement.classList.remove('ps-bbh'); }
       lastY = y;
     }, { passive: true });
   })();
@@ -379,6 +442,8 @@
     scroll: '<path d="M7 4.5h11a2 2 0 0 1 2 2v1H9"/><path d="M7 4.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5"/><path d="M9 11h7M9 14.5h5"/>',
     spark: '<path d="M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2 18 18M18 6l-2.8 2.8M8.8 15.2 6 18"/>',
     clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    ask: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.6M12 16.8v.1"/>',
+    map: '<path d="M9 4.5 3.5 6.5v13L9 17.5l6 2 5.5-2v-13L15 6.5z"/><path d="M9 4.5v13M15 6.5v13"/>',
     book: '<path d="M4 4.5h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4.5h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/>',
     dumbbell: '<path d="M6.5 7.5v9M17.5 7.5v9M3.8 9.8v4.4M20.2 9.8v4.4M6.5 12h11"/>',
     calendar: '<rect x="3.8" y="5" width="16.4" height="15" rx="3"/><path d="M3.8 10h16.4M8.2 3v4M15.8 3v4M8 14h2M14 14h2M8 17h2"/>',

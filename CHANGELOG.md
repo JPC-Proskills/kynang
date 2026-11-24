@@ -5,6 +5,26 @@ Quy ước số phiên bản: **PS a.b.c**
 - b: giai đoạn / thêm module hoặc tính năng lớn
 - c: sửa nhỏ trong giai đoạn đó
 
+## PS1.3.58 · 24/11/2026 · Thanh đáy chung cho mọi khóa (PA3), Sổ tay = ảnh đại diện ở trang chủ và Shin
+Theo bản xem trước `Claude outputs/PS1.3.58-xem-truoc-thanh-dieu-huong.html` (thầy chốt 24/11: 1 PA3, chữ “Trang chủ” thay “Proskills”; 2 tên riêng từng khóa; 3 vòng tiến độ quanh icon bản đồ; 4 “Sổ tay”; 5, 6, 7 ok; 8 ẩn khi cuộn xuống, hiện khi cuộn lên).
+- **Thanh đáy chung** (core.js `PS.navHTML`, core.css khối PS1.3.58): phía trên màn hình khóa để trống. Thanh nổi ở đáy, cùng khuôn thanh trang chủ.
+  - Chế độ ô (bản đồ, ga/bến/ải/bài): **Trang chủ** (logo O, `data-psnav="home"` → `PS.home()`) · **bản đồ khóa** (`data-psnav="map"` → `NAV.top()`, có vòng tiến độ) · ô thêm (TK: Hỏi nhanh) · **Sổ tay** = ảnh đại diện (`data-act="nb"`).
+  - Chế độ tập trung trong hoạt động (`act: 1`): ‹ ga/bến/ải/bài (`data-psnav="up"`) · vạch tiến độ n/t · (TK: Hỏi nhanh) · ảnh đại diện.
+  - Tên bản đồ: CD01 Sơ đồ tuyến · CD02 Hải đồ · TK Bản đồ · TC01 Phòng tập. Vòng tiến độ: CD01 ga hôm nay (`dayRing`), CD02 bến đang học, TK nhịp học hôm nay (`pace`), TC01 cả khóa. Đủ thì vòng xanh.
+  - `NAV.top()` (core.js `PS.nav`): về màn gốc bằng `history.go(-d)` (Back sau đó vẫn về trang chủ), đang ở gốc thì cuộn lên đầu.
+  - Ẩn khi cuộn xuống, hiện khi cuộn lên; ẩn khi bàn phím mở (điện thoại, lớp `ps-kb`). Biến `--psbb` (84px / 0) để nút dính đáy (CD02 `.sbar`), thông báo (`.ps-toast`, TK `.toast`), thẻ cập nhật, hộp hướng dẫn lần đầu nằm trên thanh.
+  - Chấm lưu bài xanh/đỏ nằm ở ảnh đại diện (`.psnav__avw`). Đổi ảnh đại diện thì thanh đổi theo (`ps:change` av).
+- **Các khóa**: `.wrap`/`main` bỏ đệm 76px phía trên, thêm đệm dưới khi có thanh. Dải “Bản demo giáo viên” chuyển lên đầu màn (CD01, CD02, TC01; TK `.demobar` giữ ở trên, `body.tk-demo`). CD01, TK, TC01, mau nạp thêm `../hub/avatar.js`.
+- **TK**: bỏ nút Sổ tay nhỏ trên Văn điệp thông quan (ý 7). Hướng dẫn lần đầu chiếu sáng nút Hỏi nhanh và Sổ tay trong thanh đáy; chữ hướng dẫn sửa theo vị trí mới. Câu “Vòng tròn quanh nút bản đồ…” ở Cài đặt nay đúng trở lại.
+- **CD01**: hướng dẫn lần đầu bước 4 “chạm Sổ tay (ảnh đại diện của bạn, góc dưới bên phải)”.
+- **Trang chủ** (hub.js `navHTML`): ảnh đại diện từ góc trên xuống ô thứ 4 “Sổ tay” (mở Cài đặt).
+- **Shin Routine** (routine/proskills.js `psHead`, bọc `renderBar`): nút `#gear` thành ô thứ 5 “Sổ tay” (ảnh đại diện) ở thanh đáy; phía trên giữ ‹ Proskills, ngày, Check-in. Máy tính: nằm cuối thanh dọc.
+- Phiên bản khóa: CD01.1.9, CD02.3.14, TK16.4, TC01.1.8, mau 1.0.2.
+- Kiểm 360 + 390 + 1280: trang chủ, Shin (cả 5 ô, mở Sổ tay), 4 khóa + mẫu (bản đồ, cấp giữa, hoạt động), ‹ / ô bản đồ / Back về trang chủ đúng, ẩn/hiện khi cuộn, bàn phím; không lỗi JS, không tràn ngang; ES5 (acorn).
+
+Tệp đổi: config.js, sw.js, mọi index.html (?v=), core/core.js, core/core.css, hub/hub.js, hub/hub.css, routine/proskills.js, cd01/(index.html, engine.js, content.js, cd01.css), cd02/(index.html, engine.js, content.js, cd02.css), tk/(index.html, engine.js, report.js, content.js, tk.css), tc01/(index.html, engine.js, content.js, tc01.css), mau/(index.html, mau.js, mau.css), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có.
+
 ## PS1.3.57 · 23/11/2026 · CD02 bản 5 đợt 2: cờ ảnh đại diện, hình kế hoạch, popup thuyền nâng cấp, vẽ lại người
 Theo `claude/cd02-ban5-de-xuat.md` (thầy chốt 23/11: 1 tùy chọn, 2 ok, 3 làm luôn, 4 không cần, 5 cả bếp và xưởng, 6 ok, 7 ok). CD02.3.13.
 - Ý 2 · Cờ dùng ảnh đại diện (tùy chọn): ô đầu lưới biểu tượng “Ảnh của tôi” (mã 'av'), dòng “Đổi ảnh đại diện” mở bảng chọn như Cài đặt trang chủ (`avOv`, lưu `PS.prefs().av`). `flagSym('av')` vẽ ảnh lúc hiển thị (art.js `avSym`, clipPath id riêng) nên cờ ở hải đồ, buồm thuyền, Sổ tay, Bảng ước mơ, phiếu, Bằng đổi theo khi đổi ảnh. cd02/index.html nạp `../hub/avatar.js`; avatar.js xuất thêm `cur, cols, letter, map, body`.

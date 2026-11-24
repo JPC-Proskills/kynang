@@ -116,13 +116,18 @@ Hồ sơ tập luyện ở `S.mem` (job, g, g2, sex, inj 0/1, goal, h, w). Gợi
 ### Trang chủ 3 thẻ, PWA, chấm lưu bài (PS1.3.54)
 - **Trang chủ** (hub.js): thanh đáy 3 thẻ `TAB` = today | course | lich (`navHTML`, `setTab`, nhớ ở `sessionStorage ps.tab`, Back Android: `TABPUSH`). Hôm nay = lời chào + `routineHTML()` + `contHTML()` (Học tiếp, đọc `PS.summary(id).extra.next.t` nếu khóa báo). Thẻ Hôm nay phải vừa 1 màn hình 390×844: thêm khối mới thì đặt ở thẻ Khóa học.
 - **Cập nhật + tải sẵn** (core/pwa.js): tự cập nhật khi chưa làm gì, thẻ `.ps-upd` khi đang làm bài; `PS.warmAll(force)` tải mọi khóa, ghi `ps.offline`; khóa có tệp nạp riêng (hình, phông, game, thư viện) thì thêm đường dẫn vào `OFFLINE_EXTRA` (không cần `?v=`).
-- **Chấm lưu bài**: `PS.save` gọi `PS.saveMark(ok)` → lớp `ps-sv` / `ps-sv-err` trên `<html>`; core.css vẽ chấm ở `[data-act="nb"]`, `.hbar__av`, `#gear`. Khóa mới: nút Sổ tay chỉ cần `data-act="nb"`. Cuối Tổng quan: `+ PS.savedHTML(ID)` (bỏ ở demo).
+- **Chấm lưu bài**: `PS.save` gọi `PS.saveMark(ok)` → lớp `ps-sv` / `ps-sv-err` trên `<html>`; core.css vẽ chấm ở ảnh đại diện `.psnav__avw` (thanh đáy khóa, trang chủ, Shin; từ PS1.3.58). Khóa mới: dùng `PS.navHTML` là có. Cuối Tổng quan: `+ PS.savedHTML(ID)` (bỏ ở demo).
 - **Manifest** không khai báo `orientation` (theo cài đặt xoay của điện thoại). Không đặt lại `"any"`.
-- **Shin Routine** (proskills.js `psHead`): nút “‹ Proskills”, ngày gọn, ảnh đại diện ở `#gear` (routine/index.html nạp `../hub/avatar.js`); Cài đặt có `.pshome` + `PS.savedHTML('routine')`.
+- **Shin Routine** (proskills.js `psHead`): nút “‹ Proskills”, ngày gọn; PS1.3.58: `#gear` = ô thứ 5 “Sổ tay” (ảnh đại diện) trong `#abar`, giữ qua `GEAR` khi `renderBar` vẽ lại (routine/index.html nạp `../hub/avatar.js`); Cài đặt có `.pshome` + `PS.savedHTML('routine')`.
+- **Trang chủ** PS1.3.58: ảnh đại diện là ô thứ 4 “Sổ tay” của `.bnav` (mở Cài đặt), không còn ở thanh trên.
 
-### Điều hướng chung, Học tiếp (PS1.3.55)
-- **Thanh trên** mọi khóa: `PS.navHTML({ back, title, extra, dot })` (core.js) → `#psnav`: nút ‹ (`data-psnav="up"`) | tên màn | `extra` | Sổ tay (`data-act="nb"`). Kiểu ở core.css `.psnav*`, dùng màu khóa `--c-t`, `--c-d`. Thanh ẩn/hiện khi cuộn làm chung ở core.js. Không tự vẽ thanh trên riêng, không đặt nút ‹ trong nội dung.
-- **Bộ điều hướng** `var NAV = PS.nav({ mod, tag, get, parent, depth, ser, de, show, intercept, beforeLeave })`: nút ‹ và Back Android cùng **về một cấp** (`parent(v)`; `null` = về trang chủ Proskills). Gọi `NAV.go(v)` trước khi đổi màn (vào sâu thì thêm mục lịch sử, ngang/lên thì thay), `NAV.save()` khi đổi bước trong cùng màn, `NAV.start(location.pathname)` một lần khi khởi động (bỏ `?demo`, `?go`). `intercept()` đóng lớp phủ riêng của khóa (trả 1); hộp `PS.dialog` lõi tự đóng. Lớp phủ, Sổ tay **không** tự `pushState` / `history.back()`.
+### Điều hướng chung, Học tiếp (PS1.3.55, thanh đáy từ PS1.3.58)
+- **Thanh đáy** mọi khóa (PS1.3.58, PA3): `PS.navHTML(o)` (core.js) → `#psnav` nổi ở đáy, phía trên màn hình khóa để trống. Không tự vẽ thanh riêng, không đặt nút ‹ trong nội dung.
+  - Màn bản đồ, ga/bến/ải/bài: `PS.navHTML({ map: { t: 'Hải đồ', ic: 'compass', ring: 0..1, ok, on: 1 }, items: [{ act, ic, t, label, on }], dot })` → Trang chủ | bản đồ | ô thêm | Sổ tay (ảnh đại diện).
+  - Trong hoạt động: `PS.navHTML({ act: 1, back: 'Bến 4', step: [n, t] })` (hoặc `title: 'Khởi động'` khi không có n/t) → ‹ nơi về | vạch tiến độ | ô thêm (chỉ icon) | ảnh đại diện.
+  - `data-psnav="home"` → `PS.home()`; `"map"` → `NAV.top()`; `"up"` → `NAV.up()`. Sổ tay `data-act="nb"`. Icon lấy từ `PS.icon` (đã có `ask`, `map`).
+  - Khóa phải nạp `../hub/avatar.js` (ảnh đại diện). Đệm: `.wrap` trên ~20px; `html.ps-bb .wrap{padding-bottom:calc(112px + safe-bottom)}`. Phần tử dính đáy/nổi đáy dùng `bottom: calc(var(--psbb,0px) + …)` (84px khi thanh hiện, 0 khi ẩn/bàn phím mở). Dải demo đặt ở đầu màn.
+- **Bộ điều hướng** `var NAV = PS.nav({ mod, tag, get, parent, depth, ser, de, show, intercept, beforeLeave })`: nút ‹ và Back Android cùng **về một cấp** (`parent(v)`; `null` = về trang chủ Proskills). `NAV.top()` về màn gốc (cha cuối cùng khác null) bằng lịch sử. Gọi `NAV.go(v)` trước khi đổi màn (vào sâu thì thêm mục lịch sử, ngang/lên thì thay), `NAV.save()` khi đổi bước trong cùng màn, `NAV.start(location.pathname)` một lần khi khởi động (bỏ `?demo`, `?go`). `intercept()` đóng lớp phủ riêng của khóa (trả 1); hộp `PS.dialog` lõi tự đóng. Lớp phủ, Sổ tay **không** tự `pushState` / `history.back()`.
 - **Về trang chủ**: `PS.home()` → `NAV.leave()`: mở từ trang chủ (`PS.open` ghi `sessionStorage ps.nav`) thì `history.go(-(d+1))`, không thì `location.replace`.
 - **Học tiếp**: khóa báo `extra.next = { t: 'Bến 4 · …', go: '<mã hoạt động>' }`; trang chủ mở `<id>/?go=<mã>` (`PS.open(id, q)`), khóa đọc `PS.goParam()` **trước** `NAV.start`, rồi `NAV.go(màn hoạt động)`. Khóa mới làm theo cd02/engine.js (`nextInfo`, `goView`, `parentOf`, `viewOf`).
 - **Cuối hoạt động** luôn có “Tiếp theo: …” và “Về <ga/bến/ải/bài>” (CD02 `doneOv`, CD01 `finish`, TK `endNav`, TC01 `finishAct`).
@@ -139,7 +144,7 @@ Hồ sơ tập luyện ở `S.mem` (job, g, g2, sex, inj 0/1, goal, h, w). Gợi
 4. Mỗi lần lưu gọi `PS.report(ID, {xp, ins, done, total, days, extra})`. Trang chủ cộng XP, tính chuỗi ngày chung từ đây.
    `extra` là dữ liệu module khác được đọc (ví dụ CD01 để CD02 điền sẵn).
 5. Tên, năm sinh, mã HV, lớp, diện, thầy cô: **chỉ đọc** `PS.profile()`, `PS.given()`, `PS.teacher()`. Không hỏi lại, không lưu bản riêng.
-6. Thanh trên + điều hướng: `PS.navHTML` và `PS.nav` (xem mục PS1.3.55); nút ‹ về một cấp, Back Android giống nút ‹.
+6. Thanh đáy + điều hướng: `PS.navHTML` và `PS.nav` (xem mục PS1.3.55/PS1.3.58); nút ‹ về một cấp, Back Android giống nút ‹; ô Sổ tay = ảnh đại diện ở góc phải thanh đáy (trang chủ, Shin, mọi khóa).
 7. Sổ tay 3 thẻ: **Tổng quan | thẻ riêng của module | Cài đặt**. Nút Sổ tay chính của module **mở thẻ Cài đặt trước** (có nút về trang chính; từ PS1.3.25). Thẻ Cài đặt = `PS.settingsHTML({ctx:'module', mod:ID, pace, extra})` + `PS.wireSettings(el, {...})`. Không tự làm Cài đặt riêng.
 8. Nghe `window` sự kiện `ps:change`: `beforeBackup`/`beforeRestore` → lưu ngay; `profile` → vẽ lại tên. Không lưu khi `window.PS_NOSAVE` bật.
 9. Âm thanh: đọc `PS.soundOn()` (công tắc chung).

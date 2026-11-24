@@ -153,13 +153,11 @@
     beforeLeave: function () { save(true); } });
 
   /* ---------- khung chung ---------- */
-  function topnav() { /* PS1.3.55 (ý 25): ‹ về một cấp | tên màn | Sổ tay */
-    var bk = 'Proskills', t = 'Huấn luyện thể chất', a, b;
-    if (V.v === 'khu') { bk = 'Sơ đồ phòng tập'; t = khuById(V.id).t; }
-    else if (V.v === 's10') { bk = 'Sơ đồ phòng tập'; t = S10_TXT.btn; }
-    else if (V.v === 'bai' && (b = BAI_BY[V.id])) { bk = khuById(b.khu).t; t = b.t; }
-    else if (V.v === 'act' && (a = actById(V.a))) { b = BAI_BY[a.bai]; bk = b.t; t = (b.acts.indexOf(a) + 1) + '/' + b.acts.length; }
-    return PS.navHTML({ back: bk, title: t });
+  function topnav() { /* PS1.3.58 (PA3): Trang chủ | Phòng tập (vòng tiến độ cả khóa) | Sổ tay; trong hoạt động: ‹ bài | n/t | Sổ tay */
+    var a, b, tot = 0, dn = 0;
+    if (V.v === 'act' && (a = actById(V.a))) { b = BAI_BY[a.bai]; return PS.navHTML({ act: 1, back: b.t, step: [b.acts.indexOf(a) + 1, b.acts.length] }); }
+    ALLACTS.forEach(function (x) { tot++; if (S.done[x.id]) dn++; });
+    return PS.navHTML({ map: { t: 'Phòng tập', ic: 'dumbbell', ring: tot ? dn / tot : 0, on: 1 } });
   }
   function demoStrip() { return IS_DEMO ? '<div class="demo-strip"><span>Bản demo giáo viên · học viên giả định</span><button type="button" data-act="demoExit">Thoát demo</button></div>' : ''; }
   function shinSays(mood, html, sz, cls) { return '<div class="shinbox' + (cls ? ' ' + cls : '') + '">' + shin(mood, sz || 58, 'bob') + '<div class="shinbox__b"><b>HLV Shin</b>' + html + '</div></div>'; }

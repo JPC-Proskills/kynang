@@ -7,7 +7,7 @@
    - Senpai có cờ draft:1 = LỜI KỂ MẪU do Claude viết, cần thay bằng chuyện thật (ẩn danh) trước khi phát hành.
    ES5. */
 var CD_ID = 'cd01';
-var CD_VER = 'CD01.1.8';
+var CD_VER = 'CD01.1.9';
 var CD_TOTAL = 18;            /* Xuất phát (1) + 7 ga (17 chặng). Ga Ước Mơ (3 chặng nghi thức, FIN_ORDER) không tính vào 18 */
 var CD_XP_ACT = 30, CD_XP_WARM = 10, CD_INS_WORDS = 20, CD_INS_FIELD = 5;
 var TIKME = 'https://tikme.com';
@@ -1177,7 +1177,7 @@ var TXT = {
   tour1: 'Đây là Vé hành trình. Mỗi chặng xong, tàu nhỏ chạy gần hơn về Ga Ước Mơ.',
   tour2: 'Bản Career Design của bạn có 8 ô. Qua mỗi ga, bạn điền thêm một ô.',
   tour3: 'Đây là Sơ đồ tuyến. Bắt đầu từ Sân ga Xuất phát, chạm vào ga để vào học.',
-  tour4: 'Giờ bạn thử nhé: chạm nút Sổ tay (quyển sách, góc trên) để xem điểm và bài làm.',
+  tour4: 'Giờ bạn thử nhé: chạm Sổ tay (ảnh đại diện của bạn, góc dưới bên phải) để xem điểm và bài làm.',
   tourDone: 'Giỏi lắm! Sổ tay luôn ở đây. Giờ bắt đầu từ Sân ga Xuất phát nhé.',
   tourAgain: 'Xem lại hướng dẫn',
   gateToast: 'Chính xác! Shin mê Oden lắm. Lên tàu thôi!',

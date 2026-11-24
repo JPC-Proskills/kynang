@@ -161,16 +161,15 @@ function pointToast(xp, ins, msg){
 }
 
 /* ---------- thanh điều hướng nổi ---------- */
-/* PS1.3.55 (ý 25): thanh trên chung · ‹ về một cấp | tên màn | Hỏi nhanh + Sổ tay */
+/* PS1.3.58 (PA3): thanh đáy chung · Trang chủ | Bản đồ (vòng nhịp học hôm nay) | Hỏi nhanh | Sổ tay; trong chặng: ‹ ải | n/t | Hỏi nhanh | Sổ tay */
 function updateNav(){
-  var on=!!(S.gate && S.onb), bk='Proskills', t='Nhật Bản Du Ký', a, ai;
-  if(V.v==='ai'){ ai=aiOf(V.n); bk='Bản đồ'; t=ai?ai.vn:''; }
-  else if(V.v==='act' && (a=ACTS[V.id])){ ai=aiOf(a.ai); bk=ai.vn; t=a.warm?'Khởi động':(ai.acts.indexOf(V.id)+1)+'/'+ai.acts.length; }
-  else if(V.v==='rep'){ bk='Bản đồ'; t='Bản ghi chép'; }
-  var tl=document.getElementById('psnav'), hid=tl && tl.classList.contains('tour-hl');
-  $('#nav').innerHTML = on ? PS.navHTML({back:bk, title:t, dot:S.d.nbDot, extra:'<button type="button" class="psnav__x'+(askOpen?' on':'')+'" data-act="ask" aria-label="Hỏi nhanh Chú Tanaka" title="Hỏi nhanh Chú Tanaka">'+icon('ask',22)+'</button>'}) : '';
+  var on=!!(S.gate && S.onb), a, ai, o, ask=[{act:'ask', ic:'ask', t:'Hỏi nhanh', label:'Hỏi nhanh Chú Tanaka', on:askOpen}];
+  if(V.v==='act' && (a=ACTS[V.id])){ ai=aiOf(a.ai); o={act:1, back:ai.vn, items:ask, dot:S.d.nbDot}; if(a.warm) o.title='Khởi động'; else o.step=[ai.acts.indexOf(V.id)+1, ai.acts.length]; }
+  else { var tgt=pace()*3, d=todayDone(); o={map:{t:'Bản đồ', ic:'map', ring:Math.min(1,d/tgt), ok:d>=tgt, on:1}, items:ask, dot:S.d.nbDot}; }
+  var tl=document.getElementById('psnav'), hl=tl && tl.querySelector('.tour-hl'), hk=hl ? (hl.classList.contains('psnav__nb')?'.psnav__nb':'[data-act="ask"]') : '';
+  $('#nav').innerHTML = on ? PS.navHTML(o) : '';
   document.body.classList.toggle('tk-nav', on);
-  if(hid && $('#psnav')) $('#psnav').classList.add('tour-hl');
+  if(hk && $('#psnav')){ var nh=$('#psnav').querySelector(hk); if(nh) nh.classList.add('tour-hl'); }
 }
 
 /* ---------- khung chung ---------- */
@@ -221,7 +220,7 @@ function vanDiep(){
   return '<section class="vdx" aria-label="Văn điệp thông quan"><div class="vdx__rod"></div><div class="vdx__paper">'+
     '<div class="vdx__side jp">通関文牒</div><div class="vdx__main">'+
       '<div class="vdx__top"><div><div class="vdx__title">Văn điệp thông quan</div><div class="vdx__sub">'+esc(COURSE)+'</div></div>'+
-      '<button class="vdx__nb" data-act="nb" aria-label="Mở Sổ tay" title="Sổ tay">'+icon('book',20)+'</button></div>'+
+      '</div>'+
       '<div class="vdx__route"><div><small class="jp">しゅっぱつ</small><b>JPC</b></div><div class="vdx__line"><span class="mini" style="left:'+(6+pct*84)+'%">'+av('hau','cheer')+'</span></div><div style="text-align:right"><small class="jp">ふそう</small><b>Phù Tang</b></div></div>'+
       '<div class="vdx__f"><span>Người lữ hành</span><b>'+esc(S.name)+'</b></div>'+
       '<div class="vdx__f2"><div class="vdx__f"><span>Lớp</span><b>'+esc(S.cls)+'</b></div><div class="vdx__f"><span>Diện</span><b>'+esc(S.path||'Chưa rõ')+'</b></div></div>'+
