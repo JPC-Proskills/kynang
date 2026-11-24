@@ -105,7 +105,7 @@
     try { history.go(-(k + 1)); } catch (e) { clearTimeout(tm); W.location.replace(hub); }
   }
   /* ---------- PS1.3.54 · đầu trang: ‹ Proskills, ngày gọn, ảnh đại diện ---------- */
-  var WDS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+  var WDS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'], GEAR = null; /* GEAR: giữ nút Sổ tay khi thanh đáy vẽ lại */
   function psHead() {
     var hd = D.getElementById('hdate'); if (!hd) return;
     var d = new Date(), p2 = function (n) { return (n < 10 ? '0' : '') + n; }, t = WDS[d.getDay()] + ', ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1);
@@ -117,15 +117,28 @@
       a.setAttribute('aria-label', 'Về trang chủ Proskills'); a.innerHTML = PS.icon('back', 15, 2.6) + '<span>Proskills</span>';
       par.insertBefore(line, hd); line.appendChild(a); line.appendChild(hd);
     }
-    var g = D.getElementById('gear');
+    var g = D.getElementById('gear') || GEAR; GEAR = g;
     if (g && W.PSAvatar) {
       var key = String(PS.prefs().av || '') + '|' + (PS.profile().name || '');
       if (g.getAttribute('data-av') !== key) {
-        var dot = D.getElementById('gdot'); g.innerHTML = W.PSAvatar.html(34); if (dot) g.appendChild(dot);
-        g.setAttribute('data-av', key); g.classList.add('psav'); g.setAttribute('aria-label', 'Sổ tay, cài đặt');
+        /* PS1.3.58: ô Sổ tay ở thanh đáy (ô thứ 5), ảnh đại diện + chữ “Sổ tay”, cùng vị trí như trang chủ và các khóa */
+        var dot = D.getElementById('gdot');
+        g.innerHTML = '<span class="m3-nav-indicator"><span class="psnav__avw"><span class="psnav__av">' + W.PSAvatar.html(28).replace(/avc-/g, 'psnavc-') + '</span></span></span><span>Sổ tay</span>';
+        if (dot) g.appendChild(dot);
+        g.setAttribute('data-av', key); g.className = 'psnb'; g.setAttribute('aria-label', 'Sổ tay, cài đặt');
       }
     }
+    var ab = D.getElementById('abar');
+    if (g && ab && g.parentNode !== ab) ab.appendChild(g);
   }
+  /* thanh đáy Shin vẽ lại bằng innerHTML: tách ô Sổ tay ra trước để giữ nguyên nút (sự kiện gắn một lần ở bindShell) */
+  (function () {
+    var base = W.renderBar; if (typeof base !== 'function') return;
+    W.renderBar = function () {
+      var g = D.getElementById('gear'); if (g) GEAR = g; if (g && g.parentNode && g.parentNode.id === 'abar') g.parentNode.removeChild(g);
+      var r = base.apply(this, arguments); try { psHead(); } catch (e) {} return r;
+    };
+  })();
   ['renderHead', 'renderTop', 'render'].forEach(function (n) {
     var base = W[n]; if (typeof base !== 'function') return;
     W[n] = function () { var r = base.apply(this, arguments); try { psHead(); } catch (e) {} return r; };
@@ -303,8 +316,11 @@
     '#shinTypographyRoot .m3-heading>.psline{grid-column:1!important;grid-row:1!important;display:flex!important;width:auto!important;max-width:100%;min-width:0;margin:0}' +
     '.psback{display:inline-flex;align-items:center;gap:1px;flex:none;height:30px;padding:0 11px 0 6px;border-radius:999px;background:rgba(40,44,60,.07);color:#4A4E5C;font-size:13px;font-weight:600;text-decoration:none;-webkit-tap-highlight-color:transparent}' +
     '.psback:active{background:rgba(40,44,60,.13)}' +
-    '#gear.psav{padding:0!important;display:grid;place-items:center;border-radius:50%}#gear.psav>svg{display:none}' +
-    '#gear .ps-av{display:grid;place-items:center;border-radius:50%;overflow:hidden;border:2px solid #fff;box-shadow:0 3px 8px -4px rgba(0,0,0,.35);font-family:Nunito,system-ui,sans-serif;font-weight:900;line-height:1;box-sizing:content-box}#gear .ps-av svg{display:block}' +
+    /* PS1.3.58: ô Sổ tay (ảnh đại diện) ở thanh đáy */
+    '#abar>#gear.psnb{position:relative;padding:0;min-height:52px;color:#62666D;background:transparent;border:0;flex:1;min-width:0}#gear .m3-nav-indicator{display:grid;place-items:center;background:transparent!important}' +
+    '#gear .psnav__av{width:28px;height:28px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2265C5}#gear .psnav__av svg,#gear .psnav__av .ps-av{width:28px!important;height:28px!important}' +
+    '#gear .ps-av{display:grid;place-items:center;border-radius:50%;overflow:hidden;font-family:Nunito,system-ui,sans-serif;font-weight:900;line-height:1}' +
+    'html.ps-sv #gear::after,html.ps-sv-err #gear::after{display:none}#gear #gdot{position:absolute;top:6px;right:calc(50% - 20px)}' +
     '.pshome{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:12px;width:100%;box-sizing:border-box;text-decoration:none;background:#2265C5;color:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 3px 0 #17479A;margin:0 0 10px;-webkit-tap-highlight-color:transparent}' +
     '.pshome>svg:first-child{width:40px;height:40px;padding:9px;box-sizing:border-box;border-radius:12px;background:rgba(255,255,255,.18)}' +
     '.pshome b{display:block;font-size:15.5px}.pshome small{display:block;font-size:12.5px;opacity:.85}.pshome:active{transform:translateY(2px);box-shadow:0 1px 0 #17479A}' +
