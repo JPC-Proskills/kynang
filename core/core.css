@@ -103,6 +103,8 @@ select.ps-inp{background-image:linear-gradient(45deg,transparent 50%,#7A82A3 50%
 .ps-rt{margin:14px 0 0;padding:14px;border-radius:20px;border:1px solid #CFE0F7;background:linear-gradient(180deg,#F3F8FF,#E9F1FD);color:#18203F;font-family:var(--f,"Be Vietnam Pro",system-ui,sans-serif)}
 .ps-rt__hd{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;margin-bottom:10px}
 .ps-rt__shin{width:40px;height:40px;border-radius:12px;background:#2265C5;display:block}
+.ps-rt__shin--g{width:50px;height:52px;margin:-8px -6px -4px -5px;border-radius:0;background:radial-gradient(circle at 50% 62%,#DCE8FF 0 52%,transparent 53%)} /* PS1.3.70: Shin của học viên (core/shin.js), cùng kiểu trang chủ */
+.ps-rt__shin--g svg{display:block;width:100%;height:100%}
 .ps-rt__hd>div>b{display:block;font-size:15.5px;line-height:1.3}
 .ps-rt__hd>div>small{display:block;font-size:13px;line-height:1.45;color:#4A5275;margin-top:2px}
 .ps-rt__l{display:grid;gap:8px}

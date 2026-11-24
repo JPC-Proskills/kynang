@@ -583,7 +583,7 @@
   function rtDays(id) { var x = rtSum(); return x.dn && x.dn[id] != null ? +x.dn[id] : null; }
   function rtState(id) { var x = rtSum(); return (x.mine && x.mine[id]) || ''; }
   function rtSugHTML(ids, title, sub, max) {
-    if (S.demo) { var lib = PS.routineLib(); return '<div class="ps-rt ps-rt--demo"><div class="ps-rt__hd"><img class="ps-rt__shin" src="' + esc(PS.url('routine/icon-192.png')) + '" width="40" height="40" alt=""><div><b>' + esc(title) + '</b><small>' + sub + '</small></div></div><div class="ps-rt__l">' +
+    if (S.demo) { var lib = PS.routineLib(); return '<div class="ps-rt ps-rt--demo"><div class="ps-rt__hd">' + PS.routineShin('hi', 1) + '<div><b>' + esc(title) + '</b><small>' + sub + '</small></div></div><div class="ps-rt__l">' +
       ids.slice(0, max || 2).map(function (id) { return '<span class="ps-rt__it"><span class="ps-rt__mk" aria-hidden="true"></span><span class="ps-rt__n"><b>' + esc(lib[id] || id) + '</b></span><span class="ps-rt__go">Rèn thẻ này' + PS.icon('next', 14) + '</span></span>'; }).join('') +
       '</div><p class="ps-rt__ft">Bản demo: học viên chạm thẻ để mở Shin routine và đặt công thức.</p></div>'; }
     return PS.routineSugHTML ? PS.routineSugHTML(ids, { from: ID, title: title, sub: sub, max: max || 2 }) : '';

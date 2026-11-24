@@ -8,6 +8,16 @@
    - Mọi tệp của module được lưu tự động sau lần mở đầu tiên có mạng.
    - PS1.3.58: thanh đáy chung (PA3) cho mọi khóa, ảnh đại diện Sổ tay ở trang chủ và Shin.
    - PS1.3.59: thanh đáy gọn theo thanh Shin (chữ 11px, ô chọn xám, icon nhà), bỏ vòng tiến độ, chấm lưu nhỏ, viền ảnh xanh nhạt.
+   - PS1.3.60: thêm 12 gương mặt nét vẽ đen trắng vào ảnh đại diện.
+   - PS1.3.61: vẽ lại 12 gương mặt (nét mảnh, bỏ má hồng, đa dạng mặt/mắt/biểu cảm, có kính đen).
+   - PS1.3.62: mắt đơn giản cho 3 gương mặt nữ, đổi tóc Nam ngại ngùng.
+   - PS1.3.64: Shin M.Claude.3.4.1 · Nối thẻ thói quen (routine/scripts/link.js, routine/styles/link.css), Bài 6.
+   - PS1.3.65: Shin M.Claude.3.4.2 · Hình Bài 6, huy hiệu mở khóa, khớp nối, dòng Nối sau trong nhật ký PDF.
+   - PS1.3.66: Shin M.Claude.3.4.3 · Check-in tối gom các thẻ cùng chuỗi thành một bước.
+   - PS1.3.67: logo mới 2C4 (icon app, logo trang chủ, intro), chữ Proskills xanh lá.
+   - PS1.3.68: chữ Proskills xanh tươi #3A9A44, 3 icon lối tắt vẽ lại tông xanh lá.
+   - PS1.3.69: Shin M.Claude.3.4.4 · hình đại diện Shin Routine (routine/icon-*.png) vẽ lại bằng gà con Shin.
+   - PS1.3.70: khối gợi ý Shin Routine trong CD01, CD02, TC01 hiện Shin của chính học viên (core.js PS.routineShin).
    - PS1.3.57: CD02 bản 5 đợt 2 (cờ ảnh đại diện, hình kế hoạch, popup thuyền nâng cấp, vẽ lại người).
    - PS1.3.56: CD02 bản 5 đợt 1 (Bến 4 tự chấm 3 yếu tố, dải màu 1–5, Bến 5 bốn ngã rẽ).
    - PS1.3.55: điều hướng chung trong khóa (core PS.nav), Học tiếp mở thẳng hoạt động (?go=).
@@ -15,7 +25,7 @@
    - Không bao giờ đụng tới bài làm (localStorage) của học viên.
    ========================================================= */
 'use strict';
-const VERSION = 'PS1.3.59';
+const VERSION = 'PS1.3.70';
 const BASE = new URL(self.registration.scope);
 const PREFIX = 'proskills-' + encodeURIComponent(BASE.pathname) + '-';
 const SHELL = PREFIX + 'shell-' + VERSION;
@@ -30,7 +40,7 @@ const CORE = [
 /* Shin Routine (routine/): tải sẵn chạy ngầm khi cài service worker, để đóng dấu được cả khi mất mạng.
    Bộ nhớ riêng theo phiên bản Shin: chỉ tải lại khi đổi ROUTINE_VER (trùng APP_VER trong routine/scripts/core.js
    và các ?v= trong routine/index.html). Thêm/bớt tệp trong routine/ thì sửa danh sách này. */
-const ROUTINE_VER = 'M.Claude.3.4.0';
+const ROUTINE_VER = 'M.Claude.3.4.4';
 const ROUTINE = PREFIX + 'routine-' + ROUTINE_VER;
 const ROUTINE_FILES = [
   "assets/breathing/exhale.mp3",
@@ -68,6 +78,7 @@ const ROUTINE_FILES = [
   "boot.js",
   "design-game.css",
   "design-system.css",
+  "styles/link.css",
   "design-system.js",
   "habit-game.html",
   "icon-192.png",
@@ -79,6 +90,7 @@ const ROUTINE_FILES = [
   "scripts/interaction.js",
   "scripts/interface.js",
   "scripts/rules-v2.js",
+  "scripts/link.js",
   "styles/base.css",
   "styles/components.css",
   "styles/extensions.css",

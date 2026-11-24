@@ -5,6 +5,111 @@ Quy ước số phiên bản: **PS a.b.c**
 - b: giai đoạn / thêm module hoặc tính năng lớn
 - c: sửa nhỏ trong giai đoạn đó
 
+## PS1.3.70 · 24/11/2026 · Khối gợi ý Shin Routine trong khóa học hiện Shin của chính học viên
+- Khối “Rèn mỗi ngày cùng Shin” trong CD01 (Ga 6), CD02 (các bến) và TC01 (từng bài) hiện đúng Shin của học viên như trang chủ: lớn theo số ngày ghi nhận (Trứng → Gà con → Gà choai → Gà lớn), mặc trang phục học viên chọn ở Tủ đồ của Shin, vẫy cánh chào.
+- Học viên chưa mở Shin Routine lần nào: vẫn hiện hình đại diện gà con (routine/icon-192.png). Bản demo giáo viên CD02: Shin Gà lớn, Khăn HLV.
+- Hàm mới dùng chung `PS.routineShin(mood, demo)` trong core/core.js; CD02 demo gọi hàm này. CD01 và TC01 nạp thêm `core/shin.js` (tệp có sẵn, không phải tệp mới). HP05 không có khối Shin, không đổi.
+- Kiểm 390: khối gợi ý ở 5 trạng thái (chưa mở Shin, Trứng, Gà con đội Mũ JPC, Gà choai, Gà lớn) và demo; mở CD01, CD02, TC01: không lỗi JS; core.js, cd02/engine.js qua acorn ES5.
+
+Tệp đổi: core/core.js (PS.routineShin, PS.routineSugHTML), core/core.css (.ps-rt__shin--g), cd02/engine.js (rtSugHTML demo), cd01/index.html và tc01/index.html (thêm core/shin.js), sw.js (VERSION), config.js, mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.69 · 24/11/2026 · Shin Routine M.Claude.3.4.4 · Hình đại diện Shin là gà con
+- `routine/icon-192.png`, `routine/icon-512.png` vẽ lại: gà con Shin (core/shin.js, giai đoạn Gà con, khăn HLV, vẫy cánh chào) trọn thân trên nền xanh Shin Routine. Hình cũ cắt sát thân nâu có vòng cổ chuông, nhìn nhỏ dễ thành con mèo.
+- Hình này hiện ở: khối Shin trang chủ khi chưa có dữ liệu Shin, đầu khối gợi ý thẻ thói quen trong khóa học (CD02, core), biểu tượng tab của trang Shin Routine.
+- Sửa chữ cũ trong hướng dẫn “Thêm app vào màn hình chính” của Shin: “biểu tượng mèo Shin” → “biểu tượng Proskills” (Shin đã gộp vào app Proskills, một biểu tượng).
+- Đổi ROUTINE_VER để máy học viên tải lại hình mới (bộ nhớ Shin chỉ làm mới khi đổi phiên bản Shin).
+- Kiểm 390/1280: trang chủ, trang Shin Routine: không lỗi JS.
+
+Tệp đổi: routine/icon-192.png, routine/icon-512.png, routine/scripts/core.js (APP_VER, chữ homeGuide), routine/index.html, routine/habit-game.html (?v=), sw.js (VERSION, ROUTINE_VER), config.js, mọi index.html (?v=), CHANGELOG.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.68 · 24/11/2026 · Chữ Proskills xanh tươi · icon lối tắt tông xanh lá
+- Chữ “Proskills” (thanh trên, màn nhập thông tin, intro) đổi #2A714D → #3A9A44: cùng họ màu vòng O #60BC56, đậm hơn để đọc rõ (tương phản 3,2:1 trên nền trang chủ, đạt mức chữ lớn). Dòng “Khoa Kỹ năng · JPC” trong intro đổi theo: #6A9A6E.
+- 3 icon lối tắt khi nhấn giữ icon app vẽ lại theo bộ 2C4: nền xanh mầm có đồi nhạt, Check-in = vòng xanh #60BC56 có dấu ✓, Lịch học = lịch trắng đầu xanh #008A45, Học tiếp = vòng #008A45 có nút ▶. Bỏ nền xanh dương và màu vàng, đỏ cũ.
+- Kiểm 390/1280: trang chủ, intro, màn nhập thông tin: không lỗi JS.
+
+Tệp đổi: icons/sc-checkin.png, icons/sc-lich.png, icons/sc-hoctiep.png, hub/hub.css, sw.js (VERSION), config.js, mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.67 · 24/11/2026 · Logo mới 2C4 (chữ O lá xanh) · intro mới · chữ Proskills xanh lá
+- Icon app (Android, iPhone, máy tính) đổi sang phương án 2C4 · Đồi nghiêng: logo chữ O lá xanh giữ nguyên hình gốc, nền xanh mầm có đồi nghiêng (lấy từ `04-Design-outputs/Logo-Proskills/PS1.3.37-2C-4-bien-the/PA2C4-doi-nghieng/icons`).
+- Logo trang chủ (`icons/logo.svg`): bản vector không nền, vẽ lại từ logo gốc (sai khác chỉ ở mép khử răng cưa), khung sát hình; bỏ bo góc và bóng của logo cũ.
+- Intro lần mở đầu trong ngày làm lại hoàn toàn: nền xanh mầm, đồi nghiêng nhô lên từ đáy, vòng O tự vẽ (bắt đầu dưới lá lớn), lá lớn rồi lá nhỏ nảy mầm, chữ Proskills hiện ra, logo bay về thanh trên. Thời lượng như cũ (~1,65 giây), chạm để bỏ qua, máy bật giảm chuyển động: hiện tĩnh.
+- Chữ “Proskills” cạnh logo (thanh trên và màn nhập thông tin) đổi sang xanh lá đậm của TC01 #2A714D.
+- Màn chờ khi mở app (manifest `background_color`) và nền tô trước intro (index.html) đổi từ xanh dương sang xanh mầm #F4FAF1.
+- Chưa đổi: 3 icon lối tắt (Check-in, Lịch học, Học tiếp) vẫn nền xanh dương; favicon riêng của Shin Routine (gà Shin).
+- Kiểm 390/1280: intro từng khung, logo bay về thanh trên (có hồ sơ và màn nhập thông tin), giảm chuyển động, trang chủ: không lỗi JS; hub.js qua acorn ES5.
+
+Tệp đổi: icons/app-192.png, icons/app-512.png, icons/apple-touch-icon.png, icons/maskable-512.png, icons/logo.svg, hub/hub.js (logo(), intro()), hub/hub.css (mục PS1.3.67 thay mục PS1.3.34, màu .hbar__brand b và .onb__brand h1), index.html, manifest.webmanifest, sw.js (VERSION), config.js, mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.66 · 24/11/2026 · Shin Routine M.Claude.3.4.3 · Check-in tối gom theo chuỗi
+- Check-in tối: các thẻ cùng chuỗi gộp thành MỘT bước (tiêu đề “A → B”, dưới là “Khi …” của thẻ neo). Mỗi thẻ chọn kết quả riêng, nối bằng chữ “rồi”; nút “Cả chuỗi đã làm”; lời Shin khi lỡ neo; một ghi chú chung (bắt buộc, không dán được) được lưu vào mọi thẻ đã chọn kết quả. Số bước Check-in giảm tương ứng.
+- Thẻ neo Đang duy trì chưa ghi hôm nay hiện trong bước chuỗi, không bắt buộc (như mục “Rèn thêm nếu muốn”): không chọn thì không lưu, không ghi chú.
+- “Bỏ qua bước này” ở bước chuỗi: để sau cả chuỗi. Đóng giữa chừng rồi mở lại: bước chuỗi vẫn gộp.
+- Cách lưu không đổi (ciFinish lưu từng thẻ như cũ). Chữ dùng lại bản đã duyệt (RT.ci.*, RT.today.list.join), không có chữ mới.
+- Kiểm 390/1280: chuỗi neo duy trì + thẻ mới; chuỗi 2 thẻ đang rèn; chỉ chọn thẻ sau; bỏ qua bước chuỗi; đóng và mở lại; lưu xong kiểm tra log và ghi chú từng thẻ: không lỗi JS.
+
+Tệp đổi: routine/scripts/link.js (cuối tệp, mục PS1.3.66), routine/scripts/core.js (APP_VER), sw.js (VERSION, ROUTINE_VER), config.js, mọi index.html + routine/habit-game.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.65 · 24/11/2026 · Shin Routine M.Claude.3.4.2 · Hình cho Nối thẻ thói quen
+- Huy hiệu mở khóa: hộp “Mở khóa: Nối thẻ thói quen” thay icon nhỏ bằng hình thẻ Vững tay + thẻ mới, khớp nối bật vào giữa (chuyển động nhẹ, tắt khi máy bật giảm chuyển động).
+- Bài 6 có 4 hình cùng nét Cách làm: Hiểu (đầu tàu “thói quen cũ” kéo toa “thói quen mới”, Shin ngồi trên toa); cặp Tách rời ✗ / Nối liền ✓ (bạn nữ uống nước rồi squat); Senpai Phong Ở TRƯỜNG ↔ Ở NHẬT; Trong app (khối chuỗi ở Hôm nay + 2 chú thích).
+- Hôm nay: khớp nối có nút tròn giữa đường nối; cả hai thẻ đã làm thì nút xanh có dấu ✓. Hiệu ứng nối (đường chạy xuống, nút bật) chỉ chạy lần đầu khớp sáng, không lặp mỗi lần vẽ lại.
+- Nhật ký PDF cho thầy cô: thẻ sau có dòng “Nối sau: [thẻ neo]” dưới công thức (RT.pdf.link); Bài 6 có trong bảng “Bài học rèn thói quen”.
+- Sửa lỗi demo: In nhật ký ở demo báo lỗi vì bài học demo thiếu ngày; demo thêm ngày minh họa.
+- Chữ trong hình (mới, chờ thầy duyệt): `02-Duyet-text/PS1.3.65-Hinh-Bai6-chu.xlsx`.
+- Kiểm 390/1280: Hôm nay (khớp nối thường/sáng), hộp mở khóa, Bài 6 đủ 4 bước + hoàn thành, In nhật ký (demo), Check-in tối: không lỗi JS.
+
+Tệp đổi: routine/scripts/how-visual.js (mục BÀI 6, `LV.b6`, `HOW_VISUAL.link.badge`), routine/scripts/link.js, routine/styles/link.css, routine/scripts/core.js (APP_VER), sw.js (VERSION, ROUTINE_VER), config.js, mọi index.html + routine/habit-game.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
+## PS1.3.64 · 24/11/2026 · Shin Routine M.Claude.3.4.1 · Nối thẻ thói quen
+(PS1.3.63 = bản duyệt chữ `02-Duyet-text/PS1.3.63-Noi-the-duyet-chu.xlsx`, không có thư mục mã.)
+- Tính năng mới “Nối thẻ thói quen” (xếp chồng thói quen): thẻ sau gắn vế “Khi…” vào một thẻ đã vững. Mở khi có 1 thẻ hằng ngày đạt bậc Vững tay; báo mở khóa một lần (cả học viên cũ đã có thẻ Vững tay).
+- Neo: thẻ hằng ngày từ Vững tay trở lên hoặc thẻ Thành nếp/Đang duy trì. Mỗi neo kéo 1 thẻ, chuỗi tối đa 3 thẻ, tối đa 2 chuỗi đang rèn. Thẻ “khi gặp dịp” không nối. Luật v2 giữ nguyên cho từng thẻ.
+- Tạo nối: nút “Nối thói quen mới” trên mặt thẻ neo (bảng Shin gợi ý + Chọn trong Thư viện); nhóm “Sau thẻ của bạn” ở bước “Khi…”; nút “Nối thẻ ngay” cuối Bài 6. Sửa thẻ: mục “Nối thẻ” › Tháo nối.
+- Hôm nay: các thẻ trong chuỗi gom thành một khối, nối bằng chữ “rồi”; đường nối xanh khi cả hai đã làm. Một nút ghi nhận cho cả chuỗi: chọn kết quả từng thẻ, nút “Cả chuỗi đã làm”, một ghi chú chung (bắt buộc, không dán được), lời Shin khi lỡ neo.
+- Bài 6 “Thói quen cũ kéo một thói quen mới” (Senpai Phong, luyện “nối toa” 3 hàng): hiện ở Thư viện › Bài học (khóa đến khi mở tính năng). Tiêu đề danh sách đổi thành “Bài học rèn thói quen”. Bài 2 thêm 1 dòng.
+- Vòng đời: neo tạm dừng/cất khỏi tay → Shin hỏi “Chọn neo khác / Để riêng”; thẻ sau lên Vững tay → hỏi nối thêm thẻ thứ ba; thẻ cuối Thành nếp → “Chuyển cả chuỗi” sang Đang duy trì.
+- Tuần: dòng tóm tắt thẻ sau ghi “· nối sau: …”. Thẻ có dòng “Nối sau: …”.
+- Demo: thẻ tự tạo u1 đổi thành “Đọc 1 trang sách”, nối sau “Ngủ đủ giấc”.
+- Kiểm 390/1280: Hôm nay, ghi nhận chuỗi, lưu và tải lại, bảng nối, bước Khi…, sửa/tháo nối, neo tạm dừng, Bài 6 đủ 4 thẻ, Thư viện, Tuần, Check-in tối, trang chủ: không lỗi JS.
+
+Tệp đổi: routine/scripts/link.js (mới), routine/styles/link.css (mới), routine/index.html, routine/habit-game.html (?v=), routine/scripts/core.js (APP_VER), sw.js (VERSION, ROUTINE_VER, ROUTINE_FILES), config.js, mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Nhớ tải lên 2 tệp mới trong routine/scripts và routine/styles.
+
+## PS1.3.62 · 24/11/2026 · Chỉnh 4 gương mặt theo góp ý thầy
+- Mắt một nét: Nữ tóc dài, dịu dàng (gf1) mắt bầu dục đặc; Nữ đuôi ngựa, ngạc nhiên (gf2) mắt chấm tròn to (kiểu mới `big`); Nữ tóc tém, tự tin (gf5) mắt cười cong.
+- Nam ngại ngùng (gm5): tóc vuốt lệch giống Nam kính tròn, bỏ rẽ ngôi giữa.
+- Mã giữ nguyên. Kiểm 390: không lỗi JS.
+
+Tệp đổi: config.js, sw.js, mọi index.html (?v=), hub/avatar.js, CHANGELOG.md.
+File cần xóa trên GitHub: không có.
+
+## PS1.3.61 · 24/11/2026 · Vẽ lại 12 gương mặt theo góp ý thầy
+- Bỏ má hồng. Nét mảnh hơn (viền 2,4 → 1,4; nét mặt 2,4 → 1,35).
+- 5 khuôn mặt: oval, cằm V, hơi vuông, tròn, dài. 11 kiểu mắt (chấm, bầu dục, mắt hạnh có con ngươi, mi, cười híp, nhìn xuống, lim dim, tròn xoe, liếc lên, nháy, mắt sáng), 7 kiểu mày, 4 kiểu mũi, 10 kiểu miệng.
+- Biểu cảm đa dạng: cười lớn (gm1), dịu dàng (gf1), tò mò (gm2), ngạc nhiên (gf2), suy nghĩ (gf3), quyết tâm (gm3), nháy mắt (gf4), thư thái (gm4), tự tin (gf5), ngại ngùng (gm5), hào hứng (gf6), kính đen (gm6).
+- gf6: bỏ tết hai bím, thay bằng tóc dài gợn sóng màu nâu + băng đô. gm6: kính đen.
+- Tên ngắn lại để dòng “Ảnh đại diện” trong Cài đặt không xuống hàng.
+- Mã giữ nguyên (gm1–gm6, gf1–gf6): học viên đã chọn ở PS1.3.60 thấy hình mới.
+- Kiểm 390: bảng chọn, thanh đáy trang chủ và CD01; cỡ 30/52/110px; không lỗi JS.
+
+Tệp đổi: config.js, sw.js, mọi index.html (?v=), hub/avatar.js, CHANGELOG.md.
+File cần xóa trên GitHub: không có.
+
+## PS1.3.60 · 24/11/2026 · 12 gương mặt cho ảnh đại diện
+Theo yêu cầu thầy 24/11: thêm 12 gương mặt kiểu nét vẽ đen trắng tối giản (tham khảo tinh thần faces.notion.com, tự vẽ mới, không chép hình), đa dạng nam/nữ, vui/nghiêm, có/không kính, tóc dài/ngắn, tuổi 18–30; không râu, không “ngầu”.
+- hub/avatar.js: mảng `FC` (mã `gm1–gm6`, `gf1–gf6`, giữ cố định vì học viên chọn theo mã) dựng từ vài phần chung (áo cổ tròn/sơ mi/áo hoodie, cổ, tai, mặt, tóc, mắt, mày, mũi, miệng, kính tròn/vuông). Mặt trắng viền đen, tóc đen (1 bạn tóc nâu), nền tròn màu nhạt; phóng to 1,28 để còn rõ ở cỡ 30px trên thanh đáy.
+- Bảng chọn Ảnh đại diện: “Gương mặt” (12) đứng đầu, rồi “Hình vui” (12 hình cũ), rồi “Chữ cái và màu”. Dùng chung ở Cài đặt trang chủ và bảng chọn cờ CD02. `PSAvatar.faces` = FC.
+- Kiểm 390 + 1280: chọn gương mặt, thanh đáy trang chủ và CD01 đổi theo; cỡ 30/52/110px; không lỗi JS.
+
+Tệp đổi: config.js, sw.js, mọi index.html (?v=), hub/avatar.js, CHANGELOG.md.
+File cần xóa trên GitHub: không có.
+
 ## PS1.3.59 · 24/11/2026 · Thanh đáy gọn theo thanh Shin
 Theo góp ý thầy 24/11 (5 ý). Chế độ tập trung trong hoạt động giữ nguyên (thầy đã duyệt).
 - Ý 1 · Chữ không dính icon: lấy chuẩn thanh Shin (routine/styles/habits.css): chữ Be Vietnam Pro 600, cách icon 4px, ô icon 56×32; cỡ chữ 11px (Shin 12px, giảm 1px cho gọn). Áp cho thanh trong khóa (core.css `.psnav__b`) và thanh trang chủ (hub.css `.bnav__b`).

@@ -1,5 +1,6 @@
 /* =========================================================
-   PROSKILLS · ẢNH ĐẠI DIỆN (hub/avatar.js) · PS1.3.36
+   PROSKILLS · ẢNH ĐẠI DIỆN (hub/avatar.js) · PS1.3.36, PS1.3.62
+   - PS1.3.60: 12 gương mặt (FC, mã g…) đứng đầu bảng chọn, rồi 12 hình vui (AV). PS1.3.61: vẽ lại nét mảnh, đa dạng mặt/mắt/biểu cảm. PS1.3.62: mắt 1 nét cho gf1, gf2, gf5; tóc gm5 như gm2
    - 12 hình vẽ tự làm (SVG phẳng, nền tròn màu nhạt) hoặc chữ cái + màu.
    - Lưu ở PS.prefs().av: 'i:<mã hình>' hoặc 'c:<số màu>' (mặc định chữ cái màu vàng như trước).
    - PSAvatar.html(size)    → ảnh đại diện (dùng ở thanh trên trang chủ)
@@ -97,9 +98,126 @@
       '<path d="M54 41.5V34.5M62.1 47.4L68.7 45.2M59 56.9L63.1 62.5M49 56.9L44.9 62.5M45.9 47.4L39.3 45.2M62.1 28.6L71.8 35.7M76.8 51.1L73.1 62.5M60 72H48M34.9 62.5L31.2 51.1M36.2 35.7L45.9 28.6" stroke="#33343D" stroke-width="2"/></g>' +
       '<circle cx="54" cy="50" r="25" fill="none" stroke="#C9E4DE" stroke-width="2"/>']
   ];
+  /* PS1.3.61 · 12 gương mặt nét mảnh đen trắng (tự vẽ, hệ 96×96): nam/nữ, nhiều khuôn mặt (oval, V, vuông, tròn, dài), nhiều kiểu mắt và biểu cảm. Mã 'g…' giữ cố định. */
+  var FC = (function () {
+    var K = '#2B2A33';
+    var SW = 1.4, FW = 1.35;
+    var S = ' fill="#fff" stroke="' + K + '" stroke-width="' + SW + '" stroke-linejoin="round" stroke-linecap="round"';
+    var L = ' fill="none" stroke="' + K + '" stroke-width="' + FW + '" stroke-linecap="round" stroke-linejoin="round"';
+    var H = ' fill="' + K + '"', HB = ' fill="#5E3A2C"';
+    function p(d, a) { return '<path d="' + d + '"' + a + '/>'; }
+    function c(x, y, r, a) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"' + a + '/>'; }
+    /* áo */
+    function body(t) {
+      var s = p('M8 100C9 86 18 80 32 78L41 76H55L64 78C78 80 87 86 88 100Z', S);
+      if (t === 'polo') s += p('M41 76L48 85L55 76', L) + p('M41 76l-4 8.5 7.5-1.8M55 76l4 8.5-7.5-1.8', S);
+      else if (t === 'hood') s += p('M31 79Q48 93 65 79', L);
+      else if (t === 'v') s += p('M41.5 76.5L48 84L54.5 76.5', L);
+      else s += p('M41.5 77Q48 82.5 54.5 77', L);
+      return s;
+    }
+    var NECK = p('M42 63V77.5Q48 80.5 54 77.5V63', S);
+    /* khuôn mặt: [đường viền, nửa bề ngang] */
+    var FACE = {
+      oval: ['M31 46C31 33 38.5 27 48 27S65 33 65 46C65 60 57.5 71 48 71S31 60 31 46Z', 17],
+      v: ['M31 45C31 32.5 38.5 27 48 27S65 32.5 65 45C65 55 61.5 61.5 56 67C52.5 70.5 50.5 72 48 72S43.5 70.5 40 67C34.5 61.5 31 55 31 45Z', 17],
+      sq: ['M30.5 44C30.5 32 38 27 48 27S65.5 32 65.5 44V55.5C65.5 62.5 61.5 67 56.5 69.5C53.5 71 51 71.6 48 71.6S42.5 71 39.5 69.5C34.5 67 30.5 62.5 30.5 55.5Z', 17.5],
+      round: ['M29.5 48C29.5 34 37.5 27.5 48 27.5S66.5 34 66.5 48C66.5 62 58.5 70.5 48 70.5S29.5 62 29.5 48Z', 18.5],
+      long: ['M32 45C32 32 39 26 48 26S64 32 64 45C64 60 57 73 48 73S32 60 32 45Z', 16]
+    };
+    function ears(w) { var a = 48 - w + .6, b = 48 + w - .6; return p('M' + a + ' 48.5Q' + (a - 5.5) + ' 46.5 ' + (a - 5.5) + ' 52.5Q' + (a - 5.5) + ' 58.5 ' + (a + .8) + ' 58.5', S) + p('M' + b + ' 48.5Q' + (b + 5.5) + ' 46.5 ' + (b + 5.5) + ' 52.5Q' + (b + 5.5) + ' 58.5 ' + (b - .8) + ' 58.5', S); }
+    /* mắt (tâm 41 và 55, y 50) */
+    function both(f) { return f(41, 1) + f(55, -1); }
+    var EYE = {
+      dot: both(function (x) { return c(x, 50, 1.9, H); }),
+      oval: both(function (x) { return '<ellipse cx="' + x + '" cy="50" rx="1.6" ry="2.5"' + H + '/>'; }),
+      almond: both(function (x) { return p('M' + (x - 3.6) + ' 50.2Q' + x + ' 46 ' + (x + 3.6) + ' 50.2Q' + x + ' 53.6 ' + (x - 3.6) + ' 50.2Z', L) + c(x, 49.9, 1.5, H); }),
+      lash: both(function (x, s) { return p('M' + (x - 3.6) + ' 50.2Q' + x + ' 46.8 ' + (x + 3.6) + ' 50.2', L) + c(x, 50.3, 1.6, H) + p('M' + (x - 3.4 * s) + ' 49.6l' + (-1.6 * s) + ' -1.2', L); }),
+      happy: both(function (x) { return p('M' + (x - 3) + ' 51Q' + x + ' 47 ' + (x + 3) + ' 51', L); }),
+      down: both(function (x) { return p('M' + (x - 3) + ' 49.5Q' + x + ' 52.5 ' + (x + 3) + ' 49.5', L); }),
+      sleepy: both(function (x) { return p('M' + (x - 3.2) + ' 49.6H' + (x + 3.2), L) + p('M' + (x - 2) + ' 49.8A2 2 0 0 0 ' + (x + 2) + ' 49.8Z', H); }),
+      wide: both(function (x) { return c(x, 49.8, 3.2, L) + c(x, 50.2, 1.5, H); }),
+      side: both(function (x) { return p('M' + (x - 3.6) + ' 50.2Q' + x + ' 46 ' + (x + 3.6) + ' 50.2Q' + x + ' 53.6 ' + (x - 3.6) + ' 50.2Z', L) + c(x + 1.6, 49.2, 1.4, H); }),
+      big: both(function (x) { return c(x, 50, 2.6, H); }),
+      up: both(function (x) { return c(x + 1, 48.6, 1.8, H); }),
+      wink: c(41, 50, 1.9, H) + p('M52 51Q55 47 58 51', L),
+      spark: both(function (x) { return c(x, 50, 2.5, H) + c(x + .9, 49, .8, ' fill="#fff"'); })
+    };
+    var BROW = {
+      arch: p('M37.5 44.2Q41 41.6 44.5 43.4M51.5 43.4Q55 41.6 58.5 44.2', L),
+      flat: p('M37.5 43.8H44.5M51.5 43.8H58.5', L),
+      high: p('M37.5 42.6Q41 40 44.5 41.8M51.5 41.8Q55 40 58.5 42.6', L),
+      one: p('M37.5 44.2H44.5M51.5 41.8Q55 39.6 58.5 42', L),
+      worry: p('M37.5 43.4Q41 43.6 44.5 41.8M51.5 41.8Q55 43.6 58.5 43.4', L),
+      firm: p('M37.5 42.8L44.5 44M51.5 44L58.5 42.8', L),
+      thick: p('M37.5 43.8Q41 42 44.5 43.4', ' fill="none" stroke="' + K + '" stroke-width="2.2" stroke-linecap="round"') + p('M51.5 43.4Q55 42 58.5 43.8', ' fill="none" stroke="' + K + '" stroke-width="2.2" stroke-linecap="round"')
+    };
+    var NOSE = {
+      hook: p('M48.6 52.5Q46 57 49.6 58', L),
+      l: p('M48 52.5V57.5H50', L),
+      dot: p('M46.6 57.2Q48 58.4 49.4 57.2', L),
+      curve: p('M49.5 52Q51 56 47.6 57.6', L)
+    };
+    var MOUTH = {
+      smile: p('M43.2 63Q48 67 52.8 63', L),
+      soft: p('M45 63.6Q48 65.4 51 63.6', L),
+      flat: p('M45 64H51', L),
+      laugh: p('M42 62H54Q53.5 69.5 48 69.5T42 62Z', H) + p('M44.8 67.4Q48 65.6 51.2 67.4Q50 69.2 48 69.2T44.8 67.4Z', ' fill="#F28AA0"'),
+      grin: p('M42.2 62.2H53.8Q53 68.6 48 68.6T42.2 62.2Z', ' fill="#fff" stroke="' + K + '" stroke-width="' + FW + '" stroke-linejoin="round"') + p('M43 64H53', ' stroke="' + K + '" stroke-width="1"'),
+      o: '<ellipse cx="48" cy="64.6" rx="2.6" ry="3.2"' + H + '/>',
+      smirk: p('M44.5 64.4Q49 65.4 53 62.4', L),
+      wavy: p('M44 64.2Q45.5 62.8 47 64.2T50 64.2T53 64.2', L),
+      side: p('M46 64.4Q49.5 64.8 52 63.2', L),
+      tiny: p('M46.6 63.8Q48 64.8 49.4 63.8', L)
+    };
+    var GL = ' fill="none" stroke="' + K + '" stroke-width="' + FW + '" stroke-linecap="round"';
+    var GLASS = {
+      round: c(41, 50, 5.8, GL) + c(55, 50, 5.8, GL) + p('M46.8 49.6H49.2M35.2 49L31.5 47.8M60.8 49L64.5 47.8', GL),
+      rect: '<rect x="34.2" y="45.8" width="12.6" height="8.8" rx="2.6"' + GL + '/><rect x="49.2" y="45.8" width="12.6" height="8.8" rx="2.6"' + GL + '/>' + p('M46.8 49.6H49.2M34.2 48.6L31 47.6M61.8 48.6L65 47.6', GL),
+      sun: p('M33.6 46.4H46.6V50.4Q46.6 55.2 40.6 55.2Q34.4 55.2 33.6 50.4Z', H) + p('M49.4 46.4H62.4V50.4Q61.6 55.2 55.4 55.2Q49.4 55.2 49.4 50.4Z', H) + p('M46.6 47.6H49.4M33.6 47L30.8 46.4M62.4 47L65.2 46.4', ' fill="none" stroke="' + K + '" stroke-width="' + FW + '" stroke-linecap="round"') + p('M36 48.4L39 48.4M51.8 48.4L54.8 48.4', ' stroke="#fff" stroke-width="1.1" stroke-linecap="round" opacity=".7"')
+    };
+    function face(o) {
+      var f = FACE[o.shape || 'oval'];
+      var g = body(o.shirt) + (o.back || '') + NECK + (o.noEars ? '' : ears(f[1])) + p(f[0], S) + (o.front || '') +
+        (o.glass === 'sun' ? '' : BROW[o.brow || 'arch'] + EYE[o.eye || 'dot']) + NOSE[o.nose || 'hook'] + MOUTH[o.mouth || 'smile'] + (o.glass ? GLASS[o.glass] : '') + (o.extra || '');
+      return '<g transform="translate(-13.4 -11) scale(1.28)">' + g + '</g>';
+    }
+    var F = [
+      ['gm1', 'Nam cười lớn', '#FFE3C8', face({ shape: 'sq', shirt: 'tee', eye: 'happy', brow: 'high', mouth: 'laugh', nose: 'l',
+        front: p('M29.5 47C27 33 33 23.5 45 22.5C50 19.5 58 20 62 24C68 27.5 69 37 66.5 47C65 41 62.5 37.5 59 35.5C55 38.5 46 39.5 38 37.5C34 40 31.5 43 29.5 47Z', H) })],
+      ['gf1', 'Nữ tóc dài', '#FFDDE6', face({ shape: 'v', noEars: 1, shirt: 'v', eye: 'oval', brow: 'arch', mouth: 'soft', nose: 'dot',
+        back: p('M27.5 47C25.5 31 34.5 22.5 48 22.5S70.5 31 68.5 47L71 86Q61 90 55.5 80H40.5Q35 90 25 86Z', H),
+        front: p('M30.5 48C29.5 34 37.5 25.5 48 25.5S66.5 33 66 47C60 43 54 37 50 30C46 37 38.5 43 30.5 48Z', H) })],
+      ['gm2', 'Nam kính tròn', '#D9E9FF', face({ shape: 'round', shirt: 'polo', eye: 'dot', brow: 'one', mouth: 'side', nose: 'hook', glass: 'round',
+        front: p('M29 47C27.5 31 36 23.5 48 23.5C60 23.5 69 30 67 47C65 39 61 35 56 33.5C49 37 40 37.5 33 39.5C31 41.5 29.8 44 29 47Z', H) })],
+      ['gf2', 'Nữ đuôi ngựa', '#E2F5D5', face({ shape: 'oval', shirt: 'tee', eye: 'big', brow: 'high', mouth: 'o', nose: 'dot',
+        back: p('M62 30C74 28 80 40 77 54C75 64 79 70 82 74C72 76 66 66 66 56Z', HB),
+        front: p('M30.5 47C29 33 37 25 48 25S67.5 32 65.5 46C63 38 57 33.5 50 32.5C43 33 36 38 30.5 47Z', HB) + '<rect x="62" y="28" width="6" height="7" rx="2" fill="#F26B8A" transform="rotate(-20 65 31.5)"/>' })],
+      ['gf3', 'Nữ kính, suy nghĩ', '#EDE3FF', face({ shape: 'v', noEars: 1, shirt: 'polo', eye: 'up', brow: 'worry', mouth: 'wavy', nose: 'l', glass: 'rect',
+        back: p('M27.5 46C26 30 35 23 48 23S70 30 68.5 46L70 66Q64 70 58 66H38Q32 70 26 66Z', H),
+        front: p('M30 47C29 31 37 25 48 25S67.5 31 66 47L64.5 41.5H31.5Z', H) })],
+      ['gm3', 'Nam quyết tâm', '#D3F0EA', face({ shape: 'sq', shirt: 'polo', eye: 'oval', brow: 'firm', mouth: 'soft', nose: 'curve',
+        front: p('M30.4 44C30.5 32 38 26 48 26S65.6 32 65.6 44C63 38.5 60 36.5 56 36C50 37 44 37 40 36C35.5 36.5 32.5 39 30.4 44Z', H) })],
+      ['gf4', 'Nữ búi tóc', '#FFF0C2', face({ shape: 'round', shirt: 'tee', eye: 'wink', brow: 'arch', mouth: 'smile', nose: 'dot',
+        back: c(48, 19.5, 8.5, H),
+        front: p('M29.8 47C29 33 37.5 25 48 25S67 33 66.2 47C63.5 39 59 34 54 32.5C50 34 41 34.5 36 37C33.5 40 31 43 29.8 47Z', H) + p('M41 24.5Q48 28 55 24.5', ' fill="none" stroke="#F2A33A" stroke-width="3" stroke-linecap="round"') })],
+      ['gm4', 'Nam tóc xoăn', '#FFE1D6', face({ shape: 'long', shirt: 'hood', eye: 'sleepy', brow: 'flat', mouth: 'smile', nose: 'hook',
+        front: '<g' + H + '><circle cx="34.5" cy="36" r="6"/><circle cx="40" cy="29" r="6.5"/><circle cx="48" cy="26" r="7"/><circle cx="56.5" cy="28.5" r="6.5"/><circle cx="61.5" cy="35.5" r="6"/><circle cx="33" cy="43" r="3.6"/><circle cx="63" cy="43" r="3.6"/><circle cx="44" cy="34" r="4"/><circle cx="52" cy="34" r="4"/></g>' })],
+      ['gf5', 'Nữ tóc tém', '#D5ECFF', face({ shape: 'v', shirt: 'polo', eye: 'happy', brow: 'arch', mouth: 'smirk', nose: 'curve',
+        front: p('M29.5 56C26 34 35 24 48.5 24C60 24 69.5 31 66.5 50C65 42 62.5 38 59 36C53 41 42 42 36 39.5C33 43 31 49 29.5 56Z', H) + '<rect x="56" y="33" width="9" height="3.4" rx="1.7" fill="#F2B93A" transform="rotate(-28 60.5 34.7)"/>' })],
+      ['gm5', 'Nam ngại ngùng', '#E6F4CF', face({ shape: 'oval', shirt: 'tee', eye: 'down', brow: 'worry', mouth: 'tiny', nose: 'dot',
+        front: p('M29 47C27.5 31 36 23.5 48 23.5C60 23.5 69 30 67 47C65 39 61 35 56 33.5C49 37 40 37.5 33 39.5C31 41.5 29.8 44 29 47Z', H) })],
+      ['gf6', 'Nữ băng đô', '#FFE3EE', face({ shape: 'oval', noEars: 1, shirt: 'tee', eye: 'spark', brow: 'high', mouth: 'grin', nose: 'dot',
+        back: p('M28 44C25 30 35 22.5 48 22.5S71 30 68 44C71 50 67 54 70 60C73 66 68 70 70 76C64 80 58 76 56 72H40C38 76 32 80 26 76C28 70 23 66 26 60C29 54 25 50 28 44Z', HB),
+        front: p('M30.5 49C29 34 37.5 26 48 26S67 34 65.5 49C63 41 58 36.5 52 35C47 38 38 41 30.5 49Z', HB) + p('M31.5 37Q48 22 64.5 37', ' fill="none" stroke="#7DB8F2" stroke-width="3.2" stroke-linecap="round"') })],
+      ['gm6', 'Nam kính đen', '#E5E7EC', face({ shape: 'sq', shirt: 'v', mouth: 'grin', nose: 'l', glass: 'sun',
+        front: p('M29.5 47C27.5 31 36 23 48 23S69 30.5 66.5 47C65 41 63 37.5 60 35.5L36 33.5C33 37 31 42 29.5 47Z', H) })]
+    ];
+    return F;
+  })();
   /* màu cho kiểu chữ cái: [nền, chữ] — màu đầu tiên giữ đúng màu cũ */
   var COLS = [['#FFE08F', '#6A4A00'], ['#CFE2FF', '#1F4FA8'], ['#CDEFD9', '#1D6B40'], ['#FFD6DF', '#A3264A'], ['#E4DBFF', '#5136B0'], ['#FFDCC2', '#9A4B12'], ['#CDEFF0', '#126C70'], ['#E5E7EC', '#3D4350']];
-  var MAP = {}; AV.forEach(function (a) { MAP[a[0]] = a; });
+  var MAP = {}; FC.concat(AV).forEach(function (a) { MAP[a[0]] = a; });
   function esc(s) { return W.PS ? PS.esc(s) : String(s); }
   function cur() {
     var v = String((W.PS && PS.prefs().av) || 'c:0'), k = v.slice(2);
@@ -124,11 +242,15 @@
   function status() { var c = cur(); return c.t === 'i' ? esc(MAP[c.k][1]) : 'Chữ cái'; }
   function body() {
     var c = cur(), L = esc(letter());
-    return '<p class="ps-small">Chọn một hình bạn thích, hoặc dùng chữ cái đầu tên với màu bạn chọn.</p>' +
-      '<div class="avp" role="radiogroup" aria-label="Hình đại diện">' + AV.map(function (a) {
+    function grid(list, lab) {
+      return '<div class="avp" role="radiogroup" aria-label="' + lab + '">' + list.map(function (a) {
         var on = c.t === 'i' && c.k === a[0];
         return '<button type="button" class="avp__b' + (on ? ' on' : '') + '" data-av="i:' + a[0] + '" role="radio" aria-checked="' + on + '" aria-label="' + esc(a[1]) + '">' + iconSVG(a[0], 52) + '</button>';
-      }).join('') + '</div>' +
+      }).join('') + '</div>';
+    }
+    return '<p class="ps-small">Chọn gương mặt giống bạn, một hình bạn thích, hoặc chữ cái đầu tên với màu bạn chọn.</p>' +
+      '<p class="avp__h">Gương mặt</p>' + grid(FC, 'Gương mặt') +
+      '<p class="avp__h">Hình vui</p>' + grid(AV, 'Hình vui') +
       '<p class="avp__h">Chữ cái và màu</p><div class="avp avp--c" role="radiogroup" aria-label="Chữ cái và màu">' + COLS.map(function (col, i) {
         var on = c.t === 'c' && c.k === i;
         return '<button type="button" class="avp__b avp__l' + (on ? ' on' : '') + '" data-av="c:' + i + '" role="radio" aria-checked="' + on + '" aria-label="Chữ cái, màu ' + (i + 1) + '" style="background:' + col[0] + ';color:' + col[1] + '">' + L + '</button>';
@@ -146,5 +268,5 @@
       PS.toast('Đã đổi ảnh đại diện.');
     });
   }
-  W.PSAvatar = { html: html, rowHTML: rowHTML, wire: wire, list: AV, icon: iconSVG, cur: cur, cols: COLS, letter: letter, map: MAP, body: body }; /* PS1.3.57: cur/cols/letter/map/body cho cờ CD02 */
+  W.PSAvatar = { html: html, rowHTML: rowHTML, wire: wire, list: AV, faces: FC, icon: iconSVG, cur: cur, cols: COLS, letter: letter, map: MAP, body: body }; /* PS1.3.57: cur/cols/letter/map/body cho cờ CD02 */
 })(window);

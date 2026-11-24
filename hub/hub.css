@@ -29,7 +29,7 @@ button{font-family:inherit}
 .onb{max-width:520px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 18px 40px}
 .onb__brand{display:flex;align-items:center;gap:14px;margin:8px 0 14px}
 .onb__brand small{display:block;font-size:12.5px;color:var(--muted);font-weight:600}
-.onb__brand h1{font:800 clamp(34px,10vw,46px)/1 var(--h);margin:2px 0 0;letter-spacing:-.02em;color:#0F4D98}
+.onb__brand h1{font:800 clamp(34px,10vw,46px)/1 var(--h);margin:2px 0 0;letter-spacing:-.02em;color:#3A9A44} /* PS1.3.68: xanh lá tươi cùng họ vòng O (#60BC56) */
 .onb__lead{font-size:16px;color:var(--ink-2);margin:0 0 16px}
 .onb__err{color:#B23A28;font-size:14px;font-weight:600;min-height:1em;margin:4px 0}
 .onb__restore{display:flex;margin:16px auto 0}
@@ -206,7 +206,7 @@ body{background:var(--bg);background-image:none}
 /* thanh trên: logo · cài app · chuỗi ngày · ảnh đại diện (chạm = Cài đặt) */
 .hbar{padding:12px max(14px,calc(50% - 346px)) 8px}
 .hbar.is-scrolled{background:rgba(246,244,238,.88);box-shadow:0 1px 0 var(--line)}
-.hbar__brand b{color:#0F4D98;font:900 20px/1 var(--h);letter-spacing:-.02em} /* PS1.3.34: xanh dương của logo, nhỏ hơn một chút (22 → 20px) */
+.hbar__brand b{color:#3A9A44;font:900 20px/1 var(--h);letter-spacing:-.02em} /* PS1.3.68: xanh lá tươi cùng họ vòng O #60BC56, đậm hơn để dễ đọc (tương phản 3,2:1 trên nền trang chủ, đạt mức chữ lớn); cỡ 20px như PS1.3.34 */
 .hbar__btns{align-items:center;gap:8px}
 .hbar__btn{border-color:var(--line);color:var(--ink);box-shadow:none}
 .hbar__fire{display:inline-flex;align-items:center;gap:4px;height:38px;padding:0 12px 0 10px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-size:13.5px;color:var(--ink-2);white-space:nowrap}
@@ -339,30 +339,35 @@ body{background:var(--bg);background-image:none}
 .wrap--top{padding-bottom:0}
 @media (max-width:380px){.hi{font-size:22px}.shn__t{font-size:29px}}
 
-/* ---- PS1.3.34 · logo mới + intro "chữ O nảy mầm" ---- */
-.hub-logo{border-radius:24%;box-shadow:0 4px 10px -6px rgba(15,77,152,.5);transition:opacity .2s}
-.pi{position:fixed;inset:0;z-index:400;background:#0F4D98;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .2s;-webkit-tap-highlight-color:transparent}
-.pi.out{background:transparent;transition:background-color .45s ease,opacity .2s}
-.pi__logo{position:relative;width:210px;height:210px}
-.pi__logo svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.pi__ring{fill:none;stroke:#fff;stroke-width:48;stroke-linecap:round;stroke-dasharray:599.3;stroke-dashoffset:599.3}
-.pi__lf{transform-box:view-box;transform-origin:288.6px 183.8px;-webkit-transform:scale(0);transform:scale(0)}
-.pi__word{margin-top:6px;text-align:center;color:#fff;opacity:0;-webkit-transform:translateY(10px);transform:translateY(10px)}
-.pi__word b{display:block;font:900 34px/1 var(--h);letter-spacing:-.015em}
-.pi__word small{display:block;margin-top:8px;font-size:13px;font-weight:600;opacity:.8;letter-spacing:.04em}
+/* ---- PS1.3.67 · logo 2C4 (chữ O lá xanh, không nền) + intro "đồi nghiêng nảy mầm" (thay bản nền xanh dương PS1.3.34) ---- */
+.hub-logo{display:block;transition:opacity .2s}
+.pi{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:opacity .2s;-webkit-tap-highlight-color:transparent}
+.pi::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,#F8FCF6,#EEF8EA);transition:opacity .45s ease}
+.pi__hill{position:absolute;left:0;right:0;bottom:0;height:36%;-webkit-transform:translateY(102%);transform:translateY(102%)}
+.pi__hill svg{display:block;width:100%;height:100%}
+.pi__logo{position:relative;width:196px;height:196px;margin-top:-5vh}
+.pi__logo svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}
+.pi__ring{fill:none;stroke:#60BC56;stroke-width:84.9;stroke-dasharray:861;stroke-dashoffset:861}
+.pi__lf{transform-box:view-box;transform-origin:256px 349px;-webkit-transform:scale(0);transform:scale(0)}
+.pi__word{position:relative;margin-top:16px;text-align:center;opacity:0;-webkit-transform:translateY(10px);transform:translateY(10px)}
+.pi__word b{display:block;font:900 34px/1 var(--h);letter-spacing:-.015em;color:#3A9A44}
+.pi__word small{display:block;margin-top:8px;font-size:13px;font-weight:600;color:#6A9A6E;letter-spacing:.04em}
+.pi.out::before,.pi.out .pi__hill{opacity:0;transition:opacity .45s ease}
 .pi.out .pi__word{opacity:0!important;transition:opacity .2s}
-.pi.go .pi__ring{animation:piDraw .62s cubic-bezier(.65,0,.35,1) .15s forwards}
-.pi.go .pi__lf1{animation:piGrow .5s cubic-bezier(.34,1.56,.64,1) .66s forwards}
-.pi.go .pi__lf2{animation:piGrow2 .56s cubic-bezier(.34,1.56,.64,1) .78s forwards}
+.pi.go .pi__hill{animation:piHill .7s cubic-bezier(.22,1,.36,1) .05s forwards}
+.pi.go .pi__ring{animation:piDraw .62s cubic-bezier(.65,0,.35,1) .2s forwards}
+.pi.go .pi__lf1{animation:piGrow .5s cubic-bezier(.34,1.56,.64,1) .7s forwards}
+.pi.go .pi__lf2{animation:piGrow2 .5s cubic-bezier(.34,1.56,.64,1) .86s forwards}
 .pi.go .pi__word{animation:piWord .4s ease-out 1.1s forwards}
 .pi__logo.fly{transition:-webkit-transform .55s cubic-bezier(.32,.72,0,1);transition:transform .55s cubic-bezier(.32,.72,0,1)}
-.pi__logo.fly .pi__ring{stroke:#0F4D98;transition:stroke .45s ease}
+.pi--still .pi__hill{-webkit-transform:none;transform:none;animation:none!important}
 .pi--still .pi__ring{stroke-dashoffset:0;animation:none!important}
 .pi--still .pi__lf{-webkit-transform:none;transform:none;animation:none!important}
 .pi--still .pi__word{opacity:1;-webkit-transform:none;transform:none;animation:none!important}
+@keyframes piHill{to{-webkit-transform:none;transform:none}}
 @keyframes piDraw{to{stroke-dashoffset:0}}
-@keyframes piGrow{0%{transform:scale(0) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
-@keyframes piGrow2{0%{transform:scale(0) rotate(26deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes piGrow{0%{transform:scale(0) rotate(-24deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes piGrow2{0%{transform:scale(0) rotate(22deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes piWord{to{opacity:1;transform:none}}
 
 /* =========================================================

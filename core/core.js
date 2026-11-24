@@ -327,6 +327,18 @@
   PS.routineOn = function () { var m = PS.mod('routine'); return !!(m && m.state === 'ready'); };
   PS.routineLib = function () { var s = PS.summary('routine'), x = s && s.extra; return (x && x.lib) || CFG.ROUTINE_LIB || {}; };
   PS.routineURL = function (id, from) { return PS.url('routine/index.html') + '?add=' + encodeURIComponent(id) + (from ? '&from=' + encodeURIComponent(from) : ''); };
+  /* PS1.3.70: hình Shin trong khối gợi ý của các khóa = Shin của chính học viên (giai đoạn, trang phục) như trang chủ.
+     Chưa mở Shin Routine lần nào (chưa có PS.summary('routine')) hoặc trang không nạp core/shin.js → hình đại diện gà con (routine/icon-192.png).
+     demo = 1: bản demo giáo viên, Shin Gà lớn mặc Khăn HLV. */
+  PS.routineShin = function (mood, demo) {
+    var Z = W.PSShin, o = null;
+    if (Z) {
+      if (demo) o = { stg: 3, fit: 'coach' };
+      else if (PS.summary('routine')) { var l = Z.look(); o = { stg: l.stg, fit: l.fit, days: l.days }; }
+    }
+    if (o) return '<span class="ps-rt__shin ps-rt__shin--g">' + Z.svg(mood || 'hi', o) + '</span>';
+    return '<img class="ps-rt__shin" src="' + esc(PS.url('routine/icon-192.png')) + '" width="40" height="40" alt="">';
+  };
   PS.routineSugHTML = function (ids, o) {
     if (!PS.routineOn() || !ids || !ids.length) return '';
     o = o || {};
@@ -340,7 +352,7 @@
         '<span class="ps-rt__n"><b>' + esc(lib[id]) + '</b>' + (st ? '<small>' + ST[st] + '</small>' : '') + '</span>' +
         '<span class="ps-rt__go">' + (on ? 'Xem thẻ' : 'Rèn thẻ này') + PS.icon('next', 14) + '</span></a>';
     }).join('');
-    return '<div class="ps-rt"><div class="ps-rt__hd"><img class="ps-rt__shin" src="' + esc(PS.url('routine/icon-192.png')) + '" width="40" height="40" alt="">' +
+    return '<div class="ps-rt"><div class="ps-rt__hd">' + PS.routineShin('hi') +
       '<div><b>' + esc(o.title || 'Rèn mỗi ngày cùng Shin') + '</b>' + (o.sub ? '<small>' + o.sub + '</small>' : '') + '</div></div>' +
       '<div class="ps-rt__l">' + items + '</div><p class="ps-rt__ft">Mở Shin Routine để đặt công thức. Bạn tự chọn, tối đa 5 thẻ cùng lúc.</p></div>';
   };
