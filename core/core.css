@@ -164,18 +164,19 @@ html.ps-bb.ps-bbh,html.ps-bb.ps-kb{--psbb:0px}
 .psnav--hide,html.ps-kb .psnav{transform:translateY(calc(100% + 30px));opacity:0}
 .psnav__in{position:relative;box-sizing:border-box;width:calc(100% - 28px);max-width:420px;height:66px;margin:0 auto;display:flex;align-items:center;justify-content:space-around;border-radius:26px;pointer-events:auto;
   background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 12px 30px -14px rgba(30,30,50,.45),0 0 0 1px rgba(30,30,50,.05);font-family:var(--f,"Be Vietnam Pro",system-ui,sans-serif)}
-.psnav__b{flex:1 1 0;min-width:0;display:grid;justify-items:center;gap:2px;border:0;background:none;padding:6px 0;color:#6E717C;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
-.psnav__b i{position:relative;width:58px;height:30px;border-radius:15px;display:grid;place-items:center;font-style:normal;transition:background .2s,transform .15s}
-.psnav__b i img{display:block}
-.psnav__b small{max-width:92%;font-size:12px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.psnav__b.on{color:var(--c-d,#151D52)}.psnav__b.on i{background:var(--c-t,#ECEEFA)}
+/* PS1.3.59: theo thanh Shin (routine/styles/habits.css): chữ cách icon 4px, ô chọn 56×32 tô xám, icon 24px nét 1.7 → 2.2 khi chọn; chữ 11px (Shin 12px, thầy muốn gọn hơn) */
+.psnav__b{flex:1 1 0;min-width:0;display:grid;justify-items:center;align-content:center;gap:4px;border:0;background:none;padding:0;color:#62666D;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.psnav__b i{position:relative;isolation:isolate;width:56px;height:32px;border-radius:20px;display:grid;place-items:center;font-style:normal;transition:transform .15s}
+.psnav__b i::before{content:"";position:absolute;inset:0;border-radius:20px;background:#E3E5E9;z-index:-1;opacity:0;transform:scaleX(.72);transition:opacity .2s ease,transform .26s ease;pointer-events:none}
+.psnav__b.on i::before{opacity:1;transform:none}
+.psnav__b .ps-ic{display:block;stroke-width:1.7;transition:stroke-width .2s ease}
+.psnav__b.on .ps-ic{stroke-width:2.2}
+.psnav__b small{max-width:94%;font-size:11px;font-weight:600;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psnav__b.on{color:#353B45}
 .psnav__b:active i,.psnav__ic:active,.psnav__bk:active{transform:scale(.94)}
-.psnav__ring{position:absolute;left:-3px;top:-3px;width:64px;height:36px;pointer-events:none;overflow:visible}
-.psnav__rg0{stroke:var(--c-d,#151D52);stroke-opacity:.14;stroke-width:2.4}
-.psnav__rg1{stroke:#F4B63B;stroke-width:2.6;stroke-linecap:round;transition:stroke-dasharray .5s}
-.psnav__rg1.ok{stroke:#2E9D5B}
 .psnav__avw{position:relative;display:grid;place-items:center}
-.psnav__av{width:30px;height:30px;border-radius:50%;overflow:hidden;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--c-d,#151D52)}
+/* PS1.3.59: viền ảnh đại diện xanh nhạt (trước: màu đậm của khóa) */
+.psnav__av{width:30px;height:30px;border-radius:50%;overflow:hidden;display:grid;place-items:center;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #BFD2F0}
 .psnav__av svg,.psnav__av .ps-av{display:block;width:30px!important;height:30px!important;border-radius:50%}
 .psnav__av .ps-av{display:grid;place-items:center;font-weight:900}
 .psnav__dot{position:absolute;top:-3px;right:-4px;width:9px;height:9px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 2px #fff}
@@ -191,9 +192,9 @@ html.ps-bb.ps-bbh,html.ps-bb.ps-kb{--psbb:0px}
 .psnav__ic.on{background:var(--c-t,#ECEEFA)}
 /* chấm lưu bài nằm ở ảnh đại diện */
 html.ps-sv .psnav__nb::after,html.ps-sv-err .psnav__nb::after{display:none}
-html.ps-sv .psnav__avw::after,html.ps-sv-err .psnav__avw::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#2E9D5B;box-shadow:0 0 0 2px #fff;pointer-events:none}
+html.ps-sv .psnav__avw::after,html.ps-sv-err .psnav__avw::after{content:"";position:absolute;right:-1px;bottom:-1px;width:5px;height:5px;border-radius:50%;background:#2E9D5B;box-shadow:0 0 0 1.5px #fff;pointer-events:none} /* PS1.3.59: nhỏ còn 1/2 (9 → 5px) */
 html.ps-sv-err .psnav__avw::after{background:#E5484D}
 /* thông báo, thẻ cập nhật nằm trên thanh */
 html.ps-bb .ps-toast{bottom:calc(var(--psbb,0px) + 18px + env(safe-area-inset-bottom,0px))}
 html.ps-bb .ps-update,html.ps-bb .ps-upd{bottom:calc(var(--psbb,0px) + 14px + env(safe-area-inset-bottom,0px))}
-@media (prefers-reduced-motion:reduce){.psnav,.psnav__b i,.psnav__rg1{transition:none}}
+@media (prefers-reduced-motion:reduce){.psnav,.psnav__b i,.psnav__b i::before,.psnav__b .ps-ic{transition:none}}

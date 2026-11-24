@@ -123,7 +123,8 @@ Hồ sơ tập luyện ở `S.mem` (job, g, g2, sex, inj 0/1, goal, h, w). Gợi
 
 ### Điều hướng chung, Học tiếp (PS1.3.55, thanh đáy từ PS1.3.58)
 - **Thanh đáy** mọi khóa (PS1.3.58, PA3): `PS.navHTML(o)` (core.js) → `#psnav` nổi ở đáy, phía trên màn hình khóa để trống. Không tự vẽ thanh riêng, không đặt nút ‹ trong nội dung.
-  - Màn bản đồ, ga/bến/ải/bài: `PS.navHTML({ map: { t: 'Hải đồ', ic: 'compass', ring: 0..1, ok, on: 1 }, items: [{ act, ic, t, label, on }], dot })` → Trang chủ | bản đồ | ô thêm | Sổ tay (ảnh đại diện).
+  - Màn bản đồ, ga/bến/ải/bài: `PS.navHTML({ map: { t: 'Hải đồ', ic: 'compass', on: 1 }, items: [{ act, ic, t, label, on }], dot })` → Trang chủ | bản đồ | ô thêm | Sổ tay (ảnh đại diện).
+  - Từ PS1.3.59: không còn vòng tiến độ (`ring`, `ok` bỏ qua). Ô Trang chủ = icon nhà (`PS.icon('home')`). Kiểu ô theo thanh Shin: chữ 11px/600 cách icon 4px, ô chọn 56×32 tô xám `#E3E5E9`, icon 24px nét 1.7 → 2.2 khi chọn, chữ `#62666D` → `#353B45`. Thanh trang chủ (`.bnav`) cùng kiểu. Viền ảnh đại diện `#BFD2F0` (cả trang chủ, Shin); chấm lưu 5px. Chế độ tập trung giữ nguyên.
   - Trong hoạt động: `PS.navHTML({ act: 1, back: 'Bến 4', step: [n, t] })` (hoặc `title: 'Khởi động'` khi không có n/t) → ‹ nơi về | vạch tiến độ | ô thêm (chỉ icon) | ảnh đại diện.
   - `data-psnav="home"` → `PS.home()`; `"map"` → `NAV.top()`; `"up"` → `NAV.up()`. Sổ tay `data-act="nb"`. Icon lấy từ `PS.icon` (đã có `ask`, `map`).
   - Khóa phải nạp `../hub/avatar.js` (ảnh đại diện). Đệm: `.wrap` trên ~20px; `html.ps-bb .wrap{padding-bottom:calc(112px + safe-bottom)}`. Phần tử dính đáy/nổi đáy dùng `bottom: calc(var(--psbb,0px) + …)` (84px khi thanh hiện, 0 khi ẩn/bàn phím mở). Dải demo đặt ở đầu màn.

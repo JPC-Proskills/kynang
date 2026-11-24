@@ -215,19 +215,14 @@
   };
   /* ---------- PS1.3.58 · Thanh đáy chung trong khóa (PA3) ----------
      Phía trên để trống; thanh nổi ở đáy, cùng khuôn thanh trang chủ.
-     Chế độ ô (bản đồ, ga/bến/ải/bài): Trang chủ | Bản đồ khóa (vòng tiến độ) | ô thêm | Sổ tay (ảnh đại diện).
+     Chế độ ô (bản đồ, ga/bến/ải/bài): Trang chủ (icon nhà) | Bản đồ khóa | ô thêm | Sổ tay (ảnh đại diện).
+     PS1.3.59: bỏ vòng tiến độ (m.ring, m.ok bỏ qua); ô đang chọn tô xám, icon đậm hơn, chữ 11px theo thanh Shin.
      Chế độ tập trung (o.act, trong hoạt động): ‹ nơi về | tiến độ n/t | ô thêm (chỉ icon) | ảnh đại diện.
      PS.navHTML({ back, title, act, step:[n, t], map:{ t, ic, ring, ok, on }, items:[{ act, ic, t, on, label }], dot })
      data-psnav="home" → PS.home(); "map" → NAV.top(); "up" → NAV.up(); Sổ tay data-act="nb". */
   function navAv() {
     var h = W.PSAvatar ? W.PSAvatar.html(30) : '<span class="ps-av" style="width:30px;height:30px;background:#FFE08F;color:#6A4A00;font-size:14px">' + esc(PS.given().charAt(0).toUpperCase()) + '</span>';
     return h.replace(/avc-/g, 'psnavc-'); /* tránh trùng id clipPath với ảnh trong Cài đặt */
-  }
-  function navRing(m) {
-    var f = Math.max(0, Math.min(1, +m.ring || 0)), P = 159.7; /* chu vi viên thuốc 61×33, bo 16.5 */
-    if (m.ring == null) return '';
-    return '<svg class="psnav__ring" viewBox="0 0 64 36" aria-hidden="true"><rect x="1.5" y="1.5" width="61" height="33" rx="16.5" fill="none" class="psnav__rg0"/>' +
-      (f > 0 ? '<rect x="1.5" y="1.5" width="61" height="33" rx="16.5" fill="none" class="psnav__rg1' + (m.ok || f >= 1 ? ' ok' : '') + '" stroke-dasharray="' + (P * f).toFixed(1) + ' ' + P + '" stroke-dashoffset="-14"/>' : '') + '</svg>';
   }
   PS.navHTML = function (o) {
     o = o || {};
@@ -246,9 +241,9 @@
       return '<nav class="psnav psnav--act" id="psnav" aria-label="Điều hướng"><div class="psnav__in">' + h + '</div></nav>';
     }
     var m = o.map;
-    h = '<button type="button" class="psnav__b" data-psnav="home" aria-label="Về trang chủ Proskills"><i><img src="' + PS.url('icons/logo.svg') + '" width="25" height="25" alt=""></i><small>Trang chủ</small></button>' +
-      (m ? '<button type="button" class="psnav__b' + (m.on ? ' on' : '') + '" data-psnav="map"' + (m.on ? ' aria-current="page"' : '') + '><i>' + PS.icon(m.ic || 'compass', 23) + navRing(m) + '</i><small>' + esc(m.t) + '</small></button>' : '') +
-      items.map(function (it) { return '<button type="button" class="psnav__b' + (it.on ? ' on' : '') + '" data-act="' + it.act + '" aria-label="' + esc(it.label || it.t) + '"><i>' + PS.icon(it.ic, 23) + '</i><small>' + esc(it.t) + '</small></button>'; }).join('') +
+    h = '<button type="button" class="psnav__b" data-psnav="home" aria-label="Về trang chủ Proskills"><i>' + PS.icon('home', 24) + '</i><small>Trang chủ</small></button>' +
+      (m ? '<button type="button" class="psnav__b' + (m.on ? ' on' : '') + '" data-psnav="map"' + (m.on ? ' aria-current="page"' : '') + '><i>' + PS.icon(m.ic || 'compass', 24) + '</i><small>' + esc(m.t) + '</small></button>' : '') +
+      items.map(function (it) { return '<button type="button" class="psnav__b' + (it.on ? ' on' : '') + '" data-act="' + it.act + '" aria-label="' + esc(it.label || it.t) + '"><i>' + PS.icon(it.ic, 24) + '</i><small>' + esc(it.t) + '</small></button>'; }).join('') +
       '<button type="button" class="psnav__b psnav__nb" data-act="nb" aria-label="Sổ tay"><i><span class="psnav__avw"><span class="psnav__av">' + navAv() + '</span>' + dot + '</span></i><small>Sổ tay</small></button>';
     return '<nav class="psnav" id="psnav" aria-label="Điều hướng"><div class="psnav__in">' + h + '</div></nav>';
   };

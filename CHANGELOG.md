@@ -5,6 +5,18 @@ Quy ước số phiên bản: **PS a.b.c**
 - b: giai đoạn / thêm module hoặc tính năng lớn
 - c: sửa nhỏ trong giai đoạn đó
 
+## PS1.3.59 · 24/11/2026 · Thanh đáy gọn theo thanh Shin
+Theo góp ý thầy 24/11 (5 ý). Chế độ tập trung trong hoạt động giữ nguyên (thầy đã duyệt).
+- Ý 1 · Chữ không dính icon: lấy chuẩn thanh Shin (routine/styles/habits.css): chữ Be Vietnam Pro 600, cách icon 4px, ô icon 56×32; cỡ chữ 11px (Shin 12px, giảm 1px cho gọn). Áp cho thanh trong khóa (core.css `.psnav__b`) và thanh trang chủ (hub.css `.bnav__b`).
+- Ý 2 · Ô “Trang chủ”: icon nhà nét mảnh (`PS.icon('home', 24)`) thay logo Proskills.
+- Ý 3 · Bỏ vòng tiến độ quanh icon bản đồ ở mọi khóa (xóa `navRing`, CSS `.psnav__ring/rg0/rg1`; `map.ring`, `map.ok` các khóa vẫn truyền nhưng bỏ qua). Ô đang chọn tô xám `#E3E5E9` (hiện dần như Shin), icon đậm hơn (nét 1.7 → 2.2), chữ `#62666D` → `#353B45`. TK: câu ở Nhịp học / Cài đặt đổi “Vòng tròn quanh nút bản đồ…” → “Dòng bên dưới cho biết hôm nay bạn đã đủ chỉ tiêu chưa.” (TK16.5).
+- Ý 4 · Chấm “đã lưu” ở ảnh đại diện: 9px → 5px, viền trắng 1.5px.
+- Ý 5 · Viền ảnh đại diện: xanh nhạt `#BFD2F0` (trước: màu đậm của khóa / `#0F4D98` trang chủ / `#2265C5` Shin).
+- Kiểm 390 + 1280: trang chủ, CD01, CD02, TK, TC01, mẫu (chữ 11px, cách icon 4px), viền ảnh Shin; không lỗi JS.
+
+Tệp đổi: config.js, sw.js, mọi index.html (?v=), core/core.js, core/core.css, hub/hub.css, routine/proskills.js, tk/(index.html, content.js, extras.js), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có.
+
 ## PS1.3.58 · 24/11/2026 · Thanh đáy chung cho mọi khóa (PA3), Sổ tay = ảnh đại diện ở trang chủ và Shin
 Theo bản xem trước `Claude outputs/PS1.3.58-xem-truoc-thanh-dieu-huong.html` (thầy chốt 24/11: 1 PA3, chữ “Trang chủ” thay “Proskills”; 2 tên riêng từng khóa; 3 vòng tiến độ quanh icon bản đồ; 4 “Sổ tay”; 5, 6, 7 ok; 8 ẩn khi cuộn xuống, hiện khi cuộn lên).
 - **Thanh đáy chung** (core.js `PS.navHTML`, core.css khối PS1.3.58): phía trên màn hình khóa để trống. Thanh nổi ở đáy, cùng khuôn thanh trang chủ.

@@ -7,6 +7,7 @@
      · Tệp khác (hình, phông, âm thanh): mở bản đã lưu ngay, đồng thời tải bản mới chạy ngầm cho lần sau.
    - Mọi tệp của module được lưu tự động sau lần mở đầu tiên có mạng.
    - PS1.3.58: thanh đáy chung (PA3) cho mọi khóa, ảnh đại diện Sổ tay ở trang chủ và Shin.
+   - PS1.3.59: thanh đáy gọn theo thanh Shin (chữ 11px, ô chọn xám, icon nhà), bỏ vòng tiến độ, chấm lưu nhỏ, viền ảnh xanh nhạt.
    - PS1.3.57: CD02 bản 5 đợt 2 (cờ ảnh đại diện, hình kế hoạch, popup thuyền nâng cấp, vẽ lại người).
    - PS1.3.56: CD02 bản 5 đợt 1 (Bến 4 tự chấm 3 yếu tố, dải màu 1–5, Bến 5 bốn ngã rẽ).
    - PS1.3.55: điều hướng chung trong khóa (core PS.nav), Học tiếp mở thẳng hoạt động (?go=).
@@ -14,7 +15,7 @@
    - Không bao giờ đụng tới bài làm (localStorage) của học viên.
    ========================================================= */
 'use strict';
-const VERSION = 'PS1.3.58';
+const VERSION = 'PS1.3.59';
 const BASE = new URL(self.registration.scope);
 const PREFIX = 'proskills-' + encodeURIComponent(BASE.pathname) + '-';
 const SHELL = PREFIX + 'shell-' + VERSION;

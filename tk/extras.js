@@ -127,7 +127,7 @@ function paceLine(){
   return 'Hôm nay: <b>'+Math.min(d,tgt)+'/'+tgt+'</b> chặng theo nhịp '+pace()+' ải/ngày.'+(left>0?' Giữ nhịp này, bạn đến Phù Tang khoảng ngày <b>'+fmtDate(end)+'</b>.':' Bạn đã đến Phù Tang!');
 }
 function paceHTML(){
-  return '<div class="card"><h3>Nhịp học</h3><p>Chọn số ải mỗi ngày. Vòng tròn quanh nút bản đồ sẽ đầy dần khi bạn đủ chỉ tiêu trong ngày.</p><div class="chips" style="margin-top:8px">'+
+  return '<div class="card"><h3>Nhịp học</h3><p>Chọn số ải mỗi ngày. Dòng bên dưới cho biết hôm nay bạn đã đủ chỉ tiêu chưa.</p><div class="chips" style="margin-top:8px">'+
     [1,2,3].map(function(n){ return '<button class="chp'+(pace()===n?' sel':'')+'" data-act="pace" data-n="'+n+'">'+n+' ải/ngày'+(n===1?' (mặc định)':'')+'</button>'; }).join('')+'</div><p class="small" style="margin:10px 0 0">'+paceLine()+'</p></div>';
 }
 /* --- Khoảnh khắc thắng ải --- */
@@ -353,7 +353,7 @@ function statsHTML(){
 /* Thẻ Cài đặt chuẩn của Proskills + phần riêng của TK: nhịp học và lời nhắc, Túi cứu viện */
 function nbSettings(){
   var r=remind();
-  var pc='<p class="small">Số ải mỗi ngày. Vòng tròn quanh nút bản đồ đầy dần khi đủ chỉ tiêu.</p><div class="chips">'+[1,2,3].map(function(n){ return '<button class="chp'+(pace()===n?' sel':'')+'" data-act="pace" data-n="'+n+'">'+n+' ải/ngày</button>'; }).join('')+'</div>'+
+  var pc='<p class="small">Số ải mỗi ngày. Dòng bên dưới cho biết hôm nay bạn đã đủ chỉ tiêu chưa.</p><div class="chips">'+[1,2,3].map(function(n){ return '<button class="chp'+(pace()===n?' sel':'')+'" data-act="pace" data-n="'+n+'">'+n+' ải/ngày</button>'; }).join('')+'</div>'+
     '<p class="small" id="paceLn" style="margin:8px 0 12px">'+paceLine()+'</p>'+
     '<p class="small"><b>Lời nhắc học</b></p><p class="small" style="margin:4px 0 8px">Giờ tự học giờ đặt chung ở trang chủ Proskills, nhắc cho mọi khóa học.</p>'+
     '<div class="btnrow"><a class="btn btn--sm" href="'+PS.url('index.html?lich=nhac')+'">'+icon('next',16)+' Đặt giờ tự học ở trang chủ</a></div>';

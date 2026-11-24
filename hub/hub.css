@@ -382,13 +382,17 @@ body.has-bnav #app{min-height:calc(100vh - 96px - env(safe-area-inset-bottom,0px
 .bnav{position:fixed;z-index:40;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:calc(100% - 28px);max-width:420px;height:66px;
   display:flex;justify-content:space-around;align-items:center;border-radius:26px;background:rgba(255,255,255,.92);
   -webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 12px 30px -14px rgba(30,30,50,.45),0 0 0 1px rgba(30,30,50,.05)}
-.bnav__b{flex:1;display:grid;justify-items:center;gap:2px;border:0;background:none;padding:6px 0;color:#6E717C;cursor:pointer;font-family:var(--f);-webkit-tap-highlight-color:transparent}
-.bnav__i{width:58px;height:30px;border-radius:15px;display:grid;place-items:center;transition:background .2s}
-.bnav__b small{font-size:12px;font-weight:700;line-height:1.1}
-.bnav__b.is-on{color:#0F4D98}.bnav__b.is-on .bnav__i{background:#E3ECFA}
-.bnav .psnav__av{box-shadow:0 0 0 2px #fff,0 0 0 3.5px #0F4D98} /* PS1.3.58: ô Sổ tay = ảnh đại diện */
+.bnav__b{flex:1;min-width:0;display:grid;justify-items:center;align-content:center;gap:4px;border:0;background:none;padding:0;color:#62666D;cursor:pointer;font-family:var(--f);-webkit-tap-highlight-color:transparent}
+/* PS1.3.59: cùng kiểu thanh trong khóa và thanh Shin: ô chọn tô xám, icon đậm hơn, chữ 11px cách icon 4px */
+.bnav__i{position:relative;isolation:isolate;width:56px;height:32px;border-radius:20px;display:grid;place-items:center;transition:transform .15s}
+.bnav__i::before{content:"";position:absolute;inset:0;border-radius:20px;background:#E3E5E9;z-index:-1;opacity:0;transform:scaleX(.72);transition:opacity .2s ease,transform .26s ease;pointer-events:none}
+.bnav__b.is-on .bnav__i::before{opacity:1;transform:none}
+.bnav__b .ps-ic{display:block;width:24px;height:24px;stroke-width:1.7;transition:stroke-width .2s ease}
+.bnav__b.is-on .ps-ic{stroke-width:2.2}
+.bnav__b small{max-width:94%;font-size:11px;font-weight:600;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bnav__b.is-on{color:#353B45}
 .bnav__b:active .bnav__i{transform:scale(.94)}
-@media (prefers-reduced-motion:reduce){.bnav__i{transition:none}}
+@media (prefers-reduced-motion:reduce){.bnav__i,.bnav__i::before,.bnav__b .ps-ic{transition:none}}
 
 /* khối Shin: dãn chữ, lời Shin, thói quen cho dễ đọc */
 .shn{margin-bottom:24px}
