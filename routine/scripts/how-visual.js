@@ -833,6 +833,74 @@ var LV={
    callout(228,146,108,['Đủ phiếu thì','thẻ tự lên bậc'],GREEN_T),'','0 0 340 202');}
  }
 };
+/* =========================================================
+   BÀI 6 · NỐI THẺ THÓI QUEN (PS1.3.65 · M.Claude.3.4.2)
+   Hiểu: đầu tàu kéo toa · Cặp: tách rời / nối liền · Senpai Phong: ở trường ↔ ở Nhật · Trong app: khối chuỗi ở Hôm nay.
+   Huy hiệu mở khóa: HOW_VISUAL.link.badge() (dùng ở link.js). Chữ trong hình: 02-Duyet-text/PS1.3.65-Hinh-Bai6-chu.xlsx.
+   ========================================================= */
+function dia(x,y,n,on,c,st){c=c||'#3E5BBF';var s='';for(var i=0;i<n;i++){var cx=x+i*11;s+='<path d="M'+cx+' '+(y-4.5)+'l4.5 4.5-4.5 4.5-4.5-4.5z" fill="'+(i<on?c:'#fff')+'" stroke="'+(st||c)+'" stroke-width="1.2"/>';}return s;}
+function linkIcon(x,y,s,c){return '<g transform="translate('+x+' '+y+') scale('+(s||1)+') rotate(-35)" fill="none" stroke="'+(c||K)+'" stroke-width="3" stroke-linecap="round"><rect x="-13" y="-5" width="15" height="10" rx="5"/><rect x="-2" y="-5" width="15" height="10" rx="5"/></g>';}
+function rails(x1,x2,y){var s='<path d="M'+x1+' '+y+'H'+x2+'" stroke="#8A7A6A" stroke-width="2.4" stroke-linecap="round"/>';for(var x=x1+6;x<x2;x+=16)s+='<path d="M'+x+' '+(y+1)+'v5" stroke="'+WOOD_D+'" stroke-width="3" stroke-linecap="round"/>';return s;}
+function wheel(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#2F3D5A" stroke="'+K+'" stroke-width="1.5"/><circle cx="'+x+'" cy="'+y+'" r="'+(r*.35)+'" fill="#C9CEE0"/>';}
+function deskTop(x,y,w){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="7" rx="2" fill="'+WOOD+'" stroke="'+WOOD_D+'" stroke-width="1.3"/>';}
+function vocab(x,y,r){return '<g transform="translate('+x+' '+y+') rotate('+(r||0)+')"><rect x="-13" y="-9" width="26" height="18" rx="3" fill="#FFFDF6" stroke="'+K+'" stroke-width="1.3"/>'+T(0,4,'語',{jp:1,s:10,w:700,c:BLUE_T})+'</g>';}
+/* Hình nhóm chuỗi giả lập (như khối “rồi” ở Hôm nay) */
+function chainMock(x,y,a,b,all){var s='<rect x="'+x+'" y="'+y+'" width="196" height="136" rx="20" fill="#fff" stroke="'+(all?GREEN:'#C9D3EE')+'" stroke-width="'+(all?2:1.5)+'"/>',row=function(yy,c1,c2,t,sub,ok){return '<rect x="'+(x+12)+'" y="'+yy+'" width="34" height="34" rx="10" fill="'+c1+'"/><circle cx="'+(x+29)+'" cy="'+(yy+17)+'" r="7" fill="'+c2+'"/>'+T(x+56,yy+15,t,{a:'start',s:12.5,w:800,c:INK})+T(x+56,yy+30,sub,{a:'start',s:10.5,w:600,c:ok?GREEN_T:MUTE});};
+ s+=row(y+14,'#E1E7F7','#6C7FC0',a[0],a[1],all)+'<path d="M'+(x+29)+' '+(y+50)+'V'+(y+84)+'" stroke="'+(all?GREEN:'#9DB0E2')+'" stroke-width="3" stroke-linecap="round"'+(all?'':' stroke-dasharray="4 4"')+'/>'+
+  '<circle cx="'+(x+29)+'" cy="'+(y+67)+'" r="6.5" fill="'+(all?GREEN:'#fff')+'" stroke="'+(all?GREEN:'#9DB0E2')+'" stroke-width="1.6"/>'+(all?'<path d="M'+(x+26)+' '+(y+67)+'l2.2 2.2 4-4.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>':'')+
+  '<rect x="'+(x+44)+'" y="'+(y+59)+'" width="30" height="16" rx="8" fill="'+(all?'#DDF3E8':'#EEF1F6')+'"/>'+T(x+59,y+71,'rồi',{s:10,w:700,c:all?GREEN_T:MUTE})+
+  row(y+86,'#EDE3F8','#8D6BB8',b[0],b[1],all);
+ return s;}
+LV.b6={
+ hieu:function(){var s=T(170,22,'Thói quen cũ kéo thói quen mới',{s:12,w:800,c:BLUE_T})+sun(306,30,8)+rails(8,332,150);
+  /* Đầu tàu = thói quen cũ (đã Vững tay) */
+  s+='<path d="M22 72h40v-22h14v22h70q10 0 12 10l4 46H22z" fill="#3E5BBF" stroke="'+K+'" stroke-width="1.6" stroke-linejoin="round"/>'+
+   '<rect x="28" y="78" width="30" height="20" rx="4" fill="#DCE6FB" stroke="'+K+'" stroke-width="1.3"/>'+dia(32,110,3,3,YEL,'#fff')+'<rect x="18" y="64" width="48" height="10" rx="3" fill="#2E4596" stroke="'+K+'" stroke-width="1.4"/>'+
+   '<circle cx="82" cy="40" r="7" fill="#E9EEF8"/><circle cx="92" cy="30" r="5" fill="#E9EEF8"/>'+
+   '<rect x="66" y="84" width="84" height="34" rx="8" fill="#fff"/>'+T(108,98,'THÓI QUEN CŨ',{s:8.5,w:800,c:'#3E5BBF'})+T(108,112,'Uống 1 ly nước',{s:10.5,w:800,c:INK})+
+   wheel(44,134,11)+wheel(80,134,11)+wheel(132,134,13)+'<path d="M44 134H132" stroke="#C9CEE0" stroke-width="2.2"/>';
+  /* Khớp nối */
+  s+='<path d="M162 118H190" stroke="'+K+'" stroke-width="2.4"/>'+linkIcon(176,118,.78,GREEN);
+  /* Toa = thói quen mới */
+  s+='<rect x="190" y="70" width="128" height="58" rx="8" fill="#F2EBF8" stroke="'+K+'" stroke-width="1.6"/><rect x="186" y="64" width="136" height="9" rx="3" fill="#8D6BB8" stroke="'+K+'" stroke-width="1.4"/>'+
+   '<rect x="200" y="82" width="108" height="34" rx="8" fill="#fff"/>'+T(254,96,'THÓI QUEN MỚI',{s:8.5,w:800,c:'#6B4E9A'})+T(254,110,'10 cái squat',{s:10.5,w:800,c:INK})+
+   wheel(212,134,11)+wheel(296,134,11)+shinMini('cheer',236,20,44);
+  return lfig('','Thói quen cũ đã vững như đầu tàu. Thói quen mới là toa nối ngay sau, được kéo đi cùng.',s,'Xong thói quen cũ là tới thói quen mới.','0 0 340 160');},
+ pair:function(){var L=panel(4,4,162,160,'#FDECE8'),R=panel(174,4,162,160,'#E2F7EE');
+  L+=T(85,24,'TÁCH RỜI',{s:11.5,w:800,c:RED_T})+floor(12,158,140)+bed(12,112,60,{})+
+   g(100,140,.62,standSide({girl:true,arms:[[15,-92,12,-112]]}))+glass(108,73,.75)+T(104,52,'6:00',{s:10.5,w:800,c:MUTE})+
+   '<g opacity=".38">'+g(144,140,.5,squatGood({girl:true}))+'</g>'+T(142,62,'?',{s:22,w:800,c:RED})+
+   T(85,158,'squat “lúc nào rảnh”',{s:10.5,w:700,c:RED_T});
+  R+=T(255,24,'NỐI LIỀN',{s:11.5,w:800,c:GREEN_T})+floor(182,328,140)+deskTop(184,108,30)+'<path d="M189 115V140M209 115V140" stroke="'+WOOD_D+'" stroke-width="3"/>'+glass(199,98,.9)+
+   g(236,140,.62,standSide({girl:true,arms:[[15,-92,12,-112]]}))+glass(244,73,.75)+
+   arrow(258,96,280,96,GREEN,2.2)+g(300,140,.62,squatGood({girl:true}))+pill(300,48,40,'× 10','#fff',GREEN_T)+
+   T(255,158,'uống xong, squat luôn',{s:10.5,w:700,c:GREEN_T});
+  return lfig('','Tách rời: uống nước lúc dậy, squat thì để lúc nào rảnh nên dễ quên. Nối liền: uống xong ly nước là squat luôn cạnh giường.',L+R+cross(152,20,9)+check(322,20,9),'','0 0 340 170');},
+ story:function(){var fp={f:1,legs:[[-6,-34,18,-34,18,-6]],hip:[-6,-34],sh:[-4,-72],head:[-1,-94]};
+  var a=board(14,30,70,34)+deskTop(10,112,140)+'<path d="M18 119v35M142 119v35" stroke="'+WOOD_D+'" stroke-width="3"/>'+
+   g(46,150,.62,sitChair(Object.assign({},fp,{arms:[[10,-60,26,-60]]})))+vocab(70,106,-6)+
+   g(114,150,.62,sitChair(Object.assign({},fp,{f:-1,girl:true,legs:[[6,-34,-18,-34,-18,-6]],hip:[6,-34],sh:[4,-72],head:[1,-94],arms:[[-10,-60,-22,-62]]})))+
+   bubble(40,64,84,24,['あめが ふる'],{tail:'bl',s:10.5,jp:1})+clock(130,40,12,'',{})+T(130,66,'sớm 5 phút',{s:9.5,w:800,c:GREEN_T});
+  var b='<rect x="10" y="30" width="64" height="40" rx="4" fill="#fff" stroke="'+K+'" stroke-width="1.3"/>'+T(42,55,'休憩室',{jp:1,s:11,w:700,c:'#B5402F'})+
+   floor(6,154,150)+'<g transform="translate(0 150)">'+bench(30,100)+'</g>'+
+   g(70,150,.62,sitBench({f:1,cap:'#E9A34D',shirt:'#FFE9B8',arms:[[10,-56,24,-58]]}))+vocab(92,104,-4)+bottle(136,106,0,.7)+
+   pill(118,48,58,'nghỉ ca','#fff','#B5402F');
+  return '<figure class="ill hv-key">'+duo('Senpai Phong: ở trường, đến lớp sớm là ôn 5 từ rồi nói một câu với bạn. Sang Nhật, giờ nghỉ ca vẫn mở 5 từ.',a,b,['Đến lớp sớm','ôn 5 từ, nói 1 câu'],['Giờ nghỉ ca','vẫn giữ nếp'],154)+'</figure>';},
+ app:function(){return lfig('','Hai thẻ nối hiện liền nhau ở Hôm nay. Mỗi thẻ vẫn tính ngày, tính bậc riêng.',
+   chainMock(8,10,['Ngủ đủ giấc','Đã làm'],['Đọc 1 trang sách','Đã làm'],true)+
+   arrow(208,46,226,46,'#C98A12',2.2)+callout(228,22,108,['Hai thẻ','hiện liền nhau'])+
+   arrow(208,118,226,118,'#C98A12',2.2)+callout(228,96,108,['Mỗi thẻ','tính bậc riêng'],GREEN_T),'','0 0 340 156');}
+};
+/* Huy hiệu mở khóa: thẻ Vững tay + thẻ mới, khớp nối bật vào. */
+function lkBadgeSVG(){
+ var card=function(x,c1,c2,lab,sub,dash){return '<g class="lkb-card"><rect x="'+x+'" y="22" width="62" height="80" rx="12" fill="'+c1+'" stroke="'+(dash?'#9D86C2':K)+'" stroke-width="1.6"'+(dash?' stroke-dasharray="5 4"':'')+'/>'+
+   '<circle cx="'+(x+31)+'" cy="52" r="15" fill="#fff"/><circle cx="'+(x+31)+'" cy="52" r="7" fill="'+c2+'"/>'+T(x+31,84,lab,{s:9,w:800,c:INK})+sub+'</g>';};
+ return svg('0 0 220 124','Huy hiệu Nối thẻ thói quen',
+  '<circle cx="110" cy="62" r="58" fill="#E5EFFC"/><circle cx="110" cy="62" r="58" fill="none" stroke="#C9D8F4" stroke-width="2" stroke-dasharray="2 6"/>'+
+  '<g class="lkb-l">'+card(30,'#E1E7F7','#3E5BBF','Vững tay',dia(42,94,3,3))+'</g>'+
+  '<g class="lkb-r">'+card(128,'#F7F2FC','#8D6BB8','Thói quen','',true)+T(159,96,'mới',{s:9,w:800,c:INK})+'</g>'+
+  '<g class="lkb-k"><circle cx="110" cy="62" r="15" fill="#fff" stroke="'+GREEN+'" stroke-width="2"/>'+linkIcon(110,62,.7,GREEN)+'</g>'+
+  '<g class="lkb-s" fill="'+YEL+'"><path d="M110 6l2.4 5 5 2.4-5 2.4-2.4 5-2.4-5-5-2.4 5-2.4z"/><path d="M190 18l1.8 3.6 3.6 1.8-3.6 1.8-1.8 3.6-1.8-3.6-3.6-1.8 3.6-1.8z"/><path d="M24 104l1.6 3.2 3.2 1.6-3.2 1.6-1.6 3.2-1.6-3.2-3.2-1.6 3.2-1.6z"/></g>','lk-badge-svg');}
 /* Ghép vào bài học */
 LESSONS.forEach(function(L){var V=LV[L.id];if(!V||L._hv)return;L._hv=1;var c=L.c1,i=c.indexOf('</p>');
  if(V.hieu&&i>0)c=c.slice(0,i+4)+V.hieu()+c.slice(i+4);
@@ -842,5 +910,5 @@ LESSONS.forEach(function(L){var V=LV[L.id];if(!V||L._hv)return;L._hv=1;var c=L.c
 var hvLsDialog=lsDialog;lsDialog=function(L){var V=LV[L.id],h=hvLsDialog(L);return V&&V.story?h.replace('<div class="hw__k">SHIN PHỎNG VẤN SENPAI</div>','<div class="hw__k">SHIN PHỎNG VẤN SENPAI</div>'+V.story()):h;};
 var hvLsApp=lsApp;lsApp=function(L){var V=LV[L.id],h=hvLsApp(L);return V&&V.app?h.replace('<div class="hw__k">Trong app này</div>','<div class="hw__k">Trong app này</div>'+V.app()):h;};
 
-window.HOW_VISUAL={lessons:LV,data:HV,parts:{stepsHTML:stepsHTML,whyHTML:whyHTML,tipHTML:tipHTML}};
+window.HOW_VISUAL={lessons:LV,data:HV,parts:{stepsHTML:stepsHTML,whyHTML:whyHTML,tipHTML:tipHTML},link:{badge:lkBadgeSVG}};
 })();

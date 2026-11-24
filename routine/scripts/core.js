@@ -93,7 +93,7 @@ function treeLettersSVG37(stage,stems,sx,order,interactive){
    KAIZEN MỖI NGÀY · TQ02
    Một file HTML, dữ liệu lưu trong trình duyệt của từng máy.
    ========================================================= */
-var APP_VER = 'M.Claude.3.4.0';
+var APP_VER = 'M.Claude.3.4.4';
 var APP_NAME = 'Shin routine';
 /* PS1.3.25: Shin Routine nằm trong Proskills (thư mục routine/), lưu theo quy ước ps.* để đi cùng bản sao lưu chung */
 var KEY = 'ps.mod.routine', KEY_DEMO = 'ps.demo.routine', KEY_MODE = 'ps.demo.routine.mode';
@@ -1598,7 +1598,7 @@ function homeGuide(){
   var ios=isIOS(), h='<div class="center"><div style="width:96px;margin:0 auto">'+shin('think')+'</div><h2 style="margin:6px 0 4px">Thêm app vào màn hình chính</h2><p class="muted small" style="margin:0 0 12px">Mở nhanh từ màn hình chính, như một ứng dụng riêng.</p></div>';
   if(ios) h+='<ol class="steps"><li><b>Mở app bằng Safari</b>Không mở trong Zalo hay Messenger.</li><li><b>Chạm nút Chia sẻ</b>Ô vuông có mũi tên lên, ở thanh dưới.</li><li><b>Chọn “Thêm vào MH chính”</b>Kéo xuống một chút sẽ thấy.</li></ol>';
   else h+='<ol class="steps"><li><b>Mở app bằng Chrome</b>Không mở trong Zalo hay Messenger.</li><li><b>Chạm nút ⋮</b>Ở góc trên bên phải.</li><li><b>Chọn “Thêm vào màn hình chính”</b>Hoặc “Cài đặt ứng dụng”.</li></ol>';
-  h+='<div class="stack" style="margin-top:12px"><button class="btn btn--wide" data-act="gHome">Mình đã thêm xong</button><button class="btn btn--ghost btn--wide" data-act="close">Để sau</button></div><p class="note center">Từ nay mở bằng biểu tượng mèo Shin trên màn hình chính.</p>';
+  h+='<div class="stack" style="margin-top:12px"><button class="btn btn--wide" data-act="gHome">Mình đã thêm xong</button><button class="btn btn--ghost btn--wide" data-act="close">Để sau</button></div><p class="note center">Từ nay mở bằng biểu tượng Proskills trên màn hình chính.</p>';
   openMini(h);
 }
 

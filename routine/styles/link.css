@@ -1,0 +1,82 @@
+/* PS1.3.64 · M.Claude.3.4.1 · Nối thẻ thói quen (scripts/link.js) */
+.lk-ic{display:inline-block;vertical-align:-4px;flex:0 0 auto}
+/* Hôm nay: khối chuỗi */
+.lk-list{display:grid;gap:9px;margin:0 0 9px}
+.lk-chain{position:relative;display:flex;align-items:center;gap:2px;padding:6px 4px 6px 6px;border-radius:22px;background:color-mix(in srgb,var(--surface) 75%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--primary) 18%,transparent)}
+.lk-chain.lk-full{box-shadow:inset 0 0 0 2px color-mix(in srgb,#2E9B6A 55%,transparent)}
+.lk-rows{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.lk-row{display:flex;align-items:center;gap:3px;min-height:64px;min-width:0}
+.lk-row .flow-emblem{margin-bottom:0}
+.lk-main{flex:1 1 auto;min-width:0;padding:6px 4px;border:0;background:none;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.lk-main b{display:block;font:650 16px/1.35 var(--f);overflow-wrap:anywhere}
+.lk-main small{display:block;margin-top:3px;font:400 12px/1.45 var(--f);color:var(--muted);overflow-wrap:anywhere}
+.lk-join{position:relative;display:flex;align-items:center;gap:8px;height:20px;margin:-6px 0;padding-left:23px;font:600 11px/1 var(--f);color:var(--muted);letter-spacing:.02em}
+.lk-join i{position:absolute;left:23px;top:-8px;bottom:-8px;width:3px;border-radius:3px;background:repeating-linear-gradient(to bottom,color-mix(in srgb,var(--primary) 35%,transparent) 0 4px,transparent 4px 7px)}
+.lk-join span{margin-left:14px;padding:2px 7px;border-radius:99px;background:var(--surface-low,#EEF1F6)}
+.lk-join.on i{background:#2E9B6A}
+.lk-join.on span{background:#DDF3E8;color:#1F6E4A}
+.lk-plus{display:grid;place-items:center;flex:0 0 44px;width:44px;min-height:44px;padding:8px;border:0;border-radius:50%;background:none;color:var(--primary);cursor:pointer}
+.lk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){.lk-join.on i{animation:lkGlow .6s ease-out}}
+@keyframes lkGlow{from{box-shadow:0 0 0 4px rgba(46,155,106,.35)}to{box-shadow:0 0 0 0 rgba(46,155,106,0)}}
+/* Bảng đóng dấu chuỗi */
+.lk-ci .lk-ci-item{padding:4px 0}
+.lk-ci-join{position:relative;display:flex;align-items:center;height:26px;padding-left:22px;font:600 11px/1 var(--f);color:var(--muted)}
+.lk-ci-join i{position:absolute;left:22px;top:0;bottom:0;width:3px;border-radius:3px;background:repeating-linear-gradient(to bottom,color-mix(in srgb,var(--primary) 35%,transparent) 0 4px,transparent 4px 7px)}
+.lk-ci-join span{margin-left:14px}
+.lk-all{display:inline-flex;align-items:center;gap:6px;margin:8px 0 4px}
+.lk-hint{margin:6px 0 2px}
+/* Bảng chọn thói quen nối */
+.lk-sub{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.lk-sug-h{display:flex;align-items:center;gap:6px;margin:4px 0 8px;font:650 13px/1.3 var(--f);color:var(--primary)}
+.lk-sug{display:grid;gap:8px;margin-bottom:12px}
+.lk-sug-row{display:flex;align-items:center;gap:10px;width:100%;padding:10px 8px 10px 10px;border:0;border-radius:18px;background:var(--surface-low,#EEF1F6);text-align:left;color:inherit;font:inherit;cursor:pointer}
+.lk-sug-row .flow-emblem{margin:0}
+.lk-sug-t{flex:1 1 auto;min-width:0}
+.lk-sug-t b{display:block;font:650 15px/1.35 var(--f)}
+.lk-sug-t b em{font-style:normal;font-weight:600;font-size:11px;margin-left:4px;padding:1px 6px;border-radius:99px;background:#EDE3F8;color:#5B3E86}
+.lk-sug-t small{display:block;margin-top:2px;font-size:12px;line-height:1.45;color:var(--muted)}
+.lk-own-ic{background:#EDE3F8;color:#5B3E86}
+.lk-none{color:var(--muted);font-size:14px}
+.lk-libbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+/* Bước “Khi…” */
+.lk-when,.lk-edit{margin:12px 0 4px;padding:10px 10px 6px;border-radius:16px;background:color-mix(in srgb,var(--primary) 7%,transparent)}
+.lk-when-lab{display:flex;align-items:center;gap:6px;margin-bottom:6px;font:650 13px/1.3 var(--f);color:var(--primary)}
+.lk-edit p{margin:0 0 8px;font-size:14px}
+.lk-edit .btn{display:inline-flex;align-items:center;gap:6px}
+.lk-edit-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+/* Thẻ */
+.band-anchor .lk-card.lk-badge,.lk-card.lk-badge{display:flex;align-items:center;gap:6px;margin:8px 0 0;font:600 12px/1.4 var(--f);color:var(--primary)}
+.band-anchor .lk-card.lk-card-btn,.lk-card.lk-card-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 12px;border:1.5px dashed color-mix(in srgb,var(--primary) 45%,transparent);border-radius:99px;background:none;color:var(--primary);font:650 13px/1.2 var(--f);cursor:pointer}
+/* Bài 6 */
+.row38.lk-locked{opacity:.72}
+.row38.lk-locked .num38{color:var(--muted)}
+.lk-ex .chp.good{background:#DDF3E8;border-color:#2E9B6A;color:#1F6E4A}
+.lk-ex .chp.bad{background:#FBE7E4;border-color:#D46A5A;color:#8A3326}
+.lk-ex .lk-ex-arrow{color:var(--muted)}
+.lk-ex-why{display:flex;align-items:center;gap:6px;margin:4px 0 2px;color:#1F6E4A;font-size:12.5px}
+.lk-pop-ic{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
+.lk-pop-ic .lk-ic{width:30px;height:30px;vertical-align:0}
+/* Tuần */
+.lk-wk{color:var(--primary)}
+/* PS1.3.65 · khớp nối: nút tròn giữa đường nối; sáng xanh + dấu ✓ khi cả hai thẻ đã làm; hiệu ứng chỉ chạy lần đầu sáng */
+.lk-knot{position:absolute;left:18px;top:50%;width:13px;height:13px;margin-top:-6.5px;border-radius:50%;background:var(--surface,#fff);box-shadow:inset 0 0 0 1.6px color-mix(in srgb,var(--primary) 40%,transparent);font-style:normal}
+.lk-join.on .lk-knot{background:#2E9B6A;box-shadow:none}
+.lk-join.on .lk-knot::after{content:"";position:absolute;left:4.2px;top:2.4px;width:3px;height:6px;border:solid #fff;border-width:0 1.8px 1.8px 0;transform:rotate(45deg)}
+.lk-join span{margin-left:16px}
+@media (prefers-reduced-motion:no-preference){
+ .lk-join.on i{animation:none}
+ .lk-join.lit i{transform-origin:top;animation:lkFill .5s ease-out}
+ .lk-join.lit .lk-knot{animation:lkKnot .55s .25s cubic-bezier(.3,1.6,.5,1) both}
+ .lk-badge .lkb-l{animation:lkInL .5s ease-out both}
+ .lk-badge .lkb-r{animation:lkInR .5s ease-out both}
+ .lk-badge .lkb-k{transform-box:fill-box;transform-origin:center;animation:lkKnot .6s .45s cubic-bezier(.3,1.6,.5,1) both}
+ .lk-badge .lkb-s{animation:lkSpark 1.1s .8s ease-out both}
+}
+@keyframes lkFill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes lkKnot{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes lkInL{from{transform:translateX(-14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes lkInR{from{transform:translateX(14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes lkSpark{0%{opacity:0}40%{opacity:1}100%{opacity:.85}}
+.lk-badge{width:220px;max-width:70%;margin:0 auto 4px}
+.lk-badge svg{display:block;width:100%;height:auto}
