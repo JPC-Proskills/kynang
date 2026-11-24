@@ -318,7 +318,7 @@
     '.psback:active{background:rgba(40,44,60,.13)}' +
     /* PS1.3.58: ô Sổ tay (ảnh đại diện) ở thanh đáy */
     '#abar>#gear.psnb{position:relative;padding:0;min-height:52px;color:#62666D;background:transparent;border:0;flex:1;min-width:0}#gear .m3-nav-indicator{display:grid;place-items:center;background:transparent!important}' +
-    '#gear .psnav__av{width:28px;height:28px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2265C5}#gear .psnav__av svg,#gear .psnav__av .ps-av{width:28px!important;height:28px!important}' +
+    '#gear .psnav__av{width:28px;height:28px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #BFD2F0}#gear .psnav__av svg,#gear .psnav__av .ps-av{width:28px!important;height:28px!important}' +
     '#gear .ps-av{display:grid;place-items:center;border-radius:50%;overflow:hidden;font-family:Nunito,system-ui,sans-serif;font-weight:900;line-height:1}' +
     'html.ps-sv #gear::after,html.ps-sv-err #gear::after{display:none}#gear #gdot{position:absolute;top:6px;right:calc(50% - 20px)}' +
     '.pshome{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:12px;width:100%;box-sizing:border-box;text-decoration:none;background:#2265C5;color:#fff;border-radius:18px;padding:12px 14px;box-shadow:0 3px 0 #17479A;margin:0 0 10px;-webkit-tap-highlight-color:transparent}' +
