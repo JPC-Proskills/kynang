@@ -317,6 +317,14 @@
     if (t.done > 0 && Date.now() - lb > 7 * 864e5) return '<div class="nudge">' + icon('shield', 18) + '<p>' + (lb ? 'Đã hơn 7 ngày bạn chưa sao lưu.' : 'Bạn chưa sao lưu bài làm lần nào.') + ' Một tập tin giữ bài của mọi khóa.</p><button type="button" class="ps-btn ps-btn--sm ps-btn--go" data-act="backup">Tải sao lưu</button></div>';
     return '';
   }
+  /* PS1.4.0 · Gửi hồ sơ cho thầy cô: một tập tin JSON cho mọi khóa và Shin Routine (PS.sendReport trong core.js) */
+  function hsrHTML() {
+    if (!PS.sendReport) return '';
+    var lr = PS.prefs().lastReport;
+    return '<section class="hsr"><span class="hsr__ic">' + icon('send', 22) + '</span><div class="hsr__t"><b>Gửi hồ sơ cho thầy cô</b><small>' +
+      (lr ? 'Đã gửi ' + PS.fmtDate(lr).slice(0, 5) + ' · ' : '') + 'Một tập tin cho mọi khóa và Shin Routine</small></div>' +
+      '<button type="button" class="ps-btn ps-btn--sm" data-act="hsSend">Gửi</button></section>';
+  }
   /* ---------------- PS1.3.54 · Trang chủ 3 thẻ (thanh đáy) ---------------- */
   var TABS = [['today', 'Hôm nay'], ['course', 'Khóa học'], ['lich', 'Lịch học']];
   var TAB = 'today', TABPUSH = 0;
@@ -387,7 +395,7 @@
         '<div class="kstats" style="--i:1"><div class="ks"><b>' + num(t.xp) + '</b><small>Tổng XP</small></div><div class="ks"><b>' + num(t.ins) + '</b><small>Insight</small></div><div class="ks"><b>' + t.todayMin + ' phút</b><small>Hôm nay</small></div></div>' +
         '</div>' +
         '<div class="enter">' + carouselHTML(carMods()) + '</div>' +
-        '<div class="wrap enter">' + guidesHTML() +
+        '<div class="wrap enter">' + hsrHTML() + guidesHTML() +
         '<footer class="hfoot">' + esc(CFG.ORG) + '<br>' + esc(CFG.APP) + ' ' + esc(CFG.APP_VER) + ' · Bài làm lưu trên máy này</footer></div>';
     } else if (TAB === 'lich') {
       body = '<div class="wrap wrap--top enter"><div class="tabh" style="--i:0"><h1 class="sec sec--top">Lịch học</h1>' +
@@ -497,6 +505,7 @@
     else if (a === 'kcNext') kcGo(KC.i + 1);
     else if (a === 'settings') openSettings();
     else if (a === 'closeSet') closeSettings();
+    else if (a === 'hsSend') { if (PS.sendReport()) render(false); }
     else if (a === 'backup') PS.backup();
     else if (a === 'restore') PS.restorePick();
   });

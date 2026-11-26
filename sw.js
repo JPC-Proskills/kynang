@@ -18,6 +18,8 @@
    - PS1.3.68: chữ Proskills xanh tươi #3A9A44, 3 icon lối tắt vẽ lại tông xanh lá.
    - PS1.3.69: Shin M.Claude.3.4.4 · hình đại diện Shin Routine (routine/icon-*.png) vẽ lại bằng gà con Shin.
    - PS1.3.70: khối gợi ý Shin Routine trong CD01, CD02, TC01 hiện Shin của chính học viên (core.js PS.routineShin).
+   - PS1.4.0: hồ sơ học tập gửi thầy cô (một tệp JSON cho mọi khóa), lõi ghi thời gian từng hoạt động.
+   - PS1.4.1: TC01.2.0 · lễ tân mới, hỏi nghề trong phòng, Sàn tập theo Sổ GDTC (slide 5), ghi lại buổi tập, video trong app.
    - PS1.3.57: CD02 bản 5 đợt 2 (cờ ảnh đại diện, hình kế hoạch, popup thuyền nâng cấp, vẽ lại người).
    - PS1.3.56: CD02 bản 5 đợt 1 (Bến 4 tự chấm 3 yếu tố, dải màu 1–5, Bến 5 bốn ngã rẽ).
    - PS1.3.55: điều hướng chung trong khóa (core PS.nav), Học tiếp mở thẳng hoạt động (?go=).
@@ -25,7 +27,7 @@
    - Không bao giờ đụng tới bài làm (localStorage) của học viên.
    ========================================================= */
 'use strict';
-const VERSION = 'PS1.3.70';
+const VERSION = 'PS1.4.1';
 const BASE = new URL(self.registration.scope);
 const PREFIX = 'proskills-' + encodeURIComponent(BASE.pathname) + '-';
 const SHELL = PREFIX + 'shell-' + VERSION;

@@ -4,7 +4,7 @@
    Nguồn nội dung: Sổ quản lý học tập GDTC v10.1, chương trình GDTC TTS/Kỹ sư, tiêu chí đo lường theo nghề (KTN),
    Sổ tay sức khỏe 2.0. Kỹ thuật động tác do GV GDTC duyệt lại. Mốc thể lực: bảng thành tích Sổ quản lý v10.1.
    ========================================================= */
-var TC_VER = 'TC01.1.8';
+var TC_VER = 'TC01.2.0';
 
 /* ---------- Gợi ý thẻ Shin Routine theo bài (PS1.3.26) ----------
    Bài có trong RT_BAI thì cuối trang bài hiện khối "Rèn mỗi ngày cùng Shin" (mã thẻ: PS_CONFIG.ROUTINE_LIB).
@@ -93,10 +93,37 @@ var TXT = {
   partNo: 'Chưa làm thêm',
   grpSay: 'Nhóm của bạn là <b>[Nhóm]</b>. Mỗi bài, Shin sẽ nói thêm điều nhóm bạn cần chú ý.',
   sexQ: 'Bảng mốc thể lực của lớp chia theo nam và nữ. Bạn xem mốc nào?',
-  injQ: 'Bạn có chấn thương cũ, vừa mổ, hoặc đang điều trị bệnh không?',
+  injQ: 'Bạn có bệnh lý, vấn đề sức khỏe hay chấn thương nào cần thầy cô lưu ý không?',
+  injSub: 'Ví dụ: chấn thương cũ, vừa mổ, hen suyễn, đang điều trị bệnh.',
   injYes: 'Cảm ơn bạn đã cho Shin biết. Báo thầy cô GDTC trước khi tập. Tập nhẹ, thấy đau là dừng.',
   injNo: 'Tốt quá! Vẫn nhớ: thấy đau là dừng nhé.',
-  injNote: 'Shin không hỏi chi tiết bệnh. Câu trả lời chỉ lưu trên máy của bạn.',
+  injPick: 'Chọn vấn đề của bạn (chọn nhiều được)',
+  injT: 'Ghi ngắn để thầy cô biết rõ hơn (không bắt buộc)',
+  injNote: 'Thông tin chỉ lưu trên máy của bạn. Khi bạn gửi hồ sơ, thầy cô GDTC đọc để hướng dẫn bạn tập an toàn.',
+  spQ: 'Trước giờ bạn có chơi thể thao không?',
+  spLv: ['Không', 'Thỉnh thoảng', 'Thường xuyên'],
+  spSub: 'Thường xuyên: từ 2 buổi mỗi tuần.',
+  spPick: 'Môn nào? Chọn một hoặc nhiều môn.',
+  jobGate: 'Phòng này gợi ý theo nghề của bạn. Cho Shin biết nghề của bạn trước nhé.',
+  jobGateSub: 'Chưa chắc thì chọn nghề gần nhất. Đổi lại được bất cứ lúc nào.',
+  jobSave: 'Lưu nghề của mình',
+  jobKeep: 'Giữ nghề cũ',
+  jobSaved: 'Đã lưu nghề của bạn.',
+  jobLine: 'Nghề của bạn',
+  jobChange: 'Đổi nghề',
+  logH: 'Ghi lại buổi tập',
+  logSub: 'Tập xong, ghi số của bạn. Máy tự ghi ngày giờ.',
+  logWarmQ: 'Hôm nay bạn đã làm phần nào?',
+  logMin: 'Tổng số phút',
+  logFeelQ: 'Bạn thấy thế nào?',
+  logSave: 'Lưu buổi tập',
+  logEmpty: 'Nhập ít nhất một số trước khi lưu nhé.',
+  logSaved: 'Đã lưu buổi tập lúc [Giờ].',
+  logHist: 'Các buổi đã ghi',
+  logNone: 'Chưa có buổi nào. Tập xong thì ghi ở đây nhé.',
+  logLast: 'Lần trước',
+  logBest: 'Kỷ lục',
+  logNu: 'Động tác này chỉ dành cho nam.',
   goalQ: 'Mục tiêu sức khỏe của bạn trước khi sang Nhật là gì?',
   goalSub: 'Viết một điều cụ thể, đo được.',
   goalTips: ['Chống đẩy được 20 cái liên tục', 'Plank được 1 phút', 'Ngủ trước 23 giờ mỗi ngày', 'Đủ sức làm ca 8 tiếng không mệt lả'],
@@ -110,7 +137,7 @@ var TXT = {
     'Tập đều mỗi ngày một chút. Sức khỏe là hành lý quan trọng nhất khi sang Nhật.',
     'Nhớ khởi động trước khi tập nha. Cơ thể ấm lên thì ít chấn thương.'
   ],
-  injHome: 'Bạn có chấn thương cũ: tập nhẹ, thấy đau là dừng, hỏi thầy cô GDTC trước nhé.',
+  injHome: 'Bạn có vấn đề sức khỏe cần lưu ý: tập nhẹ, thấy đau là dừng, hỏi thầy cô GDTC trước nhé.',
   khuSoon: 'Khu này đang xây. Shin mở sớm nhé!',
   baiDone: 'Xong bài <b>[Bài]</b>! Shin đục một lỗ trên thẻ hội viên cho bạn.',
   painStop: 'Dừng bài này hôm nay nhé. Đau kéo dài hoặc đau nhói thì báo thầy cô GDTC.',
@@ -122,45 +149,62 @@ var TXT = {
   reflSub: 'Viết một câu cho chính bạn. Viết từ 10 chữ trở lên được thêm Insight.'
 };
 
+/* ---------- lễ tân (TC01.2.0): môn thể thao, vấn đề sức khỏe cần thầy cô lưu ý ---------- */
+var SPORTS = ['Bóng đá', 'Cầu lông', 'Bóng chuyền', 'Chạy bộ', 'Gym', 'Bơi', 'Võ', 'Đạp xe', 'Môn khác'];
+var HEALTH = ['Đau, chấn thương gối', 'Đau lưng, cột sống', 'Chấn thương vai, tay', 'Chấn thương cổ chân', 'Hen suyễn, khó thở', 'Bệnh tim', 'Huyết áp cao hoặc thấp', 'Vừa mổ, vừa ốm dậy', 'Vấn đề khác'];
+
+/* ---------- hình thầy gửi (TC01.2.0) ----------
+   Hình nằm ở tc01/img/<mã>.webp. Mã đặt trong frames[].im (xem tc01-hinh-anh-yeu-cau.md).
+   Chỉ mã có trong TC_IMG mới hiện hình; mã chưa có thì hiện hình vẽ. Thêm hình: chép tệp vào img/ rồi thêm mã vào đây. */
+var TC_IMG = {};
+
 /* ---------- động tác ----------
    frames: các khoảnh khắc chính (p = tên tư thế trong art.js, t = lời hướng dẫn, g = đường gióng [x1,y1,x2,y2], a = mũi tên)
    keys: 3 điểm chính · s: tên ngắn cho nút chọn (không bắt buộc) · yt: link video riêng (để trống thì mở kênh video của thầy cô GDTC) */
 var EX = {
-  pushup: { n: 'Chống đẩy cơ bản', who: 'Nam · mốc giữa kỳ', yt: '',
+  /* Sàn tập b2–b4 (TC01.2.0): theo đúng Sổ quản lý học tập GDTC v10.1, mục IV.A (slide 5). ★ = độ khó trong sổ. yt = mã video YouTube của thầy cô GDTC */
+  pushup: { n: 'Chống đẩy cơ bản', s: 'Chống đẩy cơ bản', who: '★★ · Nữ nên bắt đầu bằng hít đất khuỵu gối', yt: 'tVW1z4NFHSg',
     frames: [
-      { p: 'pushUp', t: 'Hai tay chống ngay dưới vai, rộng hơn vai một chút. Thân thẳng từ đầu đến gót.', g: [42, 160, 186, 107] },
-      { p: 'pushDown', t: 'Hít vào, hạ người đến khi ngực gần chạm sàn. Khuỷu tay chếch về sau.', a: [[150, 90], [150, 126]] },
-      { p: 'pushUp', t: 'Thở ra, đẩy người lên. Thân vẫn thẳng một đường.', a: [[200, 150], [200, 112]] }
+      { p: 'pushUp', im: ['pushup-1'], t: 'Tay đặt thẳng dưới vai, cánh tay vuông góc với sàn. Cổ, lưng, mông thẳng một đường, hơi dốc về sau.', g: [42, 160, 186, 107] },
+      { p: 'pushDown', im: ['pushup-2'], t: 'Hít vào bằng mũi, hạ người đến khi ngực cách sàn khoảng 1 cm (nữ 10 cm). Khuỷu tay hướng ra sau, chếch 45° so với hông.', a: [[150, 90], [150, 126]] },
+      { p: 'pushUp', im: ['pushup-1'], t: 'Thở mạnh bằng miệng, đẩy người lên cao nhất có thể. Chống đẩy chậm vừa phải.', a: [[200, 150], [200, 112]] }
     ],
-    keys: ['Siết bụng, siết mông', 'Mắt nhìn sàn, phía trước tay', 'Không võng hông, không chổng mông'] },
-  kneepush: { n: 'Chống đẩy khuỵu gối', who: 'Nữ · người mới tập', yt: '',
+    keys: ['Khuỷu tay chếch 45°, không xòe ngang', 'Cổ, lưng, mông thẳng một đường', 'Xuống hít mũi, lên thở miệng'] },
+  pushknee: { n: 'Chống đẩy tay chạm gối', s: 'Tay chạm gối', who: '★★★ · Chỉ dành cho nam · test cuối kỳ', yt: '76XAAN6vj1k',
     frames: [
-      { p: 'kneeUp', t: 'Hai gối chạm sàn, tay chống ngay dưới vai. Thân thẳng từ đầu đến gối.', g: [92, 165, 190, 112] },
-      { p: 'kneeDown', t: 'Hít vào, hạ ngực xuống gần sàn. Hông đi cùng thân.', a: [[150, 100], [150, 134]] },
-      { p: 'kneeUp', t: 'Thở ra, đẩy lên. Làm chậm, đều nhịp.', a: [[204, 156], [204, 122]] }
+      { p: 'pushUp', im: ['pushknee-1'], t: 'Vào tư thế chống đẩy cơ bản: tay ngay dưới vai, thân thẳng một đường.', g: [42, 160, 186, 107] },
+      { p: 'pushDown', im: ['pushknee-2'], t: 'Hít vào, hạ ngực xuống gần sàn. Khuỷu tay chếch ra sau.', a: [[150, 90], [150, 126]] },
+      { p: 'climb', im: ['pushknee-3'], t: 'Thở ra, đẩy lên. Một tay rời sàn chạm gối chân đối diện, rồi đặt tay lại. Đổi bên.', a: [[170, 120], [158, 142]] }
     ],
-    keys: ['Thân thẳng từ đầu đến gối', 'Lót khăn dưới gối cho êm', 'Làm đúng 5 cái tốt hơn làm sai 15 cái'] },
-  plank: { n: 'Plank', who: 'Giữ thân bằng cẳng tay', yt: '',
+    keys: ['Kỹ thuật như chống đẩy cơ bản', 'Siết bụng để giữ thăng bằng khi một tay rời sàn', 'Nữ: tập chống đẩy cơ bản khi vào giai đoạn 2'] },
+  kneepush: { n: 'Hít đất khuỵu gối', s: 'Khuỵu gối', who: '★★★ · Nữ bắt đầu bằng động tác này', yt: '',
     frames: [
-      { p: 'plank', t: 'Khuỷu tay ngay dưới vai, cẳng tay đặt trên sàn.', a: [[174, 118], [174, 150]] },
-      { p: 'plank', t: 'Siết bụng, siết mông. Thân thẳng từ đầu đến gót.', g: [40, 160, 192, 132] },
-      { p: 'plank', t: 'Thở đều, không nín thở. Bấm giờ, giữ đến khi còn giữ đúng tư thế.' }
+      { p: 'kneeUp', im: ['kneepush-1'], t: 'Nằm sấp, hai tay thẳng, vuông góc với sàn, bàn tay hướng về trước. Gối chạm sàn, dang vừa phải, đùi xiên 45° so với sàn.' },
+      { p: 'kneeUp', im: ['kneepush-1'], t: 'Giữ thân thành một đường thẳng. Hóp bụng, khép cánh tay sát người.', g: [92, 165, 190, 112] },
+      { p: 'kneeDown', im: ['kneepush-2'], t: 'Hít vào, hạ người đến khi ngực chạm sàn. Thở ra, đẩy thân trên về vị trí ban đầu.', a: [[150, 100], [150, 134]] }
     ],
-    keys: ['Khuỷu tay ngay dưới vai', 'Thân thẳng một đường', 'Thở đều, không nín thở'] },
-  legraise: { n: 'Gập bụng nâng chân', who: 'Bụng dưới', yt: '',
+    keys: ['Thân thẳng từ đầu đến gối', 'Khép cánh tay sát người', 'Xuống hít vào, lên thở ra'] },
+  plank: { n: 'Plank', who: '★★ · Bụng, lưng', yt: 'LqH4Oh7znf4',
     frames: [
-      { p: 'legDown', t: 'Nằm ngửa, tay xuôi theo người. Lưng dưới áp sát sàn.' },
-      { p: 'legUp', t: 'Thở ra, nâng hai chân thẳng lên đến khi vuông góc với sàn.', a: [[50, 140], [96, 92]] },
-      { p: 'legDown', t: 'Hít vào, hạ chân thật chậm. Gót gần chạm sàn thì nâng lên tiếp.', a: [[86, 80], [44, 132]] }
+      { p: 'plank', im: ['plank-1'], t: 'Nằm sấp, khuỵu gối. Khuỷu tay ngay dưới vai, cẳng tay vuông góc với sàn.', a: [[174, 118], [174, 150]] },
+      { p: 'plank', im: ['plank-1'], t: 'Lần lượt duỗi thẳng hai chân. Siết bụng, siết mông. Dồn lực vào tay, nâng ngực lên hết mức.', g: [40, 160, 192, 132] },
+      { p: 'plank', im: ['plank-1'], t: 'Mắt nhìn hai bàn tay. Hít bằng mũi, thở bằng miệng thật đều. Bấm giờ, giữ đến khi còn đúng tư thế.' }
     ],
-    keys: ['Lưng dưới luôn áp sàn', 'Hạ chân chậm, không thả rơi', 'Chân thẳng, mũi chân duỗi'] },
-  superman: { n: 'Superman (lưng)', who: 'Lưng dưới', yt: '',
+    keys: ['Cổ, lưng, mông thẳng hoặc hơi dốc về sau', 'Xương vai sau còn nhô là ngực chưa nâng đủ', 'Siết bụng, siết mông suốt bài'] },
+  legraise: { n: 'Gập bụng nâng chân', s: 'Nâng chân', who: '★★★ · Bụng dưới', yt: 'tg7XajI2RK0',
     frames: [
-      { p: 'supRest', t: 'Nằm sấp, hai tay duỗi thẳng qua đầu, hai chân duỗi thẳng.' },
-      { p: 'supUp', t: 'Siết bụng, siết lưng dưới. Nâng tay, ngực và chân khỏi sàn. Giữ 1–2 giây.', a: [[200, 158], [200, 128]] },
-      { p: 'supRest', t: 'Hạ xuống chậm. Mắt nhìn sàn, cổ thẳng theo lưng.' }
+      { p: 'legDown', im: ['legraise-2'], t: 'Nằm ngửa, hai tay duỗi xuôi theo người (hoặc đặt dưới đầu). Hai chân duỗi thẳng.' },
+      { p: 'legUp', im: ['legraise-1'], t: 'Thở ra bằng miệng, từ từ nâng hai chân thẳng lên vuông góc với thân. Giữ vài giây.', a: [[50, 140], [96, 92]] },
+      { p: 'legDown', im: ['legraise-2'], t: 'Hít vào bằng mũi, hạ chân đến khi cách sàn khoảng 15 cm rồi nâng lên tiếp.', a: [[86, 80], [44, 132]] }
     ],
-    keys: ['Nâng chậm, không giật', 'Cổ thẳng theo lưng', 'Giữ 1–2 giây rồi hạ'] },
+    keys: ['Tay giữ cố định suốt bài', 'Hai chân duỗi thẳng, khép sát', 'Hạ chân cách sàn 15 cm, không chạm sàn'] },
+  superman: { n: 'Bụng lưng (superman)', s: 'Superman', who: '★★★ · Lưng dưới', yt: '',
+    frames: [
+      { p: 'supRest', im: ['superman-1'], t: 'Nằm úp, hai tay duỗi thẳng qua đầu. Hai chân duỗi, khép hẹp hơn hông, mũi chân chống sàn (có bạn giữ chân càng tốt).' },
+      { p: 'supUp', im: ['superman-2'], t: 'Siết bụng và lưng dưới, nhấc tay cùng ngực khỏi sàn. Giữ 1–2 giây.', a: [[200, 158], [200, 128]] },
+      { p: 'supRest', im: ['superman-1'], t: 'Hạ tay và ngực xuống nhưng không chạm hẳn sàn, rồi nhấc lên tiếp.' }
+    ],
+    keys: ['Siết bụng và lưng dưới', 'Giữ 1–2 giây ở điểm cao', 'Hạ xuống không chạm hẳn sàn'] },
   lift: { n: 'Nâng vật đúng cách', who: 'Lưng, chân, hông', yt: '',
     frames: [
       { p: 'liftLow', mk: 'boxLow', t: 'Đứng sát vật, hai chân rộng bằng vai. Hạ hông xuống, giữ lưng thẳng.', g: [96, 128, 127, 91] },
@@ -168,13 +212,20 @@ var EX = {
       { p: 'liftUp', mk: 'boxUp', t: 'Muốn đổi hướng thì bước cả bàn chân theo. Không vặn lưng khi đang ôm vật.', arc: [[126, 156, 12]] }
     ],
     keys: ['Lưng thẳng, hạ hông bằng chân', 'Ôm vật sát người', 'Đổi hướng bằng bước chân, không vặn lưng'] },
-  squat: { n: 'Squat', who: 'Chân, hông', yt: '',
+  squat: { n: 'Squat cơ bản', s: 'Squat cơ bản', who: '★★ · Chân, hông', yt: 'A7-fRuNZb94',
     frames: [
-      { p: 'standArms', t: 'Chân rộng bằng vai, mũi chân hơi mở ra. Tay đưa ra trước.' },
-      { p: 'squatDown', t: 'Đẩy hông ra sau như ngồi xuống ghế. Hạ đến khi đùi gần song song sàn.', g: [76, 140, 148, 54] },
-      { p: 'standArms', t: 'Dồn lực ở gót và đùi, đứng thẳng lên.', a: [[90, 130], [90, 92]] }
+      { p: 'standArms', im: ['squat-1'], t: 'Chân rộng bằng hoặc hơn vai một chút. Hai tay duỗi song song trước mặt.' },
+      { p: 'squatDown', im: ['squat-2'], t: 'Hít vào bằng mũi, đẩy hông ra sau hết mức rồi hạ thấp. Lưng thẳng, thóp bụng. Gối chỉ hơi vượt mũi chân.', g: [76, 140, 148, 54] },
+      { p: 'standArms', im: ['squat-1'], t: 'Thở ra bằng miệng, đứng thẳng lên. Lòng bàn chân luôn áp sát sàn.', a: [[90, 130], [90, 92]] }
     ],
-    keys: ['Lưng thẳng, ngực mở', 'Gối hướng theo mũi chân', 'Gót luôn chạm sàn'] },
+    keys: ['Đẩy hông ra sau trước khi hạ', 'Lưng thẳng, thóp bụng', 'Gối chỉ hơi vượt mũi chân'] },
+  squat20: { n: 'Squat tạ vôi (20 kg)', s: 'Squat tạ 20 kg', who: '★★★ · Tạ 20 kg ở lớp · ở nhà ôm bình nước', yt: '',
+    frames: [
+      { p: 'sumoUp', mk: 'wtUp', im: ['squat20-2'], t: 'Hai chân dang rộng hơn vai, mũi chân hướng ra ngoài khoảng 45°.' },
+      { p: 'sumoLow', mk: 'wtLow', im: ['squat20-1'], t: 'Hạ trọng tâm, mông gần chạm gót, mở gối và đùi theo hướng mũi chân. Nâng tạ lên, lưng thẳng, mặt nhìn trước.', a: [[60, 100], [60, 134]] },
+      { p: 'sumoUp', mk: 'wtUp', im: ['squat20-2'], t: 'Hít sâu, dùng lực đùi đứng thẳng lên. Rồi từ từ hạ xuống mức thấp nhất.', a: [[60, 134], [60, 100]] }
+    ],
+    keys: ['Gối mở theo hướng mũi chân', 'Lưng thẳng, mặt nhìn phía trước', 'Ở nhà: ôm bình nước trước ngực'] },
   lunge: { n: 'Bước lunge', who: 'Chân, hông, thăng bằng', yt: '',
     frames: [
       { p: 'stand', t: 'Đứng thẳng, tay thả lỏng hoặc chống hông.' },
@@ -196,7 +247,37 @@ var EX = {
       { p: 'kneeHigh', t: 'Thân thẳng, không ngả ra sau. Nhanh dần.' }
     ],
     keys: ['Đùi lên ngang hông', 'Thân thẳng', 'Tay đánh theo nhịp'] },
-  /* khởi động và giãn cơ: thẻ hình, không có mốc */
+  /* Khởi động trước khi tập (TC01.2.0): Sổ quản lý học tập GDTC v10.1, mục IV.B (slide 5). Mỗi khung = 1 động tác (n). Số nhịp, số giây: Claude đề xuất, GV GDTC duyệt */
+  kxuong: { n: 'Khớp xương', s: 'Khớp xương', who: 'Phần 1 · 6 động tác · mỗi động tác 8 nhịp, đổi chiều 8 nhịp', yt: '_QudBgJvP20', list: 1,
+    frames: [
+      { n: 'Xoay cổ tay, cổ chân', p: 'standArms', im: ['kx1-1', 'kx1-2'], c: 'Xoay cổ tay, cổ chân', t: 'Đan hai tay, xoay cổ tay 8 nhịp mỗi chiều. Rồi nhấc mũi chân, xoay cổ chân. Đổi chân.', arc: [[184, 39, 9], [126, 163, 7]] },
+      { n: 'Xoay khuỷu tay (chỏ)', p: 'armSide', im: ['kx2-1'], c: 'Xoay khuỷu tay', t: 'Dang hai tay ngang vai. Xoay cẳng tay quanh khuỷu 8 nhịp, rồi đổi chiều.', arc: [[56, 42, 9], [184, 42, 9]] },
+      { n: 'Xoay khớp vai', p: 'handsShoulder', im: ['kx3-1'], c: 'Xoay khớp vai', t: 'Đặt các ngón tay lên vai. Xoay khuỷu tay thành vòng tròn ra trước 8 nhịp, ra sau 8 nhịp.', arc: [[78, 52, 9], [162, 52, 9]] },
+      { n: 'Xoay, gập cổ', p: 'neckSide', im: ['kx4-1', 'kx4-2'], c: 'Xoay, gập cổ', t: 'Chống tay vào hông. Nghiêng đầu sang trái, sang phải, cúi xuống, ngửa nhẹ. Rồi xoay cổ thật chậm.' },
+      { n: 'Xoay, vặn mình', p: 'handsHip', im: ['kx5-1', 'kx5-2'], c: 'Xoay, vặn mình', t: 'Chân rộng bằng vai, chống tay vào hông. Xoay hông 8 vòng mỗi chiều. Rồi vặn thân sang trái, sang phải.', arc: [[120, 100, 13]] },
+      { n: 'Xoay, gập gối', p: 'stand', im: ['kx6-1', 'kx6-2'], c: 'Xoay, gập gối', t: 'Khép chân, hơi chùng gối, hai tay đặt lên gối. Xoay gối 8 vòng mỗi chiều. Rồi ngồi xuống, đứng lên chậm.', arc: [[121, 132, 10]] }
+    ],
+    keys: ['Làm lần lượt 6 động tác theo thứ tự trong sổ', 'Mỗi động tác 8 nhịp, đổi chiều 8 nhịp', 'Xoay chậm, đều, không giật mạnh'] },
+  kcobap: { n: 'Cơ bắp', s: 'Cơ bắp', who: 'Phần 2 · 6 động tác kéo dãn · giữ mỗi bên 10–15 giây', yt: '_QudBgJvP20', list: 1,
+    frames: [
+      { n: 'Kéo dãn cơ vai', p: 'armCross', im: ['cb1-1'], c: 'Kéo dãn cơ vai', t: 'Duỗi một tay ngang ngực, tay kia giữ khuỷu kéo sát người. Giữ 10–15 giây, đổi bên.' },
+      { n: 'Kéo dãn cơ tay sau', p: 'triceps', im: ['cb2-1'], c: 'Kéo dãn cơ tay sau', t: 'Gập một tay ra sau đầu, tay kia kéo nhẹ khuỷu. Giữ 10–15 giây, đổi bên.' },
+      { n: 'Tay chạm đất 3 lần (bụng, lưng)', p: 'toeTouch', im: ['cb3-1', 'cb3-2'], c: 'Tay chạm đất 3 lần', t: 'Chân rộng bằng vai. Cúi gập người, tay chạm đất 3 lần. Đứng lên, chống tay sau lưng, ưỡn nhẹ.' },
+      { n: 'Lườn trái, lườn phải', p: 'sideBend', im: ['cb4-1'], c: 'Lườn trái, phải', t: 'Một tay chống hông, tay kia vòng qua đầu. Nghiêng người sang bên, giữ 10–15 giây. Đổi bên.' },
+      { n: 'Tay này chạm mũi chân kia (hông)', p: 'toeTouch', im: ['cb5-1'], c: 'Tay chạm mũi chân kia', t: 'Chân rộng hơn vai. Cúi xuống, tay phải chạm mũi chân trái, tay trái giơ cao. Đổi bên.' },
+      { n: 'Ép dọc, ép ngang', p: 'lungeDown', im: ['cb6-1', 'cb6-2'], c: 'Ép dọc, ép ngang', t: 'Ép dọc: bước dài, gối trước gập, chân sau duỗi thẳng. Ép ngang: chân rộng, gập một gối sang bên. Giữ 10–15 giây mỗi bên.' }
+    ],
+    keys: ['Giữ mỗi bên 10–15 giây', 'Căng nhẹ là đủ, không nhún giật', 'Thở đều, không nín thở'] },
+  ktim: { n: 'Tim mạch', s: 'Tim mạch', who: 'Phần 3 · 5 động tác · mỗi động tác 20–30 giây, nhanh dần', yt: '_QudBgJvP20', list: 1,
+    frames: [
+      { n: 'Nâng cao đùi', p: 'kneeHigh', im: ['tm1-1'], c: 'Nâng cao đùi', t: 'Chạy tại chỗ, nâng đùi lên ngang hông. Tay đánh theo nhịp.', g: [100, 86, 176, 86] },
+      { n: 'Đập tay (cổ vũ)', p: 'jjOpen', im: ['tm2-1'], c: 'Đập tay (jumping jack)', t: 'Bật nhảy dang chân, hai tay vỗ trên đầu. Bật về khép chân, hạ tay. Chính là động tác jumping jack.' },
+      { n: 'Leo núi (chân, bụng)', p: 'climb', im: ['tm3-1'], c: 'Leo núi', t: 'Vào tư thế chống đẩy cao. Kéo luân phiên từng gối về sát ngực, nhanh dần.', a: [[150, 160], [166, 146]] },
+      { n: 'Chạy tại chỗ (nhanh dần đều)', p: 'jog', im: ['tm4-1'], c: 'Chạy tại chỗ', t: 'Chạy nhẹ tại chỗ, nhanh dần đều. Thở đều.' },
+      { n: 'Chạy gót chạm mông', p: 'buttKick', im: ['tm5-1'], c: 'Gót chạm mông', t: 'Chạy tại chỗ, gót chân đá ra sau chạm mông. Thân thẳng.' }
+    ],
+    keys: ['Nhẹ rồi nhanh dần', 'Tiếp đất nhẹ bằng nửa trước bàn chân', 'Mệt quá thì chậm lại, không dừng đột ngột'] },
+  /* khởi động và giãn cơ cũ: thẻ hình, không có mốc (warm: không còn dùng ở Sàn tập từ TC01.2.0, giữ cho dữ liệu cũ) */
   warm: { n: 'Chuỗi khởi động 10 phút', who: 'Làm trước mọi buổi tập', yt: '',
     frames: [
       { p: 'armSide', t: 'Xoay cổ tay, khuỷu tay, khớp vai. Mỗi khớp 8 nhịp, xoay cả hai chiều.', arc: [[50, 42, 9], [190, 42, 9]] },
@@ -275,6 +356,8 @@ var EX = {
 var MOC = {
   pushup:   { u: 'rep', nam: [20, 35, 40], src: 'Hít đất cơ bản · giữa kỳ' },
   kneepush: { u: 'rep', nu: [20, 30, 35], src: 'Hít đất khuỵu gối · giữa kỳ' },
+  pushknee: { u: 'rep', note: 'Test cuối kỳ (nam): hít đất tay chạm đầu gối.' },
+  squat20:  { u: 'rep', note: 'Trên lớp dùng tạ vôi 20 kg. Ở nhà: ôm bình nước trước ngực.' },
   plank:    { u: 's', nam: [120, 150, 180], nu: [90, 120, 150], src: 'Plank · giữa kỳ' },
   legraise: { u: 'rep', nam: [30, 40, 50], nu: [20, 30, 40], src: 'Gập bụng nâng chân · cuối kỳ' },
   superman: { u: 'rep', nam: [30, 40, 50], nu: [20, 30, 40], src: 'Lưng bụng (superman) · cuối kỳ' },
@@ -291,24 +374,13 @@ var MOC = {
 var MOC_LAB = ['Yếu', 'Trung bình', 'Tốt'];
 
 /* ---------- 6 bài của Sàn tập ----------
+   TC01.2.0: theo Sổ quản lý học tập GDTC (slide 5), bỏ bài Tim mạch; b1–b4 chỉ còn how + log (ghi lại buổi tập: 'kd' khởi động, 'ex' số cái/giây × hiệp).
    Mỗi bài tối đa 3 hoạt động, 3–5 phút. Hoạt động: how (xem cách làm) · spot (tìm điểm chưa đúng) · try (tập thử cùng Shin)
    · order (xếp thứ tự) · pick (chọn cách làm đúng) · plan (lịch tập của mình). gtip: một câu riêng cho từng nhóm. */
 var BAI = [
-  { id: 'b1', t: 'Khởi động đúng cách', ic: 'warm', sub: 'Làm ấm khớp và tim trước khi tập', min: 10,
+  { id: 'b1', t: 'Khởi động đúng cách', ic: 'warm', sub: 'Khớp xương, cơ bắp, tim mạch · 17 động tác', min: 15,
     acts: [
-      { id: 'b1a', k: 'how', t: 'Xem chuỗi khởi động', min: 3, xp: 10, ex: ['warm'] },
-      { id: 'b1b', k: 'order', t: 'Xếp chuỗi khởi động', min: 3, xp: 10,
-        q: 'Xếp 5 việc khởi động theo thứ tự đúng.', sub: 'Chạm lần lượt từ việc làm trước đến việc làm sau.',
-        items: ['Xoay cổ tay, khuỷu tay, vai', 'Xoay cổ, vặn mình', 'Xoay gối, cổ chân', 'Nâng cao đùi tại chỗ', 'Chạy tại chỗ, nhanh dần'],
-        hint: 'Gợi ý: khớp trước, tim mạch sau. Khớp đi từ trên xuống dưới.',
-        ok: 'Khớp ấm trước, tim tăng nhịp dần. Cơ thể sẵn sàng mà không bị sốc.' },
-      { id: 'b1c', k: 'pick', t: 'Trễ giờ thì sao?', min: 2, xp: 10,
-        q: 'Hôm nay bạn chỉ còn 15 phút để tập. Bạn làm gì?',
-        opts: [
-          { t: 'Bỏ khởi động, vào tập luôn cho kịp giờ', why: 'Cơ còn lạnh mà tập mạnh ngay thì dễ chấn thương.' },
-          { t: 'Khởi động 5 phút, tập 10 phút nhẹ hơn mọi ngày', ok: 1, why: 'Đúng rồi! Tập ít mà an toàn vẫn hơn tập nhiều rồi chấn thương.' },
-          { t: 'Tập thật nhanh, thật mạnh để bù lại thời gian đã mất', why: 'Vội và quá sức là lúc dễ sai tư thế, dễ đau nhất.' }
-        ] }
+      { id: 'b1a', k: 'how', t: 'Xem cách làm', kl: 'Xem cách làm · ghi lại', min: 5, xp: 20, ex: ['kxuong', 'kcobap', 'ktim'], log: 'kd' }
     ],
     gtip: {
       xuong: 'Đứng máy cả ca dễ cứng vai, cổ tay. Khởi động khớp thật kỹ.',
@@ -317,18 +389,9 @@ var BAI = [
       dv: 'Đi lại, cúi, bưng bê cả ngày. Khởi động kỹ lưng, hông, gối.',
       vp: 'Ngồi lâu làm cơ cứng lại. Khởi động giúp vai gáy, hông linh hoạt hơn.' } },
 
-  { id: 'b2', t: 'Ngực – Vai – Tay', ic: 'arm', sub: 'Chống đẩy cơ bản, chống đẩy khuỵu gối', min: 12,
+  { id: 'b2', t: 'Ngực – Vai – Tay', ic: 'arm', sub: 'Chống đẩy cơ bản, tay chạm gối, khuỵu gối', min: 10,
     acts: [
-      { id: 'b2a', k: 'how', t: 'Xem cách làm', min: 4, xp: 10, ex: ['pushup', 'kneepush'],
-        more: 'Nâng cao: chống đẩy tay chạm gối (test cuối kỳ). Xem cách làm trong video của thầy cô GDTC.' },
-      { id: 'b2b', k: 'spot', t: 'Tìm điểm chưa đúng', min: 3, xp: 10,
-        rounds: [{ p: 'pushWrong', q: 'Bạn này chống đẩy chưa đúng ở 3 chỗ. Chạm vào từng chỗ.',
-          hs: [
-            { x: 132, y: 152, r: 20, t: 'Hông võng xuống', why: 'Lực dồn vào thắt lưng, dễ đau lưng.' },
-            { x: 178, y: 132, r: 15, t: 'Cúi gằm đầu', why: 'Cổ bị gập, không thẳng theo lưng.' },
-            { x: 197, y: 162, r: 15, t: 'Tay đặt quá xa phía trước', why: 'Tay phải ở ngay dưới vai thì mới đẩy khỏe.' }
-          ] }] },
-      { id: 'b2c', k: 'try', t: 'Tập thử cùng Shin', min: 4, xp: 15, ex: ['pushup', 'kneepush'] }
+      { id: 'b2a', k: 'how', t: 'Xem cách làm', kl: 'Xem cách làm · ghi lại', min: 5, xp: 20, ex: ['pushup', 'pushknee', 'kneepush'], log: 'ex' }
     ],
     gtip: {
       xuong: 'Nhấc chi tiết, chỉnh máy, cầm dụng cụ cả ca cần vai và tay khỏe.',
@@ -337,22 +400,9 @@ var BAI = [
       dv: 'Đỡ người, bưng khay, đẩy xe cần tay và vai khỏe.',
       vp: 'Ngồi lâu dễ gù vai. Tập ngực, vai giúp dáng thẳng hơn.' } },
 
-  { id: 'b3', t: 'Bụng – Lưng', ic: 'core', sub: 'Plank, gập bụng nâng chân, superman', min: 12,
+  { id: 'b3', t: 'Bụng – Lưng', ic: 'core', sub: 'Plank, gập bụng nâng chân, superman', min: 10,
     acts: [
-      { id: 'b3a', k: 'how', t: 'Xem cách làm', min: 4, xp: 10, ex: ['plank', 'legraise', 'superman'] },
-      { id: 'b3b', k: 'spot', t: 'Tìm điểm chưa đúng', min: 3, xp: 10,
-        rounds: [
-          { p: 'plankSag', q: 'Plank này chưa đúng ở 2 chỗ. Chạm vào từng chỗ.',
-            hs: [
-              { x: 126, y: 156, r: 20, t: 'Hông võng xuống', why: 'Bụng không siết, lưng dưới chịu hết lực.' },
-              { x: 186, y: 152, r: 15, t: 'Cúi đầu sát sàn', why: 'Mắt nhìn sàn nhưng cổ phải thẳng theo lưng.' }
-            ] },
-          { p: 'plankHigh', q: 'Còn plank này? Chạm vào chỗ chưa đúng.',
-            hs: [{ x: 136, y: 98, r: 22, t: 'Mông chổng cao', why: 'Trông dễ hơn nhưng bụng gần như không phải làm việc.' }] },
-          { p: 'legWrong', q: 'Gập bụng nâng chân: chạm vào chỗ chưa đúng.',
-            hs: [{ x: 134, y: 150, r: 20, t: 'Lưng dưới cong lên khỏi sàn', why: 'Dễ đau lưng. Hạ chân ít thôi, giữ lưng áp sàn.' }] }
-        ] },
-      { id: 'b3c', k: 'try', t: 'Tập thử cùng Shin', min: 4, xp: 15, ex: ['plank', 'legraise', 'superman'] }
+      { id: 'b3a', k: 'how', t: 'Xem cách làm', kl: 'Xem cách làm · ghi lại', min: 5, xp: 20, ex: ['plank', 'legraise', 'superman'], log: 'ex' }
     ],
     gtip: {
       xuong: 'Bụng, lưng khỏe giữ thân vững khi đứng máy và cúi nhấc đồ.',
@@ -361,25 +411,9 @@ var BAI = [
       dv: 'Cúi lau, đỡ người, bưng bê cần bụng và lưng khỏe để đỡ đau lưng.',
       vp: 'Ngồi lâu dễ đau lưng dưới. Bụng, lưng khỏe giúp ngồi thẳng lâu hơn.' } },
 
-  { id: 'b4', t: 'Chân – Hông', ic: 'leg', sub: 'Squat, bước lunge', min: 12,
+  { id: 'b4', t: 'Chân – Hông', ic: 'leg', sub: 'Squat cơ bản, squat tạ vôi 20 kg', min: 10,
     acts: [
-      { id: 'b4a', k: 'how', t: 'Xem cách làm', min: 4, xp: 10, ex: ['squat', 'lunge'],
-        more: 'Nâng cao: ôm bình nước trước ngực khi squat (test cuối kỳ dùng tạ 20 kg trên lớp).' },
-      { id: 'b4b', k: 'spot', t: 'Tìm điểm chưa đúng', min: 3, xp: 10,
-        rounds: [
-          { p: 'squatWrong', q: 'Squat này chưa đúng ở 3 chỗ. Chạm vào từng chỗ.',
-            hs: [
-              { x: 118, y: 92, r: 22, t: 'Lưng gù', why: 'Lưng phải thẳng, ngực mở thì cột sống mới an toàn.' },
-              { x: 116, y: 160, r: 14, t: 'Nhón gót', why: 'Gót phải chạm sàn để đứng vững.' },
-              { x: 150, y: 136, r: 15, t: 'Gối đẩy quá xa ra trước', why: 'Đẩy hông ra sau trước, gối sẽ đỡ bị ép.' }
-            ] },
-          { p: 'lungeWrong', q: 'Bước lunge này: chạm vào 2 chỗ chưa đúng.',
-            hs: [
-              { x: 156, y: 108, r: 20, t: 'Thân đổ về trước', why: 'Giữ thân thẳng thì lực dồn đều hai chân.' },
-              { x: 176, y: 132, r: 15, t: 'Gối trước vượt xa mũi chân', why: 'Gối chịu lực quá nhiều, dễ đau gối.' }
-            ] }
-        ] },
-      { id: 'b4c', k: 'try', t: 'Tập thử cùng Shin', min: 4, xp: 15, ex: ['squat', 'lunge'] }
+      { id: 'b4a', k: 'how', t: 'Xem cách làm', kl: 'Xem cách làm · ghi lại', min: 5, xp: 20, ex: ['squat', 'squat20'], log: 'ex' }
     ],
     gtip: {
       xuong: 'Đứng máy 8 tiếng mỗi ngày. Chân khỏe thì cuối ca vẫn còn sức.',
@@ -387,24 +421,6 @@ var BAI = [
       troi: 'Ngồi xổm, đứng lên, leo giàn, vác đồ đi lại. Chân, hông là gốc sức của bạn.',
       dv: 'Đi lại cả ngày, ngồi xuống đỡ người. Squat đúng cũng là cách nâng đồ đúng.',
       vp: 'Ngồi nhiều thì chân, hông ít vận động. Vài phút squat giữa giờ rất có ích.' } },
-
-  { id: 'b5', t: 'Tim mạch', ic: 'heart', sub: 'Jumping jack, nâng cao đùi', min: 10,
-    acts: [
-      { id: 'b5a', k: 'how', t: 'Xem cách làm', min: 3, xp: 10, ex: ['jj', 'kneehigh'] },
-      { id: 'b5b', k: 'spot', t: 'Tìm điểm chưa đúng', min: 2, xp: 10,
-        rounds: [{ p: 'kneeLow', q: 'Nâng cao đùi chưa đúng ở 2 chỗ. Chạm vào từng chỗ.',
-          hs: [
-            { x: 150, y: 104, r: 18, t: 'Đùi thấp, chưa ngang hông', why: 'Đùi lên ngang hông thì tim mới làm việc đủ.' },
-            { x: 108, y: 54, r: 20, t: 'Ngả người ra sau', why: 'Thân thẳng giúp giữ thăng bằng, đỡ mỏi lưng.' }
-          ] }] },
-      { id: 'b5c', k: 'try', t: 'Tập thử cùng Shin', min: 4, xp: 15, ex: ['jj', 'kneehigh'] }
-    ],
-    gtip: {
-      xuong: 'Tim phổi khỏe giúp bạn bền sức qua ca dài, cả khi tăng ca.',
-      chuyen: 'Làm theo nhịp máy cả ca cần sức bền. Tập tim mạch giúp bạn bền sức.',
-      troi: 'Làm ngoài trời, vận động nhiều cả ngày. Sức bền tốt giúp bạn trụ đến cuối ca.',
-      dv: 'Đi lại, chạy việc cả ngày cần sức bền. Tập đều giúp đỡ hụt hơi.',
-      vp: 'Ít vận động cả ngày. 10 phút tim mạch giúp cơ thể tỉnh táo hơn.' } },
 
   { id: 'b6', t: 'Giãn cơ và lịch tập', ic: 'stretch', sub: 'Thả lỏng sau tập, lên lịch tập ở nhà', min: 10,
     acts: [
@@ -927,7 +943,7 @@ var LAD_G = [
   { k: 'nvt', n: 'Ngực – vai – tay', d: 'Bưng, đẩy, nâng', ex: 'pushup', bai: 'b2' },
   { k: 'bl', n: 'Bụng – lưng', d: 'Giữ lưng thẳng khi cúi, khi xoay', ex: 'plank', bai: 'b3' },
   { k: 'ch', n: 'Chân – hông', d: 'Đứng lâu, ngồi xuống đứng lên', ex: 'squat', bai: 'b4' },
-  { k: 'tm', n: 'Sức bền', d: 'Làm hết ca không đuối', ex: 'jj', bai: 'b5' }
+  { k: 'tm', n: 'Sức bền', d: 'Làm hết ca không đuối', ex: 'jj', bai: 'b1' } /* TC01.2.0: bài Tim mạch bỏ, phần Tim mạch nằm trong Khởi động */
 ];
 var LAD_NEED = { xuong: ['nvt', 'ch'], chuyen: ['ch', 'bl'], troi: ['nvt', 'bl'], dv: ['bl', 'ch'], vp: ['bl', 'tm'],
   'dieu-duong': ['bl', 'ch'], 'xay-dung': ['nvt', 'bl'], 'thuc-pham': ['ch', 'nvt'], 'o-to': ['nvt', 'bl'], 've-sinh-toa-nha': ['bl', 'ch'] };
@@ -2301,10 +2317,10 @@ var BAI_RT = [
 
 /* =========================================================
    BUỔI TẬP 10 PHÚT CÙNG SHIN (TC01.1.5) · PA A: 3 bài cố định để chọn
-   Khởi động 2 phút (preshift 5 × 24 giây) → bài chính 6 phút (6 động tác × làm 40 giây, nghỉ 20 giây) → giãn 2 phút (midstretch 5 × 24 giây).
+   Khởi động 2 phút (kxuong 6 × 20 giây, từ TC01.2.0) → bài chính 6 phút (6 động tác × làm 40 giây, nghỉ 20 giây) → giãn 2 phút (midstretch 5 × 24 giây).
    Nữ: pushup tự đổi thành kneepush. Không đục lỗ thẻ; thẻ ghi số buổi.
    ========================================================= */
-var S10 = { warm: 'preshift', cool: 'midstretch', wSec: 24, work: 40, rest: 20 };
+var S10 = { warm: 'kxuong', cool: 'midstretch', wSec: 20, work: 40, rest: 20 };
 var S10_MENU = [
   { id: 'sang', n: 'Tỉnh táo buổi sáng', ic: 'warm', d: 'Tim đập nhanh hơn, người tỉnh táo', main: ['jj', 'squat', 'kneehigh', 'lunge', 'jj', 'kneehigh'] },
   { id: 'luc', n: 'Sức mạnh', ic: 'arm', d: 'Tay, bụng, lưng, chân', main: ['pushup', 'squat', 'plank', 'superman', 'lunge', 'legraise'] },
@@ -2314,7 +2330,7 @@ var S10_TXT = {
   btn: 'Buổi tập 10 phút cùng Shin',
   btnSub: '3 bài để chọn',
   hi: 'Chọn một bài 10 phút. Shin đếm giờ, bạn làm theo hình.',
-  inj: 'Bạn có chấn thương cũ: làm nhẹ, động tác nào đau thì bỏ qua.',
+  inj: 'Bạn có vấn đề sức khỏe cần lưu ý: làm nhẹ, động tác nào đau thì bỏ qua.',
   plan: ['Khởi động', 'Bài chính', 'Giãn cơ'],
   planD: ['2 phút', '6 động tác · làm 40 giây, nghỉ 20 giây', '2 phút'],
   start: 'Bắt đầu buổi tập',
@@ -2334,11 +2350,10 @@ var S10_TXT = {
 };
 
 var DEMO = {
-  mem: { job: 'co-khi', g: 'xuong', sex: 'nam', inj: 0, goal: 'Chống đẩy được 30 cái liên tục trước khi bay', h: 168, w: 60, at: 0 },
-  done: ['b1a', 'b1b', 'b1c', 'b2a', 'b2b', 'b2c', 'b4a'],
-  log: { pushup: [{ n: 18, f: 2 }, { n: 22, f: 2 }], squat: [{ n: 30, f: 1 }] },
-  refl: { b2c: 'Lần tới mình sẽ siết bụng, siết mông từ đầu đến cuối, không để hông võng xuống.',
-    d1c: 'Bữa sáng mai mình sẽ ăn thêm một quả trứng và uống sữa thay cà phê.' },
+  mem: { job: 'co-khi', g: 'xuong', sex: 'nam', inj: 0, sp: { lv: 1, l: [0, 3] }, hl: { y: 0, l: [], t: '' }, goal: 'Chống đẩy được 30 cái liên tục trước khi bay', h: 168, w: 60, at: 0 },
+  done: ['b1a', 'b2a', 'b4a'],
+  log: { pushup: [{ n: 18, s: 2, f: 2 }, { n: 22, s: 2, f: 1 }], squat: [{ n: 30, s: 2, f: 1 }], kd: [{ n: 15, g: [0, 1, 2], f: 1 }] },
+  refl: { d1c: 'Bữa sáng mai mình sẽ ăn thêm một quả trứng và uống sữa thay cà phê.' },
   bepDone: ['d1a', 'd1b', 'd1c', 'd2a', 'd3a', 'd5b', 'n1a', 'n1b', 'n2a', 'n4a', 'y1a', 'y1b', 'y2b', 't1a', 't1b', 'r1a', 'r1b', 'r1c', 'r2a', 'r2b', 'r2c', 'r3a', 'r6b', 'r6c'],
   radio: { beat: 13, fl: { r2c: 2 }, self: { c: [2, 1, 0], need: [5, 8], at: 0 }, s7: { slot: 0, txt: 'Khi đánh răng xong buổi sáng, mình sẽ tập Radio Taiso ở hành lang', ago: 3, done: [0, 1, 3] } },
   s10: [{ ago: 6, m: 'luc', sec: 600, f: 1 }, { ago: 4, m: 'sang', sec: 600, f: 1 }, { ago: 2, m: 'nghe', sec: 420, f: 2 }, { ago: 1, m: 'luc', sec: 600, f: 1 }],

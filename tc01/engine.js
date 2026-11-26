@@ -29,7 +29,7 @@
   /* ---------- trạng thái ---------- */
   function blank() { return { v: 1, created: Date.now(), done: {}, xp: {}, ins: {}, days: {}, mem: null, log: {}, refl: {}, plan: null, d: {}, food: {}, nghe: {}, yte: {}, kc: {}, test: {}, ft: { h: [] }, radio: {}, s10: { h: [] } }; }
   function demoState() {
-    var s = blank(), m = DEMO.mem; s.demo = 1; s.mem = { job: m.job, g: m.g, sex: m.sex, inj: m.inj, goal: m.goal, h: m.h, w: m.w, at: Date.now() - 20 * 864e5 };
+    var s = blank(), m = DEMO.mem; s.demo = 1; s.mem = { job: m.job, g: m.g, sex: m.sex, inj: m.inj, sp: m.sp, hl: m.hl, goal: m.goal, h: m.h, w: m.w, at: Date.now() - 20 * 864e5 };
     DEMO.done.concat(DEMO.bepDone || []).forEach(function (id, i) { var a = actById(id); s.done[id] = Date.now() - (12 - i) * 864e5; s.xp[id] = a ? a.xp : 10; });
     var F = DEMO.food || {}, cs = F.calc, cm = F.commit;
     if (F.meal) s.food.meal = { sang: F.meal.sang.slice(), trua: F.meal.trua.slice(), toi: F.meal.toi.slice(), skip: {}, d: today() };
@@ -43,7 +43,7 @@
     if (DEMO.s10) s.s10 = { h: DEMO.s10.map(function (e) { return { d: Date.now() - e.ago * 864e5, m: e.m, sec: e.sec, f: e.f, full: e.sec >= 600 ? 1 : 0 }; }) };
     if (DEMO.ft) s.ft = { h: DEMO.ft.map(function (e) { return { d: Date.now() - e.ago * 864e5, a: e.a, lv: e.lv, r: e.r, f: e.f }; }) };
     if (cm) { var st = new Date(); st.setHours(8, 0, 0, 0); st = new Date(st.getTime() - cm.ago * 864e5); s.food.commit = { h: cm.h, txt: cm.txt, at: st.getTime(), days: {} }; cm.done.forEach(function (d) { s.food.commit.days[dayKeyFrom(st, d)] = 1; }); }
-    for (var k in DEMO.log) if (DEMO.log.hasOwnProperty(k)) s.log[k] = DEMO.log[k].map(function (e, i) { return { d: Date.now() - (5 - i) * 864e5, n: e.n, f: e.f }; });
+    for (var k in DEMO.log) if (DEMO.log.hasOwnProperty(k)) s.log[k] = DEMO.log[k].map(function (e, i) { var o = { d: Date.now() - (5 - i) * 864e5 - 7 * 36e5, n: e.n, f: e.f, r: 1 }; if (e.s) o.s = e.s; if (e.g) o.g = e.g; return o; });
     for (var r in DEMO.refl) if (DEMO.refl.hasOwnProperty(r)) { s.refl[r] = DEMO.refl[r]; s.ins[r] = 1; }
     return s;
   }
@@ -82,7 +82,7 @@
       if (IS_DEMO) { rawSet(DEMO_KEY, S); return; }
       PS.save(ID, S);
       PS.report(ID, { xp: xpTotal(), ins: insTotal(), done: doneCount(), total: ALLACTS.length, days: S.days, ver: TC_VER,
-        extra: { next: nextInfo(), job: S.mem ? S.mem.job : '', group: S.mem ? S.mem.g : '', goal: S.mem ? S.mem.goal : '', tries: tryCount(), plan: S.plan || null, food: foodSum(), nghe: ngheSum(), yte: yteSum(), test: testSum(), radio: radioSum(), s10: s10Sum() } });
+        extra: { next: nextInfo(), job: S.mem ? S.mem.job : '', group: S.mem ? S.mem.g : '', goal: S.mem ? S.mem.goal : '', tries: tryCount(), mem: memSum(), logs: lgSessions(['kd'].concat(Object.keys(EX)), 60).length, plan: S.plan || null, food: foodSum(), nghe: ngheSum(), yte: yteSum(), test: testSum(), radio: radioSum(), s10: s10Sum() } });
     };
     if (now) w(); else saveT = setTimeout(w, 250);
   }
@@ -95,6 +95,12 @@
     if (!S || IS_DEMO || D.visibilityState !== 'visible' || Date.now() - lastAct > 60000) return;
     var k = today(); S.days[k] = Math.round(((S.days[k] || 0) + 0.25) * 100) / 100; save();
   }, 15000);
+  /* TC01.2.0: thông tin lễ tân gửi thầy cô (chấn thương, số đo đã chốt 24/11/2026) */
+  function memSum() {
+    var m = S.mem; if (!m) return null;
+    return { sex: m.sex, h: m.h || 0, w: m.w || 0, sport: m.sp ? { lv: TXT.spLv[m.sp.lv], l: m.sp.l.map(function (i) { return SPORTS[i]; }) } : null,
+      health: { y: m.inj ? 1 : 0, l: m.hl ? m.hl.l.map(function (i) { return HEALTH[i]; }) : [], t: m.hl ? m.hl.t : '' } };
+  }
   function markDay() { if (IS_DEMO) return; var k = today(); if (!S.days[k]) { S.days[k] = 0.25; save(); } }
 
   /* ---------- dữ liệu ---------- */
@@ -188,50 +194,36 @@
      ========================================================= */
   function viewJoin() {
     J = J || {}; var st = V.step || 0, h = '';
-    var bar = '<div class="stepbar stepbar--join">' + [1, 2, 3, 4].map(function (i) { return '<i class="' + (i < st ? 'on' : (i === st ? 'cur' : '')) + '"></i>'; }).join('') + '</div>';
+    var bar = '<div class="stepbar stepbar--join">' + [1, 2, 3].map(function (i) { return '<i class="' + (i < st ? 'on' : (i === st ? 'cur' : '')) + '"></i>'; }).join('') + '</div>';
     if (st === 0) {
       return '<div class="intro intro--gym">' + storefront() + '<span class="kicker">TC01 · Huấn luyện thể chất</span>' +
         shinSays('hi', fill(TXT.joinHi)) + shinSays('encourage', TXT.joinHi2) +
         '<button type="button" class="btn btn--go btn--w" data-act="jEnter">' + ic('card', 18) + 'Vào phòng tập</button>' +
         (S.mem ? '' : '<button type="button" class="link" data-act="psHome">Về trang chính Proskills</button>') + '</div>';
     }
-    h = (S.mem ? back('Sơ đồ phòng tập', 'home') : '') + '<div class="reg"><span class="reg__clip" aria-hidden="true"></span><small>SHIN FITNESS CENTER · RECEPTION</small><b>' + (S.mem ? 'Sửa thẻ hội viên' : 'Phiếu đăng ký hội viên') + '</b><span class="reg__st">Bước ' + st + '/4</span>' + bar + '</div>';
+    h = (S.mem ? back('Sơ đồ phòng tập', 'home') : '') + '<div class="reg"><span class="reg__clip" aria-hidden="true"></span><small>SHIN FITNESS CENTER · RECEPTION</small><b>' + (S.mem ? 'Sửa thẻ hội viên' : 'Phiếu đăng ký hội viên') + '</b><span class="reg__st">Bước ' + st + '/3</span>' + bar + '</div>';
     if (st === 1) {
-      if (!J.job && J.cd === undefined) { J.cd = cdJob(); if (J.cd) J.job = J.cd; }
-      h += '<div class="card"><p class="q">' + esc(TXT.jobQ) + '</p><p class="qsub">' + esc(TXT.jobSub) + '</p>' +
-        (J.cd ? '<div class="note note--cd">' + ic('stamp', 16) + '<span>' + TXT.fromCd.replace('[Nghề]', esc(jobOf(J.cd).n)) + '</span></div>' : '') +
-        '<div class="jobs">' + JOBS.map(function (j) {
-          var g = GROUPS[j.g];
-          return '<button type="button" class="job' + (J.job === j.s ? ' on' : '') + '" data-act="jJob" data-s="' + j.s + '"><b>' + esc(j.n) + '</b>' + (g ? '<small>' + ic(g.ic, 13) + esc(g.n) + (j.two ? ' + việc làm thêm' : '') + '</small>' : '<small>Chọn nơi làm ở bước sau</small>') + '</button>';
-        }).join('') + '</div>' +
-        (J.job && jobOf(J.job).note ? '<p class="qsub" style="margin-top:10px">' + esc(jobOf(J.job).note) + '</p>' : '') + '</div>' +
-        '<button type="button" class="btn btn--w" data-act="jNext"' + (J.job ? '' : ' disabled') + '>Tiếp</button>';
+      J.spl = J.spl || [];
+      h += '<div class="card"><p class="q">' + esc(TXT.sexQ) + '</p><div class="opts opts--2">' +
+        [['nam', 'Mốc nam'], ['nu', 'Mốc nữ']].map(function (o) { return '<button type="button" class="opt' + (J.sex === o[0] ? ' on' : '') + '" data-act="jSex" data-v="' + o[0] + '"><span class="dot">' + (J.sex === o[0] ? PS.icon('check', 13, 3) : '') + '</span>' + o[1] + '</button>'; }).join('') + '</div></div>' +
+        '<div class="card"><p class="q">' + esc(TXT.spQ) + '</p><p class="qsub">' + esc(TXT.spSub) + '</p><div class="opts opts--3">' +
+        TXT.spLv.map(function (t, i) { return '<button type="button" class="opt' + (J.sp === i ? ' on' : '') + '" data-act="jSp" data-v="' + i + '"><span class="dot">' + (J.sp === i ? PS.icon('check', 13, 3) : '') + '</span>' + esc(t) + '</button>'; }).join('') + '</div>' +
+        (J.sp > 0 ? '<p class="qsub" style="margin:12px 0 6px">' + esc(TXT.spPick) + '</p><div class="chips">' + SPORTS.map(function (t, i) { return '<button type="button" class="chip' + (J.spl.indexOf(i) >= 0 ? ' on' : '') + '" data-act="jSpL" data-i="' + i + '">' + esc(t) + '</button>'; }).join('') + '</div>' : '') + '</div>' +
+        '<button type="button" class="btn btn--w" data-act="jNext"' + (J.sex && J.sp !== undefined ? '' : ' disabled') + '>Tiếp</button>';
       return h;
     }
     if (st === 2) {
-      var j = jobOf(J.job), two = j && j.two;
-      if (!two && j && j.g) J.g = j.g;
-      if (!two && j && j.g) { h += '<div class="card"><p class="q">Nơi làm việc của nghề ' + esc(j.n) + '</p><div class="grps">' + grpBtn('g')(j.g) + '</div><p class="qsub" style="margin:10px 0 0">Không đúng với công việc của bạn? Quay lại chọn “Nghề khác” rồi chọn nơi làm.</p></div>'; }
-      else h += '<div class="card">' + (two ? '<p class="q">' + esc(TXT.partQ) + '</p><p class="qsub">Giờ học của bạn thuộc nhóm Văn phòng. Shin thêm nhóm việc làm thêm.</p>' : (j && j.g ? '' : '<p class="q">' + esc(TXT.whereQ) + '</p><p class="qsub">Chọn nơi giống nhất.</p>')) +
-        (two ? '<div class="grps">' + ['dv', 'chuyen'].map(grpBtn('g2')).join('') + '<button type="button" class="grp' + (J.g2 === 'none' ? ' on' : '') + '" data-act="jG2" data-g="none"><span class="grp__ic">' + PS.icon('close', 20) + '</span><b>' + esc(TXT.partNo) + '</b></button></div>' :
-          (j && j.g ? '' : '<div class="grps">' + GROUP_ORDER.map(grpBtn('g')).join('') + '</div>')) + '</div>';
-      if (two) J.g = 'vp';
-      var ready = two ? !!J.g2 : !!J.g;
-      if (ready) h += grpResult();
-      h += '<button type="button" class="btn btn--w" data-act="jNext"' + (ready ? '' : ' disabled') + '>Tiếp</button>';
+      J.hll = J.hll || [];
+      h += '<div class="card"><p class="q">' + esc(TXT.injQ) + '</p><p class="qsub">' + esc(TXT.injSub) + '</p><div class="opts opts--2">' +
+        [[0, 'Không'], [1, 'Có']].map(function (o) { return '<button type="button" class="opt' + (J.inj === o[0] ? ' on' : '') + '" data-act="jInj" data-v="' + o[0] + '"><span class="dot">' + (J.inj === o[0] ? PS.icon('check', 13, 3) : '') + '</span>' + o[1] + '</button>'; }).join('') + '</div>' +
+        (J.inj === 1 ? '<p class="qsub" style="margin:12px 0 6px">' + esc(TXT.injPick) + '</p><div class="chips">' + HEALTH.map(function (t, i) { return '<button type="button" class="chip' + (J.hll.indexOf(i) >= 0 ? ' on' : '') + '" data-act="jHlL" data-i="' + i + '">' + esc(t) + '</button>'; }).join('') + '</div>' +
+          '<label class="lab-s" for="jHt">' + esc(TXT.injT) + '</label><textarea class="inp ta" id="jHt" rows="2" maxlength="160" placeholder="Ví dụ: đứt dây chằng gối trái năm 2024, đã hết đau">' + esc(J.ht || '') + '</textarea>' : '') +
+        (J.inj === 1 ? shinSays('encourage', TXT.injYes, 46) : (J.inj === 0 ? shinSays('cheer', TXT.injNo, 46) : '')) +
+        '<p class="ps-small" style="margin:8px 0 0">' + esc(TXT.injNote) + '</p></div>' +
+        '<button type="button" class="btn btn--w" data-act="jNext"' + (J.inj !== undefined ? '' : ' disabled') + '>Tiếp</button>';
       return h;
     }
     if (st === 3) {
-      h += '<div class="card"><p class="q">' + esc(TXT.sexQ) + '</p><div class="opts opts--2">' +
-        [['nam', 'Mốc nam'], ['nu', 'Mốc nữ']].map(function (o) { return '<button type="button" class="opt' + (J.sex === o[0] ? ' on' : '') + '" data-act="jSex" data-v="' + o[0] + '"><span class="dot">' + (J.sex === o[0] ? PS.icon('check', 13, 3) : '') + '</span>' + o[1] + '</button>'; }).join('') + '</div></div>' +
-        '<div class="card"><p class="q">' + esc(TXT.injQ) + '</p><div class="opts opts--2">' +
-        [[0, 'Không'], [1, 'Có']].map(function (o) { return '<button type="button" class="opt' + (J.inj === o[0] ? ' on' : '') + '" data-act="jInj" data-v="' + o[0] + '"><span class="dot">' + (J.inj === o[0] ? PS.icon('check', 13, 3) : '') + '</span>' + o[1] + '</button>'; }).join('') + '</div>' +
-        (J.inj === 1 ? shinSays('encourage', TXT.injYes, 46) : (J.inj === 0 ? shinSays('cheer', TXT.injNo, 46) : '')) +
-        '<p class="ps-small" style="margin:8px 0 0">' + esc(TXT.injNote) + '</p></div>' +
-        '<button type="button" class="btn btn--w" data-act="jNext"' + (J.sex && J.inj !== undefined ? '' : ' disabled') + '>Tiếp</button>';
-      return h;
-    }
-    if (st === 4) {
       var okGoal = words(J.goal) >= 3;
       h += '<div class="card"><p class="q">' + esc(TXT.goalQ) + '</p><p class="qsub">' + esc(TXT.goalSub) + '</p>' +
         '<textarea class="inp ta" id="jGoal" rows="3" maxlength="160" placeholder="Ví dụ: Chống đẩy được 20 cái liên tục">' + esc(J.goal || '') + '</textarea>' +
@@ -241,6 +233,33 @@
       return h;
     }
     return h;
+  }
+  /* ---------- hỏi nghề trong phòng có liên quan (TC01.2.0): Góc nghề, bài có tình huống theo nhóm ---------- */
+  var KP = false; /* đang mở khung đổi nghề ở Góc nghề */
+  function needJob(b) {
+    if (!b) return false; if (b.khu === 'nghe') return true;
+    for (var i = 0; i < b.acts.length; i++) { var x = b.acts[i]; if ((x.byGroup && !x.rounds) || x.exBy || x.k === 'ca') return true; }
+    return false;
+  }
+  function jobPick() {
+    var m = S.mem || {};
+    if (!J || J.ctx !== 'job') { J = { ctx: 'job', job: m.job || '', g: m.g || '', g2: m.g2 || (m.job === 'du-hoc' ? 'none' : '') }; if (!J.job) { J.cd = cdJob(); if (J.cd) { J.job = J.cd; var jc = jobOf(J.cd); if (jc && jc.g && !jc.two) J.g = jc.g; else if (jc && jc.two) J.g = 'vp'; } } }
+    var j = jobOf(J.job), two = j && j.two, h = shinSays('think', esc(TXT.jobGate), 50);
+    h += '<div class="card"><p class="q">' + esc(TXT.jobQ) + '</p><p class="qsub">' + esc(TXT.jobGateSub) + '</p>' +
+      (J.cd ? '<div class="note note--cd">' + ic('stamp', 16) + '<span>' + TXT.fromCd.replace('[Nghề]', esc(jobOf(J.cd).n)) + '</span></div>' : '') +
+      '<div class="jobs">' + JOBS.map(function (x) {
+        var g = GROUPS[x.g];
+        return '<button type="button" class="job' + (J.job === x.s ? ' on' : '') + '" data-act="jJob" data-s="' + x.s + '"><b>' + esc(x.n) + '</b>' + (g ? '<small>' + ic(g.ic, 13) + esc(g.n) + (x.two ? ' + việc làm thêm' : '') + '</small>' : '<small>Chọn nơi làm ở dưới</small>') + '</button>';
+      }).join('') + '</div>' + (j && j.note ? '<p class="qsub" style="margin-top:10px">' + esc(j.note) + '</p>' : '') + '</div>';
+    var ready = false;
+    if (j) {
+      if (two) { J.g = 'vp'; h += '<div class="card"><p class="q">' + esc(TXT.partQ) + '</p><p class="qsub">Giờ học của bạn thuộc nhóm Văn phòng. Shin thêm nhóm việc làm thêm.</p><div class="grps">' + ['dv', 'chuyen'].map(grpBtn('g2')).join('') + '<button type="button" class="grp' + (J.g2 === 'none' ? ' on' : '') + '" data-act="jG2" data-g="none"><span class="grp__ic">' + PS.icon('close', 20) + '</span><b>' + esc(TXT.partNo) + '</b></button></div></div>'; ready = !!J.g2; }
+      else if (j.g) { J.g = j.g; ready = true; }
+      else { h += '<div class="card"><p class="q">' + esc(TXT.whereQ) + '</p><p class="qsub">Chọn nơi giống nhất.</p><div class="grps">' + GROUP_ORDER.map(grpBtn('g')).join('') + '</div></div>'; ready = !!J.g; }
+    }
+    if (ready) h += grpResult();
+    return h + '<button type="button" class="btn btn--go btn--w" data-act="kSave"' + (ready ? '' : ' disabled') + '>' + ic('helmet', 18) + esc(TXT.jobSave) + '</button>' +
+      (m.g ? '<button type="button" class="link" data-act="kKeep">' + esc(TXT.jobKeep) + '</button>' : '');
   }
   function grpBtn(field) {
     return function (g) { var G = GROUPS[g], on = J[field] === g; return '<button type="button" class="grp' + (on ? ' on' : '') + '" data-act="' + (field === 'g' ? 'jG' : 'jG2') + '" data-g="' + g + '"><span class="grp__ic">' + ic(G.ic, 22) + '</span><b>' + esc(G.n) + '</b><small>' + esc(G.d) + '</small></button>'; };
@@ -257,7 +276,9 @@
   }
   function finishJoin() {
     var old = S.mem || {};
-    S.mem = { job: J.job, g: J.g, g2: J.g2 && J.g2 !== 'none' ? J.g2 : '', sex: J.sex, inj: J.inj ? 1 : 0, goal: String(J.goal || '').replace(/^\s+|\s+$/g, ''), h: bmi(J.h, J.w) ? +J.h : 0, w: bmi(J.h, J.w) ? +String(J.w).replace(',', '.') : 0, at: old.at || Date.now() };
+    S.mem = { job: old.job || '', g: old.g || '', g2: old.g2 || '', sex: J.sex, inj: J.inj ? 1 : 0,
+      sp: { lv: J.sp || 0, l: J.sp ? (J.spl || []).slice().sort(function (x, y) { return x - y; }) : [] },
+      hl: { y: J.inj ? 1 : 0, l: J.inj ? (J.hll || []).slice().sort(function (x, y) { return x - y; }) : [], t: J.inj ? String(J.ht || '').replace(/^\s+|\s+$/g, '').slice(0, 160) : '' }, goal: String(J.goal || '').replace(/^\s+|\s+$/g, ''), h: bmi(J.h, J.w) ? +J.h : 0, w: bmi(J.h, J.w) ? +String(J.w).replace(',', '.') : 0, at: old.at || Date.now() };
     markDay(); save(true);
   }
 
@@ -286,7 +307,7 @@
   };
   function cardFront() {
     var p = PS.profile(), m = S.mem || {}, t = tier(), nm = p.name || (IS_DEMO ? 'Học viên demo' : given());
-    var info = [p.cls, grpName(m.g) + (m.g2 && GROUPS[m.g2] ? ' + ' + GROUPS[m.g2].n : ''), jobName()].filter(function (x) { return x && x !== '—'; }).join(' · ');
+    var info = [p.cls, m.g ? grpName(m.g) + (m.g2 && GROUPS[m.g2] ? ' + ' + GROUPS[m.g2].n : '') : '', jobName()].filter(function (x) { return x && x !== '—'; }).join(' · ');
     return '<span class="mc__f"><span class="mc__slot"></span><span class="mc__pat" aria-hidden="true">' + MC_PAT + '</span><span class="mc__shine"></span>' +
       '<span class="mc__top"><span class="mc__logo">' + PS.icon('dumbbell', 15, 2.6) + '</span><span class="mc__brand"><b>SHIN FITNESS</b><small>CENTER</small></span>' +
       '<span class="mc__tier"><small>MEMBER</small><span>' + t + '</span></span></span>' +
@@ -436,9 +457,11 @@
     var k = khuById(V.id);
     if (!k.ready) return zoneHead(k) + shinSays('think', TXT.khuSoon) + '<button type="button" class="btn btn--soft btn--w" data-act="home">Về sơ đồ phòng tập</button>';
     var L = baisOf(k.id), n = baiCount(k.id);
+    var zh = zoneHead(k, '<div class="zh__bar"><i style="width:' + Math.round(n / L.length * 100) + '%;background:' + (k.col ? k.col[0] : '') + '"></i></div><div class="zh__meta"><b>' + n + '/' + L.length + ' bài xong</b><span>Chọn bài nào trước cũng được</span></div>');
+    if (k.id === 'nghe' && (!grp() || KP)) return zh + jobPick();
     return zoneHead(k, '<div class="zh__bar"><i style="width:' + Math.round(n / L.length * 100) + '%;background:' + (k.col ? k.col[0] : '') + '"></i></div><div class="zh__meta"><b>' + n + '/' + L.length + ' bài xong</b><span>Chọn bài nào trước cũng được</span></div>') +
       (k.id === 'bep' ? shinSays('hi', esc(BEP_TXT.khuSay)) + commitCard() : '') +
-      (k.id === 'nghe' ? shinSays('hi', esc(NGHE_TXT.khuSay)) : '') +
+      (k.id === 'nghe' ? shinSays('hi', esc(NGHE_TXT.khuSay)) + '<p class="jobline">' + ic(GROUPS[grp()].ic, 15) + '<span>' + esc(TXT.jobLine) + ': <b>' + esc(jobName() || grpName(grp())) + '</b></span><button type="button" class="link" data-act="kChange">' + esc(TXT.jobChange) + '</button></p>' : '') +
       (k.id === 'yte' ? shinSays('hi', esc(YTE_TXT.khuSay)) : '') +
       (k.id === 'test' ? shinSays('hi', esc(TEST_TXT.khuSay)) : '') +
       (k.id === 'radio' ? shinSays('hi', esc(RT_TXT.khuSay)) + s7Card() : '') +
@@ -455,6 +478,7 @@
     var b = BAI_BY[V.id], g = grp(), G = GROUPS[g];
     if (!b || b.soon) { V = { v: 'home' }; return viewHome(); }
     var K = khuById(b.khu);
+    if (needJob(b) && !grp()) return '<header class="bh"><span class="bh__ic">' + ic(b.ic, 30) + '</span><div><span class="ah__lab">' + esc(K.t) + '</span><h1>' + esc(b.t) + '</h1><p>' + esc(b.sub) + '</p></div></header>' + jobPick();
     return '<header class="bh"><span class="bh__ic">' + ic(b.ic, 30) + '</span><div><span class="ah__lab">' + esc(K.t) + ' · ' + b.min + ' phút</span><h1>' + esc(b.t) + '</h1><p>' + esc(b.sub) + '</p></div></header>' +
       (G && b.gtip[g] ? '<div class="gtip"><span class="gtip__ic">' + ic(G.ic, 20) + '</span><div><small>Với nhóm ' + esc(G.n) + '</small>' + esc(b.gtip[g]) + '</div></div>' : '') +
       (S.mem && S.mem.g2 && b.gtip[S.mem.g2] ? '<div class="gtip"><span class="gtip__ic">' + ic(GROUPS[S.mem.g2].ic, 20) + '</span><div><small>Khi làm thêm · ' + esc(GROUPS[S.mem.g2].n) + '</small>' + esc(b.gtip[S.mem.g2]) + '</div></div>' : '') +
@@ -462,6 +486,7 @@
         var dn = !!S.done[a.id];
         return '<button type="button" class="act' + (dn ? ' act--done' : '') + '" data-act="act" data-id="' + a.id + '"><span class="act__n">' + (dn ? PS.icon('check', 18, 3) : (i + 1)) + '</span><span><b>' + esc(a.t) + '</b><small>' + esc(a.kl || KIND[a.k]) + ' · ' + a.min + ' phút · +' + a.xp + ' XP</small></span>' + (dn ? '<span class="badge badge--ok">Xong</span>' : '') + '</button>';
       }).join('') + '</div>' +
+      lastLogLine(b) +
       (baiDone(b) ? '<div class="stampbox">' + ic('stamp', 20) + '<span>Bài này đã đục lỗ trên thẻ hội viên. ' + (b.khu === 'san' ? 'Tập lại' : 'Làm lại') + ' lúc nào cũng được.</span></div>' : '') +
       rtSug(b);
   }
@@ -519,6 +544,7 @@
     var a = actById(V.a); if (!a) { V = { v: 'home' }; return viewHome(); }
     if (T.a !== a.id) T = newT(a);
     var h = actHead(a);
+    if (needJob(BAI_BY[a.bai]) && !grp()) return h + jobPick();
     if (a.k === 'how') h += viewHow(a);
     else if (a.k === 'spot') h += viewSpot(a);
     else if (a.k === 'try') h += viewTry(a);
@@ -576,15 +602,112 @@
     var anyDone = false; XL.forEach(function (x) { if (T.seen[x]) anyDone = true; });
     return (a.exBy ? '<p class="qsub">' + ic(GROUPS[grp() || 'xuong'].ic, 14) + ' ' + esc(grpFill(NGHE2_TXT.n6Intro)) + '</p>' : '') + (XL.length > 1 ? '<div class="extabs" role="tablist">' + XL.map(function (x, i) { return '<button type="button" role="tab" class="extab' + (i === T.ex ? ' on' : '') + '" data-act="howEx" data-i="' + i + '">' + esc(EX[x].s || EX[x].n) + (T.seen[x] ? PS.icon('check', 13, 3) : '') + '</button>'; }).join('') + '</div>' : '') +
       '<div class="card howc"><div class="howc__top"><b>' + esc(E.n) + '</b><small>' + esc(E.who) + '</small></div>' +
-      '<div class="figbox">' + frameFig(fr) + '<span class="figbox__n">' + (T.fr + 1) + '/' + n + '</span></div>' +
-      '<p class="howc__t"><b>Bước ' + (T.fr + 1) + '.</b> ' + esc(fr.t) + '</p>' +
+      '<div class="figbox' + (frImg(fr) ? ' figbox--img' : '') + '">' + frameMedia(fr) + '<span class="figbox__n">' + (T.fr + 1) + '/' + n + '</span></div>' +
+      '<p class="howc__t">' + (fr.n ? '<b class="howc__mv">' + (T.fr + 1) + '. ' + esc(fr.n) + '</b>' : '<b>Bước ' + (T.fr + 1) + '.</b> ') + esc(fr.t) + '</p>' +
       '<div class="howc__nav"><button type="button" class="btn btn--soft btn--sm" data-act="howFr" data-d="-1"' + (T.fr ? '' : ' disabled') + '>' + PS.icon('back', 16) + 'Trước</button>' +
       '<span class="dots">' + E.frames.map(function (f, i) { return '<i class="' + (i === T.fr ? 'on' : (T.seen[exId + i] ? 'seen' : '')) + '"></i>'; }).join('') + '</span>' +
       '<button type="button" class="btn btn--sm" data-act="howFr" data-d="1"' + (T.fr < n - 1 ? '' : ' disabled') + '>Tiếp' + PS.icon('next', 16) + '</button></div></div>' +
       '<div class="card keys"><b class="keys__h">' + ic('stamp', 16) + 'Ba điểm chính</b><ul>' + E.keys.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('') + '</ul>' +
-      (/^rt\d/.test(exId) ? vidBtn() : '<a class="ytbtn" href="' + esc(E.yt ? 'https://www.youtube.com/watch?v=' + E.yt : TC_YT) + '" target="_blank" rel="noopener">' + ic('play', 18) + '<span><b>Xem video của thầy cô GDTC</b><small>' + (E.yt ? 'Mở đúng video động tác' : 'Mở kênh video động tác của khóa') + '</small></span>' + PS.icon('ext', 16) + '</a>') + '</div>' +
+      (/^rt\d/.test(exId) ? vidBtn() : (E.yt ? '' : '<a class="ytbtn" href="' + esc(TC_YT) + '" target="_blank" rel="noopener">' + ic('play', 18) + '<span><b>Xem video của thầy cô GDTC</b><small>Mở kênh video động tác của khóa</small></span>' + PS.icon('ext', 16) + '</a>')) + '</div>' +
+      (E.yt ? ytCard(E.yt) : '') +
       (a.more ? '<p class="morenote">' + esc(a.more) + '</p>' : '') +
+      (a.log ? logCard(a) : '') +
       '<button type="button" class="btn btn--go btn--w" data-act="finish"' + (anyDone ? '' : ' disabled') + '>' + (anyDone ? 'Mình xem xong rồi' : 'Xem hết các bước để hoàn thành') + '</button>';
+  }
+  /* TC01.2.0: hình thầy gửi (TC_IMG) thay hình vẽ; chưa có hình thì giữ hình vẽ */
+  function frImg(fr) { var L = []; (fr.im || []).forEach(function (c) { if (TC_IMG[c]) L.push(c); }); return L; }
+  function frameMedia(fr) {
+    var L = frImg(fr); if (!L.length) return frameFig(fr);
+    return '<span class="figimg' + (L.length > 1 ? ' figimg--2' : '') + '">' + L.map(function (c) { return '<img src="img/' + c + '.webp" alt="' + esc(fr.n || fr.t) + '" loading="lazy" decoding="async">'; }).join('') + '</span>';
+  }
+  /* video YouTube: chạm mới tải và phát ngay trong app (ít tốn mạng), kèm nút mở trên YouTube */
+  function ytCard(id) {
+    return '<div class="card ytc"><button type="button" class="ytv" data-act="ytPlay" data-y="' + esc(id) + '" aria-label="Phát video"><img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'"><span class="ytv__play">' + ic('play', 26) + '</span></button>' +
+      '<div class="ytc__row"><span><b>Video của thầy cô GDTC</b><small>Chạm vào hình để xem</small></span><a class="link" href="https://www.youtube.com/watch?v=' + esc(id) + '" target="_blank" rel="noopener">Mở trên YouTube ' + PS.icon('ext', 13) + '</a></div></div>';
+  }
+
+  /* ---------- ghi lại buổi tập (TC01.2.0, thay "Tập thử cùng Shin" ở Sàn tập) ----------
+     a.log = 'ex': mỗi động tác ghi số cái (hoặc số giây) × số hiệp · 'kd': khởi động, chọn phần đã làm + số phút.
+     Lưu vào S.log[mã] = [{ d: thời điểm, n: số cái/giây mỗi hiệp (phút với kd), s: số hiệp, g: phần đã làm (kd), f: cảm nhận, r: 1 }] */
+  var LG = { a: '', v: {}, g: [], f: -1, min: '', saved: 0 };
+  function lgMoves(a) { if (a.log === 'kd') return []; return a.ex.filter(function (x) { return !(x === 'pushknee' && sexKey() === 'nu'); }); }
+  function lgFmt(x, e) { if (x === 'kd') return e.n + ' phút'; var M = MOC[x] || {}; return (M.u === 's' ? fmtT(e.n) : e.n + ' cái') + (e.s > 1 ? ' × ' + e.s + ' hiệp' : ''); }
+  function lgReset(a) { LG = { a: a.id, v: {}, g: [], f: -1, min: '', saved: 0 }; }
+  function lgSessions(keys, max) {
+    var by = {}, L = [];
+    keys.forEach(function (x) { (S.log[x] || []).forEach(function (e) { if (e.t) return; var k = String(e.d); if (!by[k]) { by[k] = { d: e.d, it: [], f: e.f }; L.push(by[k]); } by[k].it.push([x, e]); }); });
+    L.sort(function (p, q) { return q.d - p.d; });
+    return L.slice(0, max || 6);
+  }
+  function lgWhen(d) { var t = new Date(d), n = new Date(); var hm = pad2(t.getHours()) + ':' + pad2(t.getMinutes()); return (t.toDateString() === n.toDateString() ? 'Hôm nay' : pad2(t.getDate()) + '/' + pad2(t.getMonth() + 1)) + ' · ' + hm; }
+  function lgName(x) { return x === 'kd' ? 'Khởi động' : (EX[x] ? EX[x].n : x); }
+  function lgHist(keys) {
+    var L = lgSessions(keys, 6), FL = ['Nhẹ nhàng', 'Vừa sức', 'Hơi quá sức', 'Thấy đau'];
+    if (!L.length) return '<p class="ps-small">' + esc(TXT.logNone) + '</p>';
+    return '<ul class="lgh">' + L.map(function (ss) {
+      return '<li><small>' + esc(lgWhen(ss.d)) + (ss.f >= 0 ? ' · ' + FL[ss.f] : '') + '</small>' + ss.it.map(function (p) { return '<span>' + esc(lgName(p[0])) + ': <b>' + esc(lgFmt(p[0], p[1])) + '</b>' + (p[0] === 'kd' && p[1].g ? ' (' + esc(p[1].g.map(function (i) { return ['khớp xương', 'cơ bắp', 'tim mạch'][i]; }).join(', ')) + ')' : '') + '</span>'; }).join('') + '</li>';
+    }).join('') + '</ul>';
+  }
+  function lgLast(x) { var l = S.log[x] || []; for (var i = l.length - 1; i >= 0; i--) if (l[i].r || !l[i].t) return l[i]; return null; }
+  function logBody(a) {
+    var FL = ['Nhẹ nhàng', 'Vừa sức', 'Hơi quá sức', 'Thấy đau'], say = ['easySay', 'okSay', 'hardSay', 'painStop'], h = '';
+    if (a.log === 'kd') {
+      h += '<p class="lg__q">' + esc(TXT.logWarmQ) + '</p><div class="chips">' + a.ex.map(function (x, i) { return '<button type="button" class="chip' + (LG.g.indexOf(i) >= 0 ? ' on' : '') + '" data-act="lgG" data-i="' + i + '">' + esc(EX[x].n) + '</button>'; }).join('') + '</div>' +
+        '<label class="lg__row"><span><b>' + esc(TXT.logMin) + '</b></span><span class="lg__in"><input class="inp" id="lgMin" inputmode="numeric" maxlength="3" value="' + esc(LG.min) + '" placeholder="15"><em>phút</em></span></label>';
+    } else {
+      h += lgMoves(a).map(function (x) {
+        var M = MOC[x] || {}, sec = M.u === 's', v = LG.v[x] || {}, last = lgLast(x), bst = best(x), mk = M[sexKey()];
+        return '<div class="lg__mv"><div class="lg__nm"><b>' + esc(EX[x].n) + '</b><small>' +
+          (last ? esc(TXT.logLast) + ' ' + esc(lgFmt(x, last)) : 'Chưa ghi lần nào') + (bst ? ' · ' + esc(TXT.logBest) + ' ' + (sec ? fmtT(bst) : bst + ' cái') : '') + '</small>' +
+          (mk ? '<small class="lg__moc">Mốc lớp (' + (sexKey() === 'nu' ? 'nữ' : 'nam') + '): ' + mk.map(function (m0, i) { return MOC_LAB[i] + ' ' + (sec ? fmtT(m0) : m0); }).join(' · ') + '</small>' : '') + '</div>' +
+          '<div class="lg__ins"><span class="lg__in"><input class="inp" id="lgN_' + x + '" inputmode="numeric" maxlength="3" value="' + esc(v.n || '') + '" placeholder="0"><em>' + (sec ? 'giây' : 'cái') + '</em></span><i>×</i>' +
+          '<span class="lg__in"><input class="inp" id="lgS_' + x + '" inputmode="numeric" maxlength="2" value="' + esc(v.s || '') + '" placeholder="1"><em>hiệp</em></span></div></div>';
+      }).join('');
+      if (a.ex.indexOf('pushknee') >= 0 && sexKey() === 'nu') h += '<p class="ps-small">Chống đẩy tay chạm gối: ' + esc(TXT.logNu.toLowerCase()) + '</p>';
+    }
+    h += '<p class="lg__q">' + esc(TXT.logFeelQ) + '</p><div class="chips">' + FL.map(function (f, i) { return '<button type="button" class="chip' + (LG.f === i ? ' on' : '') + (i === 3 ? ' chip--pain' : '') + '" data-act="lgFeel" data-i="' + i + '">' + f + '</button>'; }).join('') + '</div>' +
+      (LG.f >= 0 ? shinSays(LG.f === 3 ? 'sad' : (LG.f === 2 ? 'think' : 'cheer'), esc(TXT[say[LG.f]]), 44) : '') +
+      (S.mem && S.mem.inj ? '<p class="warn-s">' + esc(TXT.injHome) + '</p>' : '') +
+      '<button type="button" class="btn btn--w" data-act="lgSave">' + ic('pen', 17) + esc(TXT.logSave) + '</button>' +
+      (LG.saved ? '<div class="fb fb--ok">' + esc(TXT.logSaved.replace('[Giờ]', lgWhen(LG.saved).split(' · ')[1])) + (LG.pr ? ' <span class="prtag">' + PS.icon('star', 14) + esc(TXT.pr) + '</span>' : '') + '</div>' : '') +
+      '<p class="lg__q">' + esc(TXT.logHist) + '</p>' + lgHist(a.log === 'kd' ? ['kd'] : a.ex);
+    return h;
+  }
+  function logCard(a) {
+    if (LG.a !== a.id) lgReset(a);
+    return '<div class="card lg" id="lgBox"><div class="lg__h">' + ic('pen', 18) + '<span><b>' + esc(TXT.logH) + '</b><small>' + esc(TXT.logSub) + '</small></span></div><div id="lgBody">' + logBody(a) + '</div></div>';
+  }
+  function lgRead() {
+    var a = actById(V.a); if (!a || !a.log) return;
+    var mi = $('#lgMin'); if (mi) LG.min = mi.value.replace(/[^\d]/g, '');
+    lgMoves(a).forEach(function (x) { var n = $('#lgN_' + x), st = $('#lgS_' + x); if (n || st) LG.v[x] = { n: n ? n.value.replace(/[^\d]/g, '') : '', s: st ? st.value.replace(/[^\d]/g, '') : '' }; });
+  }
+  function lgDraw() { var a = actById(V.a), el = $('#lgBody'); if (a && el) el.innerHTML = logBody(a); }
+  function lgSave() {
+    var a = actById(V.a), now = Date.now(), any = false, pr = false;
+    if (a.log === 'kd') {
+      var mn = Math.min(240, parseInt(LG.min, 10) || 0);
+      if (mn > 0 || LG.g.length) { (S.log.kd = S.log.kd || []).push({ d: now, n: mn, g: LG.g.slice().sort(), f: LG.f, r: 1 }); if (S.log.kd.length > 60) S.log.kd.shift(); any = true; }
+    } else {
+      lgMoves(a).forEach(function (x) {
+        var v = LG.v[x] || {}, n = Math.min(999, parseInt(v.n, 10) || 0), st = Math.max(1, Math.min(20, parseInt(v.s, 10) || 1));
+        if (n <= 0) return;
+        if (best(x) > 0 && n > best(x)) pr = true;
+        (S.log[x] = S.log[x] || []).push({ d: now, n: n, s: st, f: LG.f, r: 1 }); if (S.log[x].length > 60) S.log[x].shift(); any = true;
+      });
+    }
+    if (!any) { PS.toast(TXT.logEmpty); return; }
+    if (IS_DEMO) { /* demo: vẫn lưu vào bản demo trên máy */ }
+    markDay(); save(true); sfx('ting');
+    LG.v = {}; LG.g = []; LG.min = ''; LG.saved = now; LG.pr = pr; LG.f = -1;
+    lgDraw();
+    /* đã tập và ghi lại thì được hoàn thành hoạt động, không cần xem hết từng bước */
+    a.ex.forEach(function (x) { T.seen[x] = 1; }); { var fb = $('[data-act="finish"]'); if (fb) { fb.disabled = false; fb.textContent = 'Hoàn thành bài'; } }
+  }
+  function lastLogLine(b) {
+    var a = null; b.acts.forEach(function (x) { if (x.log) a = x; }); if (!a) return '';
+    var L = lgSessions(a.log === 'kd' ? ['kd'] : a.ex, 1);
+    return L.length ? '<p class="lglast">' + ic('pen', 14) + '<span>Lần ghi gần nhất: <b>' + esc(lgWhen(L[0].d)) + '</b> · ' + esc(L[0].it.map(function (p) { return lgName(p[0]) + ' ' + lgFmt(p[0], p[1]); }).join(', ')) + '</span></p>' : '';
   }
 
   /* ---------- tìm điểm chưa đúng ---------- */
@@ -1976,11 +2099,15 @@
     for (k in EX) if (EX.hasOwnProperty(k) && best(k)) rec.push('<li><span>' + esc(EX[k].n) + '</span><b>' + (MOC[k] && MOC[k].u === 's' ? fmtT(best(k)) : best(k) + ' cái') + '</b></li>');
     var notes = []; ALLACTS.forEach(function (a) { if (S.refl[a.id]) notes.push('<li><small>' + esc(BAI_BY[a.bai].t) + '</small>' + esc(S.refl[a.id]) + '</li>'); });
     return memCard(true) +
-      '<div class="nbsec"><h3>Thông tin tập luyện</h3><ul class="kv"><li><span>Nghề</span><b>' + esc(jobName()) + '</b></li><li><span>Nhóm</span><b>' + esc(grpName(m.g)) + (m.g2 && GROUPS[m.g2] ? ' + ' + esc(GROUPS[m.g2].n) : '') + '</b></li><li><span>Mốc thể lực</span><b>' + (m.sex === 'nu' ? 'Nữ' : 'Nam') + '</b></li>' +
-      (bmi(m.h, m.w) ? '<li><span>BMI (tham khảo)</span><b>' + bmi(m.h, m.w) + '</b></li>' : '') + '<li><span>Chấn thương cũ</span><b>' + (m.inj ? 'Có · tập nhẹ, hỏi thầy cô' : 'Không') + '</b></li></ul>' +
+      '<div class="nbsec"><h3>Thông tin tập luyện</h3><ul class="kv"><li><span>Nghề</span><b>' + esc(jobName() || 'Chọn ở Góc nghề') + '</b></li><li><span>Nhóm</span><b>' + esc(grpName(m.g)) + (m.g2 && GROUPS[m.g2] ? ' + ' + esc(GROUPS[m.g2].n) : '') + '</b></li><li><span>Mốc thể lực</span><b>' + (m.sex === 'nu' ? 'Nữ' : 'Nam') + '</b></li>' +
+      (bmi(m.h, m.w) ? '<li><span>BMI (tham khảo)</span><b>' + bmi(m.h, m.w) + '</b></li>' : '') +
+      '<li><span>Thể thao</span><b>' + (m.sp ? esc(TXT.spLv[m.sp.lv] + (m.sp.l.length ? ' · ' + m.sp.l.map(function (i) { return SPORTS[i]; }).join(', ') : '')) : 'Chưa trả lời') + '</b></li>' +
+      '<li><span>Sức khỏe cần lưu ý</span><b>' + (m.inj ? 'Có' + (m.hl && m.hl.l.length ? ' · ' + esc(m.hl.l.map(function (i) { return HEALTH[i]; }).join(', ')) : '') : 'Không') + '</b></li></ul>' +
+      (m.inj && m.hl && m.hl.t ? '<p class="goal">' + esc(m.hl.t) + '</p>' : '') +
       '<button type="button" class="btn btn--soft btn--sm" data-act="editMem">' + ic('pen', 15) + 'Sửa thẻ hội viên</button></div>' +
       '<div class="nbsec"><h3>Lịch tập của mình</h3>' + (S.plan ? '<p><b>' + esc(planLine(S.plan)) + '</b></p><p class="goal">' + esc(S.plan.txt) + '</p>' : '<p class="ps-small">Chưa có. Làm ở Sàn tập › Giãn cơ và lịch tập.</p>') + '</div>' +
-      '<div class="nbsec"><h3>Kỷ lục cá nhân</h3>' + (rec.length ? '<ul class="kv">' + rec.join('') + '</ul>' : '<p class="ps-small">Chưa có. Tập thử ở các bài của Sàn tập nhé.</p>') + '</div>' +
+      '<div class="nbsec"><h3>Kỷ lục cá nhân</h3>' + (rec.length ? '<ul class="kv">' + rec.join('') + '</ul>' : '<p class="ps-small">Chưa có. Tập xong thì ghi lại ở các bài của Sàn tập nhé.</p>') + '</div>' +
+      '<div class="nbsec"><h3>Nhật ký tập Sàn tập</h3>' + lgHist(['kd'].concat(Object.keys(EX))) + '</div>' +
       nbS10() + nbRadio() + nbFood() + nbNghe() + nbYte() + nbTest() + nbFt() +
       (notes.length ? '<div class="nbsec"><h3>Ghi chú của bạn</h3><ul class="notes">' + notes.join('') + '</ul></div>' : '');
   }
@@ -2030,7 +2157,7 @@
     if (a === 'lobby') { TAB = 'the'; sfx('door'); openNb(); return; }
     if (a === 'nbClose') { closeNb(); return; }
     if (a === 'tab') { TAB = b.getAttribute('data-t'); drawNb(); return; }
-    if (a === 'editMem') { if (nbOpen) closeNb(); var m = S.mem || {}; J = { job: m.job, g: m.g, g2: m.g2 || (m.job === 'du-hoc' ? 'none' : ''), sex: m.sex, inj: m.inj, goal: m.goal, h: m.h || '', w: m.w || '', cd: '' }; go({ v: 'join', step: 1 }); return; }
+    if (a === 'editMem') { if (nbOpen) closeNb(); var m = S.mem || {}; J = { sex: m.sex, sp: m.sp ? m.sp.lv : undefined, spl: m.sp ? m.sp.l.slice() : [], inj: m.inj, hll: m.hl ? m.hl.l.slice() : [], ht: m.hl ? m.hl.t : '', goal: m.goal, h: m.h || '', w: m.w || '' }; go({ v: 'join', step: 1 }); return; }
     if (a === 'demoExit') { W.PS_NOSAVE = true; clearTimeout(saveT); try { W.localStorage.removeItem(DEMO_KEY); } catch (er) {} W.location.href = PS.url(ID + '/index.html'); return; }
     if (a === 'khu') { go({ v: 'khu', id: id }); return; }
     if (a === 'bai') { go({ v: 'bai', id: id }); return; }
@@ -2047,6 +2174,15 @@
     if (a === 'jG2') { J.g2 = b.getAttribute('data-g'); render(); return; }
     if (a === 'jSex') { J.sex = b.getAttribute('data-v'); render(); return; }
     if (a === 'jInj') { J.inj = +b.getAttribute('data-v'); render(); return; }
+    if (a === 'jSp') { J.sp = +b.getAttribute('data-v'); render(); return; }
+    if (a === 'jSpL' || a === 'jHlL') { var LL = a === 'jSpL' ? (J.spl = J.spl || []) : (J.hll = J.hll || []), li = +b.getAttribute('data-i'), lp = LL.indexOf(li); if (lp >= 0) LL.splice(lp, 1); else LL.push(li); var htx = $('#jHt'); if (htx) J.ht = htx.value; render(); return; }
+    if (a === 'kSave') { var two = jobOf(J.job) && jobOf(J.job).two; S.mem.job = J.job; S.mem.g = two ? 'vp' : J.g; S.mem.g2 = two && J.g2 && J.g2 !== 'none' ? J.g2 : ''; KP = false; J = null; sfx('pen'); save(true); PS.toast(TXT.jobSaved); render(true); return; }
+    if (a === 'kChange') { KP = true; J = null; render(true); return; }
+    if (a === 'kKeep') { KP = false; J = null; render(true); return; }
+    if (a === 'ytPlay') { var yid = b.getAttribute('data-y'); b.outerHTML = '<div class="ytv ytv--on"><iframe src="https://www.youtube-nocookie.com/embed/' + esc(yid) + '?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="Video động tác" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>'; return; }
+    if (a === 'lgG') { var gi = +b.getAttribute('data-i'), gp = LG.g.indexOf(gi); if (gp >= 0) LG.g.splice(gp, 1); else LG.g.push(gi); lgRead(); lgDraw(); return; }
+    if (a === 'lgFeel') { LG.f = +b.getAttribute('data-i'); lgRead(); lgDraw(); return; }
+    if (a === 'lgSave') { lgRead(); lgSave(); return; }
     if (a === 'jTip') { var gt = $('#jGoal'); J.goal = TXT.goalTips[+b.getAttribute('data-i')]; if (gt) gt.value = J.goal; syncJoin(); return; }
     if (a === 'jDone') { syncJoin(); if (words(J.goal) < 3) return; var isNew = !S.mem; finishJoin(); if (isNew) handover(function () { go({ v: 'home' }, true); }); else { go({ v: 'home' }, true); PS.toast('Đã cập nhật thẻ hội viên.'); } return; }
     /* hoạt động */
@@ -2204,6 +2340,7 @@
   D.addEventListener('input', function (e) {
     var t = e.target;
     if (t.id === 'jGoal' || t.id === 'jH' || t.id === 'jW') syncJoin();
+    if (t.id === 'jHt' && J) J.ht = t.value;
     if (t.id === 'wTxt' || t.id === 'pTxt') syncWrite();
     if (t.id === 'cH' || t.id === 'cW' || t.id === 'cA') syncCalc();
     if (t.id === 'cOwn') T.own = t.value;

@@ -77,6 +77,7 @@
         if (S.demo) { S.savedAt = Date.now(); PS.set(DEMO_KEY, S); return; }
         PS.save(ID, S);
         PS.report(ID, { xp: xpTotal(), ins: insTotal(), done: doneMain(), total: CD_TOTAL, days: S.days, ver: CD_VER, extra: extra() });
+        evSave(now); /* PS1.4.0: hồ sơ gửi thầy cô (giãn 60 giây, lưu ngay khi rời trang) */
       } catch (e) {}
     };
     if (now) w(); else saveT = setTimeout(w, 300);
@@ -97,6 +98,125 @@
     var k = PS.today(); S.days[k] = Math.round(((S.days[k] || 0) + 0.25) * 100) / 100; save();
   }, 15000);
   function markDay() { if (S.demo) return; var k = PS.today(); if (!S.days[k]) { S.days[k] = 0.25; save(); } }
+
+  /* =========================================================
+     PS1.4.0 · HỒ SƠ GỬI THẦY CÔ: dịch bài làm CD01 sang khuôn chung (PS.evidence, xem core.js)
+     Chỉ đọc S, không đổi bài. Câu hỏi, ý gợi ý lấy từ ACTS (content.js): sửa chữ khóa không cần sửa trang thầy cô.
+     Thêm dạng bước mới: thường không phải làm gì (key/opts/fields đọc chung); khóa lưu lạ thì vào mục "Ghi thêm".
+     ========================================================= */
+  var EV_AT = 0, EV_SKIP = /\.(st|for|hist|saved|seal|n|y|ivn|print)$|~$/;
+  function evTxt(x) {
+    return String(x == null ? '' : x).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\[Tên\]/g, given()).replace(/\[Nghề\]/g, g('a33.main') ? jobName() : 'nghề bạn chọn')
+      .replace(/\[Nơi\]/g, JP().place).replace(/\[Diện\]/g, (VISA[visaKey()] || {}).n || '').replace(/\[Năm5\]/g, String(y5())).replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+  }
+  function evOpts(s) {
+    var o = [];
+    if (s.groups && s.groups.push) s.groups.forEach(function (gr) { o = o.concat(gr[1] || []); });
+    else if (s.opts && s.opts.push) o = s.opts;
+    else if (s.k === 'dil' && s.a && s.b) o = [s.a.t, s.b.t, 'Tùy hôm'];
+    else if (s.from && s.from.push && s.labels) o = s.labels.slice();
+    return o.map(function (x) { return evTxt(typeof x === 'string' ? x : (x && x.push ? x[1] : (x && (x.t || x.n)) || '')); }).filter(function (x) { return x; });
+  }
+  function evLab(s, v) {
+    if (v === 'o' || v === 'khac') return null;
+    if (s.k === 'dil') return v === 'a' ? s.a.t : (v === 'b' ? s.b.t : (v === 'm' ? 'Tùy hôm' : String(v)));
+    if (s.k === 'visa' && VISA[v]) return VISA[v].n;
+    if (s.from && s.from.push && s.labels && s.from.indexOf(v) >= 0) return s.labels[s.from.indexOf(v)];
+    if (s.k === 'inds' || s.k === 'jobguess') return indName(v, s.key);
+    var o = s.opts, i, x;
+    if (o && o.push) for (i = 0; i < o.length; i++) {
+      x = o[i];
+      if (x && x.push && String(x[0]) === String(v)) return x[1];
+      if (x && typeof x === 'object' && !x.push && x.v != null && String(x.v) === String(v)) return x.t;
+    }
+    if (typeof v === 'number' && o && o.push && typeof o[v] === 'string') return o[v];
+    var cm = s.k === 'gap' ? GAP_OPTS : (s.k === 'zsort' ? ZONES : null); /* mã mức tự xếp */
+    if (cm) for (i = 0; i < cm.length; i++) if (cm[i][0] === String(v)) return cm[i][1];
+    return String(v);
+  }
+  function evFlat(s, v) {
+    var out = [];
+    for (var k in v) if (v.hasOwnProperty(k)) {
+      var x = v[k]; if (x == null || x === '') continue;
+      if (typeof x === 'object') x = x.push ? x.join(', ') : JSON.stringify(x);
+      out.push(evTxt(k) + ': ' + evTxt(evLab(s, x) == null ? x : evLab(s, x)));
+    }
+    return out.join(' · ');
+  }
+  function evStep(id, s, out, used) {
+    var q = evTxt(s.q || s.hq || ''), v, it, opts, L;
+    if (s.key && !used[s.key]) { /* hai bước cùng khóa (vẽ rồi xem lại): chỉ lấy một lần */
+      used[s.key] = 1; used[s.key + 'o'] = 1;
+      v = S.d[s.key];
+      if (v != null && v !== '' && !(v.push && !v.length)) {
+        opts = evOpts(s); it = { a: id, q: q, k: 'other' };
+        if (opts.length) it.opts = opts;
+        if (v.push) {
+          var sel = [], mine = [];
+          v.forEach(function (x) { if (typeof x === 'object') return; var l = evLab(s, x); if (l == null) { if (S.d[s.key + 'o']) mine.push(S.d[s.key + 'o']); return; } l = evTxt(l); if (opts.length && opts.indexOf(l) < 0) mine.push(l); else sel.push(l); });
+          it.k = 'multi'; it.sel = sel; if (mine.length) it.own = mine.join(' · ');
+        } else if (typeof v === 'object' && s.k === 'swipe') { /* thẻ sẵn sàng: Sẵn sàng / Còn lo / Chưa biết */
+          var rd = RD(), lab = {}; READY_OPTS.forEach(function (o) { lab[o[0]] = o[1]; });
+          it.val = rd.map(function (c, i) { return v[i] ? evTxt(c[0]) + ': ' + (lab[v[i]] || v[i]) : ''; }).filter(function (x) { return x; }).join(' · ');
+          if (!it.val) it = null;
+        } else if (typeof v === 'object' && (s.k === 'tl' || s.k === 'tlview')) { /* lộ trình: mốc → năm (tháng) */
+          it.val = MILES.filter(function (x) { return v[x[0]]; }).map(function (x) { return evTxt(x[1]) + ': ' + (v[x[0] + '_m'] ? 'tháng ' + v[x[0] + '_m'] + '/' : '') + v[x[0]]; }).join(' · ');
+          for (var tk in v) if (v.hasOwnProperty(tk) && !/_m$/.test(tk) && typeof v[tk] !== 'object' && !MILES.some(function (x) { return x[0] === tk; })) it.val += (it.val ? ' · ' : '') + evTxt(tk) + ': ' + v[tk];
+          if (!it.val) it = null;
+        } else if (typeof v === 'object') { it.val = evFlat(s, v); if (!it.val) it = null; }
+        else if (!opts.length && s.k !== 'inds' && s.k !== 'jobguess') { it.val = evTxt(evLab(s, v)); }
+        else {
+          L = evLab(s, v); it.k = s.scale ? 'scale' : 'pick';
+          if (L != null) it.sel = [evTxt(L)];
+          if ((v === 'o' || v === 'khac') && S.d[s.key + 'o']) it.own = String(S.d[s.key + 'o']);
+        }
+        if (it && it.sel) it.sel = it.sel.filter(function (x) { return x !== ''; });
+        if (it && !it.opts && ((it.sel && it.sel.join('').replace(/[\s0-9]/g, '') === '') || (it.val != null && /^[0-9.\s]*$/.test(it.val)))) it = null; /* chỉ là số thứ tự nội bộ */
+        if (it && it.sel && !it.sel.length && !it.own) it = null;
+        if (it) out.push(it);
+      }
+    }
+    (s.fields || []).forEach(function (f) {
+      used[f.key] = 1;
+      var t = own(f, S.d[f.key]); if (!t) return;
+      var lb = evTxt(f.l), w = { a: id, q: q && lb && q !== lb ? q + ' · ' + lb : (q || lb), k: 'write', own: t };
+      if (f.min) w.min = f.min;
+      if (autoSame(f)) w.sug = 1;
+      if (s.tips && s.tips.push) w.tips = s.tips.map(evTxt);
+      out.push(w);
+    });
+  }
+  function evBuild() {
+    var units = [], acts = [], items = [], used = {};
+    ALLST.concat([FINAL]).forEach(function (st) {
+      units.push([st.id, st === FINAL || st === START ? st.vn : stLabel(st) + ' · ' + st.vn]);
+      (st.warm ? [st.warm] : []).concat(st.acts || []).forEach(function (id) {
+        var a = ACTS[id]; if (!a) return;
+        acts.push({ id: id, t: a.t, u: st.id, warm: a.warm ? 1 : 0, done: S.done[id] || 0, redo: S.bak[id] ? 1 : 0, mins: a.mins || 0 });
+        a.steps.forEach(function (s) { evStep(id, s, items, used); });
+        /* khóa lưu khác của chặng (dạng bước riêng): chỉ lấy chữ học viên viết, từ 3 chữ trở lên */
+        Object.keys(S.d).sort().forEach(function (k) {
+          if (k.indexOf(id + '.') !== 0 || used[k] || EV_SKIP.test(k)) return;
+          var v = S.d[k], t = typeof v === 'string' ? v : (v && v.push ? v.filter(function (x) { return typeof x === 'string'; }).join(' · ') : '');
+          if (words(t) < 3) return;
+          used[k] = 1; items.push({ a: id, q: FIELD[k] ? evTxt(FIELD[k].l) : 'Ghi thêm', k: 'write', own: t });
+        });
+      });
+    });
+    var x = extra();
+    var facts = [['goal', 'Mục tiêu đầu khóa', x.goal], ['me', '5 năm sau muốn là người', x.me], ['job', 'Nghề chính', x.mainName], ['job2', 'Nghề dự phòng', x.bName],
+      ['why', 'Vì sao chọn nghề', x.why], ['ria', 'Mã RIASEC', x.ria], ['visa', 'Diện đi Nhật', x.visa && VISA[x.visa] ? VISA[x.visa].n : ''], ['worry', 'Điều lo nhất', x.worry],
+      ['habit', 'Thói quen hứa (Ga 6)', x.habits.filter(function (h) { return h; }).join(' | ')], ['motto', 'Câu tâm niệm', x.motto], ['far', 'Hướng 5 năm', x.far],
+      ['jobKey', 'Mã ngành (để so với khóa khác)', x.jobKey]].filter(function (r) { return r[2] != null && r[2] !== ''; });
+    return { v: 1, ver: CD_VER, units: units, acts: acts, items: items, facts: facts };
+  }
+  function evSave(force) {
+    if (S.demo || NOSAVE || W.PS_NOSAVE || !PS.evidence) return;
+    if (!force && Date.now() - EV_AT < 60000) return;
+    EV_AT = Date.now();
+    try { PS.evidence(ID, evBuild()); } catch (e) {}
+  }
+  setTimeout(function () { evSave(true); }, 1200); /* học viên cũ: mở khóa một lần là có hồ sơ */
 
   /* =========================================================
      2. GA, CHẶNG, MỞ KHÓA
@@ -341,6 +461,7 @@
     de: viewOf,
     show: function (v, y) { V = v; QUIET = true; render(false); QUIET = false; W.scrollTo(0, y || 0); },
     intercept: function () { if (D.getElementById('cdov')) { closeOv(); return 1; } if (nbOpen) { closeNb(); return 1; } return V.v === 'intro' ? 2 : 0; },
+    trk: function (v) { return v && v.v === 'act' ? v.id : ''; }, /* PS1.4.0: lõi đếm thời gian từng chặng */
     beforeLeave: function () { save(true); } });
 
   /* ---------- màn mở đầu ---------- */

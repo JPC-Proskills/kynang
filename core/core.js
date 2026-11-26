@@ -168,6 +168,7 @@
       var f = ''; try { f = W.sessionStorage.getItem('ps.nav'); W.sessionStorage.removeItem('ps.nav'); } catch (e) {}
       N.d = 0; N.fh = f === o.mod ? 1 : 0; rep(o.get(), 0, url);
     };
+    N.trk = function () { return o.trk ? o.trk(o.get()) : ''; }; /* PS1.4.0: mã hoạt động đang mở, để lõi đếm thời gian từng hoạt động */
     N.save = function (y) { rep(o.get(), y == null ? (W.pageYOffset || 0) : y); };
     /* trước khi đổi sang màn v: vào sâu hơn thì thêm mục (đủ số cấp), ngang hoặc lên thì thay mục hiện tại */
     N.go = function (v) {
@@ -457,6 +458,7 @@
     bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
     ext: '<path d="M14 4.5h5.5V10"/><path d="M19.5 4.5 11 13"/><path d="M17 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h4"/>',
     team: '<circle cx="12" cy="6.6" r="2.4"/><circle cx="5.4" cy="9.4" r="2"/><circle cx="18.6" cy="9.4" r="2"/><path d="M2.2 19.5c.3-3 1.5-5 3.4-5.3 1.2-.2 2.2.4 2.9 1.3.8-1.9 2-3 3.5-3s2.7 1.1 3.5 3c.7-.9 1.7-1.5 2.9-1.3 1.9.3 3.1 2.3 3.4 5.3"/><path d="M8.6 17.2c1 .8 2.1 1.2 3.4 1.2s2.4-.4 3.4-1.2"/>',
+    send: '<path d="M20.5 3.5 10.6 13.4"/><path d="M20.5 3.5 14.2 20.5l-3.6-7.1-7.1-3.6z"/>',
     gift: '<rect x="4" y="9" width="16" height="11" rx="1.6"/><path d="M3 9h18v-1.5H3zM12 7.5v12.5M12 7.5c-1.4-2.8-5-3.2-5-1.2 0 1.5 2.6 1.2 5 1.2zM12 7.5c1.4-2.8 5-3.2 5-1.2 0 1.5-2.6 1.2-5 1.2z"/>'
   };
   PS.icon = function (k, sz, sw) {
@@ -707,6 +709,7 @@
     if (ctx === 'module') h += '<button type="button" class="ps-homebtn" data-psact="home">' + PS.icon('home', 20) + '<span><b>Về trang chính ' + esc(CFG.APP) + '</b><small>Chọn module khác, xem tổng điểm</small></span>' + PS.icon('next', 16) + '</button>';
     h += row('info', 'user', 'Thông tin của bạn', esc(p.name ? PS.given() + (p.cls ? ' · ' + p.cls : '') : 'Chưa nhập'), infoBody());
     h += row('tch', 'people', 'Thầy cô hướng dẫn', t ? esc(t.name) : 'Chưa chọn', '<div class="ps-form"><label>Thầy cô hướng dẫn lớp bạn' + PS.teacherSelect('data-psset="teacher"') + '</label></div><p class="ps-small">Dùng khi gửi báo cáo qua Teams. Đổi khi bạn chuyển lớp.</p>');
+    if (ctx === 'hub') h += row('rep', 'send', 'Gửi hồ sơ cho thầy cô', repStatus(), repBody()); /* PS1.4.0: chỉ ở trang chủ */
     if (opts.pace) h += row('pace', 'flame', 'Nhịp học và lời nhắc', opts.pace.status || '', opts.pace.body || '');
     h += '<div class="ps-srow ps-srow--sw"><div class="ps-srow__h"><span class="ps-srow__ic">' + PS.icon(PS.soundOn() ? 'sound' : 'mute', 18) + '</span><b>Âm thanh</b><button type="button" class="ps-sw' + (PS.soundOn() ? ' on' : '') + '" data-psact="snd" role="switch" aria-checked="' + PS.soundOn() + '" aria-label="Âm thanh"><i></i></button></div></div>';
     h += '<div class="ps-srow ps-srow--sw"><div class="ps-srow__h"><span class="ps-srow__ic">' + PS.icon('text', 18) + '</span><b>Cỡ chữ</b><span class="ps-seg" role="radiogroup" aria-label="Cỡ chữ">' +
@@ -745,6 +748,7 @@
         PS.toast(big ? 'Đã chọn chữ <b>Lớn</b> cho mọi khóa.' : 'Đã chọn chữ <b>Vừa</b>.');
         if (opts.onChange) opts.onChange('fs');
       }
+      else if (a === 'report') { if (PS.sendReport()) { var rs = $('.ps-srow[data-k="rep"] .ps-srow__st', rootEl); if (rs) rs.innerHTML = repStatus(); } }
       else if (a === 'backup') PS.backup();
       else if (a === 'restore') PS.restorePick();
       else if (a === 'full') PS.toggleFull();
@@ -788,6 +792,174 @@
       ]
     });
   };
+
+  /* =========================================================
+     PS1.4.0 · HỒ SƠ HỌC TẬP GỬI THẦY CÔ (một tập tin JSON cho mọi khóa)
+     1) Lõi tự ghi thời gian trên mọi trang có nạp core.js, khóa lưu ps.trk:
+        d[ngày] = { o: giây mở màn hình, a: giây có thao tác, n: số lần vào học, m: { mod: [o, a] } }
+        h[0..23] = giây có thao tác theo giờ trong ngày
+        x[mod][mã hoạt động] = [giây có thao tác, giây mở, số lần gõ, số lần dán, lần đầu, lần cuối]
+        Mã hoạt động: khóa khai báo PS.nav({ trk: function (v) { return mã | ''; } }). Không có thì '_'.
+        Có thao tác = chạm, gõ, cuộn trong 60 giây gần nhất (cùng cách các khóa đếm phút học).
+     2) Khóa có bộ dịch (config.js: ev: 1) gọi PS.evidence(ID, ev) để lưu bài làm theo KHUÔN CHUNG (ps.ev.<ID>):
+        ev = { v: 1, ver, units: [[mã, tên]], acts: [{ id, t, u, done, redo, warm }], items: [...], facts: [[mã, nhãn, giá trị]] }
+        item = { a: mã hoạt động, q: câu hỏi (chữ thật), k: 'pick' | 'multi' | 'scale' | 'write' | 'note' | 'other',
+                 opts: [ý gợi ý], sel: [ý đã chọn], own: 'chữ tự viết', sug: 1 (dùng nguyên câu gợi ý), val: 'dữ liệu khác', at: 'ngày' }
+        Câu hỏi nằm sẵn trong tệp nên trang thầy cô không cần biết nội dung khóa; sửa khóa chỉ sửa bộ dịch của khóa đó.
+     3) Trang chủ: PS.reportData() gom tất cả; PS.sendReport() tải tệp rồi mở Teams (nút ở thẻ Khóa học và Sổ tay › Cài đặt).
+     Không gửi: tâm trạng ở Check-in Shin, Thẻ khẩn cấp TC01. Mã kiểm tra `sig` chỉ phát hiện sửa tay, không phải bảo mật.
+     ========================================================= */
+  var TRK_KEY = 'ps.trk', TRK_LAST = Date.now(), TRK_PEND = {}, TRK_GAP = 30 * 60000;
+  var TRK_MOD = (function () {
+    var seg = String(W.location.pathname || '').split('/'), ids = PS.modules().map(function (m) { return m.id; }), i;
+    for (i = seg.length - 2; i >= 0; i--) if (ids.indexOf(seg[i]) >= 0) return seg[i];
+    return 'home';
+  })();
+  function trkOff() {
+    return !PS.storageOK || W.PS_NOSAVE || W.DEMO === true || PS.demoParam().on || rawGet('ps.demo.' + TRK_MOD) != null || PS.needProfile();
+  }
+  function trkGet() {
+    var t = get(TRK_KEY, null), i;
+    if (!t || typeof t !== 'object') t = {};
+    if (!t.d || typeof t.d !== 'object') t.d = {};
+    if (!t.x || typeof t.x !== 'object') t.x = {};
+    if (!t.h || t.h.length !== 24) { t.h = []; for (i = 0; i < 24; i++) t.h.push(0); }
+    if (!t.since) t.since = today();
+    return t;
+  }
+  function trkDay(t) { var k = today(); return t.d[k] || (t.d[k] = { o: 0, a: 0, n: 0, m: {} }); }
+  function trkCur() { try { return NAVC && NAVC.trk ? String(NAVC.trk() || '') : ''; } catch (e) { return ''; } }
+  function trkRow(t, k) {
+    var m = t.x[TRK_MOD] || (t.x[TRK_MOD] = {}), r = m[k], now = Date.now();
+    if (!r) r = m[k] = [0, 0, 0, 0, now, now];
+    r[5] = now; return r;
+  }
+  function trkFlush(t) { /* số lần gõ/dán chờ ghi */
+    for (var k in TRK_PEND) if (TRK_PEND.hasOwnProperty(k)) { var r = trkRow(t, k); r[2] += TRK_PEND[k][0]; r[3] += TRK_PEND[k][1]; }
+    TRK_PEND = {};
+  }
+  function trkTrim(t) {
+    var ks = Object.keys(t.d).sort(); while (ks.length > 200) delete t.d[ks.shift()];
+  }
+  function trkSave(t) { trkTrim(t); t.last = Date.now(); set(TRK_KEY, t); }
+  function trkSession() { /* mở app hoặc quay lại sau hơn 30 phút = một lần vào học mới */
+    if (trkOff()) return;
+    var t = trkGet(), d = trkDay(t);
+    if (!d.n || Date.now() - (t.last || 0) > TRK_GAP) d.n = (d.n || 0) + 1;
+    trkSave(t);
+  }
+  function trkTick(sec) {
+    if (trkOff() || D.visibilityState === 'hidden') return;
+    var t = trkGet(), d = trkDay(t), on = Date.now() - TRK_LAST <= 60000, mm = d.m[TRK_MOD] || (d.m[TRK_MOD] = [0, 0]), ck = trkCur();
+    if (Date.now() - (t.last || 0) > TRK_GAP) d.n = (d.n || 0) + 1;
+    d.o += sec; mm[0] += sec;
+    if (on) { d.a += sec; mm[1] += sec; t.h[new Date().getHours()] += sec; }
+    if (ck) { var r = trkRow(t, ck); r[1] += sec; if (on) r[0] += sec; }
+    trkFlush(t); trkSave(t);
+  }
+  function trkBump(i) {
+    if (trkOff()) return;
+    var k = trkCur() || '_', p = TRK_PEND[k] || (TRK_PEND[k] = [0, 0]); p[i]++;
+  }
+  ['pointerdown', 'keydown', 'touchstart', 'scroll', 'input'].forEach(function (n) { W.addEventListener(n, function () { TRK_LAST = Date.now(); }, { passive: true, capture: true }); });
+  D.addEventListener('input', function (e) {
+    var el = e.target, tg = el && el.tagName;
+    if (tg === 'TEXTAREA' || (tg === 'INPUT' && /^(text|search|)$/i.test(el.getAttribute('type') || ''))) trkBump(0);
+  }, true);
+  D.addEventListener('paste', function () { trkBump(1); }, true); /* đếm cả lần dán bị chặn (ghi chú Shin) */
+  setInterval(function () { trkTick(15); }, 15000);
+  D.addEventListener('visibilitychange', function () {
+    if (D.visibilityState === 'visible') trkSession();
+    else if (!trkOff()) { var t = trkGet(); trkFlush(t); trkSave(t); }
+  });
+  W.addEventListener('pagehide', function () { if (!trkOff()) { var t = trkGet(); trkFlush(t); trkSave(t); } });
+  setTimeout(trkSession, 0);
+  PS.trk = function () { return trkGet(); };
+
+  /* khóa lưu bài làm theo khuôn chung (gọi khi lưu, có giãn nhịp ở phía khóa) */
+  PS.evidence = function (id, ev) { if (!ev || typeof ev !== 'object') return false; ev.at = Date.now(); return set('ps.ev.' + id, ev); };
+
+  /* mã kiểm tra FNV-1a 32 bit (trang thầy cô tính lại trên JSON.stringify của tệp khi bỏ trường sig) */
+  function psSig(s) {
+    var h = 0x811c9dc5, i; s = 'proskills-oden|' + s;
+    for (i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) >>> 0; }
+    return ('0000000' + h.toString(16)).slice(-8);
+  }
+  PS.sig = psSig;
+  function r1(x) { return Math.round((+x || 0) * 10) / 10; }
+  PS.reportData = function () {
+    fire('beforeBackup');
+    var p = PS.profile(), tc = PS.teacher(), trk = trkGet(), log = get('ps.days', {}) || {}, un = get('ps.unlock', {}) || {}, tot = PS.totals();
+    trkFlush(trk);
+    /* thời gian: phút tương tác theo ngày, theo khóa (ps.days có từ trước PS1.4.0) + phút mở app, số lần vào học (từ PS1.4.0) */
+    var days = {}, k, id;
+    function dd(k) { return days[k] || (days[k] = { a: 0, o: null, n: 0, m: {} }); }
+    for (k in log) if (log.hasOwnProperty(k)) for (id in log[k]) if (log[k].hasOwnProperty(id)) { var e = dd(k); e.m[id] = [r1(log[k][id]), null]; }
+    for (k in trk.d) if (trk.d.hasOwnProperty(k)) {
+      var t = trk.d[k], e2 = dd(k); e2.o = r1(t.o / 60); e2.n = t.n || 0;
+      for (id in t.m) if (t.m.hasOwnProperty(id)) { var c = e2.m[id] || (e2.m[id] = [0, null]); c[0] = Math.max(c[0], r1(t.m[id][1] / 60)); c[1] = r1(t.m[id][0] / 60); }
+    }
+    for (k in days) if (days.hasOwnProperty(k)) { var s = 0; for (id in days[k].m) if (days[k].m.hasOwnProperty(id)) s += days[k].m[id][0]; days[k].a = r1(s); }
+    var mods = [];
+    PS.modules().forEach(function (m) {
+      if (m.state === 'hidden') return;
+      var sm = PS.summary(m.id), ev = get('ps.ev.' + m.id, null), x = trk.x[m.id] || {}, acts = {};
+      if (!sm && !ev && !un[m.id]) return;
+      for (var a in x) if (x.hasOwnProperty(a)) acts[a] = { sec: x[a][0], open: x[a][1], keys: x[a][2], paste: x[a][3], first: x[a][4], last: x[a][5] };
+      mods.push({ id: m.id, code: m.code, title: m.title, ver: (sm && sm.ver) || m.ver || '', done: sm ? sm.done || 0 : 0, total: sm && sm.total ? sm.total : (m.total || 0),
+        xp: sm ? sm.xp || 0 : 0, ins: sm ? sm.ins || 0 : 0, start: un[m.id] || 0, last: sm ? sm.last || 0 : 0,
+        ev: ev, stale: !!(m.ev && sm && sm.last && (!ev || sm.last - (ev.at || 0) > 5 * 60000)),
+        time: acts, raw: ev ? null : (sm && sm.extra) || null });
+    });
+    var hrs = trk.h.map(function (v) { return r1(v / 60); });
+    var o = { kind: 'proskills-report', v: 1, app: CFG.APP, appVer: CFG.APP_VER, at: Date.now(), tz: -new Date().getTimezoneOffset(),
+      hv: { name: p.name, by: p.by, sid: p.sid, cls: p.cls, path: p.path, teacher: tc ? tc.email : (p.teacher || ''), teacherName: tc ? tc.name : '', created: p.created || 0 },
+      totals: { xp: tot.xp, ins: tot.ins, done: tot.done, streak: tot.streak, started: tot.started },
+      time: { since: trk.since, days: days, hours: hrs },
+      mods: mods };
+    o.sig = psSig(JSON.stringify(o));
+    return o;
+  };
+  PS.reportName = function () { var p = PS.profile(); return ('Proskills_HoSo_' + norm(p.name).slice(0, 24) + '_' + norm(p.cls) + '_' + today()).replace(/_+/g, '_') + '.json'; };
+  function copyOld(t) { try { var a = D.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; D.body.appendChild(a); a.select(); D.execCommand('copy'); D.body.removeChild(a); } catch (e) {} }
+  function copyTxt(t) {
+    copyOld(t); /* chép ngay trong lúc bấm (iPhone cần), rồi thử cách mới */
+    try { if (W.navigator.clipboard && W.isSecureContext) W.navigator.clipboard.writeText(t).then(null, function () {}); } catch (e) {}
+  }
+  function repMsg(t, nm) {
+    var p = PS.profile(), call = t.name.charAt(0).toLowerCase() + t.name.slice(1);
+    return 'Em chào ' + call + '. Em là ' + p.name + (p.cls ? ', lớp ' + p.cls : '') + '. Em gửi ' + t.pron + ' hồ sơ học tập Proskills (tập tin ' + nm + '). Em cảm ơn ' + t.pron + ' ạ.';
+  }
+  PS.sendReport = function () {
+    var data, nm = PS.reportName();
+    try { data = PS.reportData(); } catch (e) { PS.toast('Chưa tạo được hồ sơ. Bạn thử mở lại ứng dụng nhé.'); return false; }
+    if (!PS.download(nm, JSON.stringify(data))) { PS.toast('Chưa tải được tập tin. Thử mở bằng Chrome hoặc Safari nhé.'); return false; }
+    PS.setPref('lastReport', Date.now());
+    var miss = data.mods.filter(function (m) { return m.stale; }).map(function (m) { return m.title; });
+    PS.dialog({
+      icon: 'send', title: 'Đã tải hồ sơ học tập',
+      html: '<p class="ps-small">Tập tin <b>' + esc(nm) + '</b> đã lưu vào thư mục Tải về của máy. Tập tin gồm bài làm mọi khóa và Shin Routine.</p>' +
+        '<p class="ps-small"><b>Bước 2:</b> mở Teams, đính kèm tập tin này rồi bấm gửi. Tin nhắn đã được soạn và chép sẵn.</p>' +
+        '<div class="ps-form"><label>Thầy cô hướng dẫn lớp bạn' + PS.teacherSelect('id="psRepT"') + '</label></div>' +
+        (miss.length ? '<p class="ps-warn">' + esc(miss.join(', ')) + ': mở khóa này một lần rồi gửi lại, để thầy cô xem được chi tiết bài làm.</p>' : ''),
+      onOpen: function (ov) { var s = $('#psRepT', ov); if (s) s.addEventListener('change', function () { PS.setProfile({ teacher: s.value }); }); },
+      buttons: [
+        { t: PS.icon('team', 18) + ' Mở Teams', cls: 'ps-btn--go', fn: function () {
+          var t = PS.teacher(); if (!t) { PS.toast('Bạn chọn thầy cô trước nhé.'); return false; }
+          var msg = repMsg(t, nm); copyTxt(msg);
+          W.open('https://teams.microsoft.com/l/chat/0/0?users=' + encodeURIComponent(t.email) + '&message=' + encodeURIComponent(msg), '_blank');
+          return true;
+        } },
+        { t: 'Xong', cls: 'ps-btn--soft' }
+      ]
+    });
+    return true;
+  };
+  function repBody() {
+    return '<p class="ps-small">Một tập tin gồm bài làm mọi khóa và Shin Routine. Thầy cô xem để biết bạn đang làm tốt chỗ nào, cần giúp chỗ nào.</p>' +
+      '<div class="ps-btnrow"><button type="button" class="ps-btn ps-btn--sm" data-psact="report">' + PS.icon('send', 16) + ' Tải và gửi hồ sơ</button></div>';
+  }
+  function repStatus() { var lr = PS.prefs().lastReport; return lr ? 'Đã gửi ' + fmtDate(lr).slice(0, 5) : 'Chưa gửi'; }
 
   W.PS = PS;
 })(window, document);

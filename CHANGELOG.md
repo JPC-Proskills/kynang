@@ -5,6 +5,32 @@ Quy ước số phiên bản: **PS a.b.c**
 - b: giai đoạn / thêm module hoặc tính năng lớn
 - c: sửa nhỏ trong giai đoạn đó
 
+## PS1.4.1 · 25/11/2026 · TC01.2.0 · Điều chỉnh TC01 đợt 1: lễ tân, hỏi nghề trong phòng, Sàn tập theo Sổ GDTC
+- **Lễ tân (phiếu đăng ký) còn 3 bước**: (1) mốc nam/nữ + **Trước giờ có chơi thể thao không?** (Không / Thỉnh thoảng / Thường xuyên + chọn môn) · (2) **Bệnh lý, sức khỏe, chấn thương cần thầy cô lưu ý** (Không / Có + chọn nhanh 9 vấn đề + ô ghi ngắn) · (3) mục tiêu + chiều cao, cân nặng. Bỏ câu hỏi nghề ở lễ tân.
+- **Hỏi nghề trong phòng có liên quan**: lần đầu vào Room 202 Góc nghề, hoặc mở bài có tình huống theo nhóm (Bếp › Ăn theo ca và nghề, Năng lượng của mình), hoặc Học tiếp mở thẳng hoạt động Góc nghề → hiện khung chọn nghề ngay tại chỗ (gợi ý sẵn Ga đích CD01 nếu có). Góc nghề có dòng "Nghề của bạn · Đổi nghề". Chưa chọn nghề thì Sàn tập ẩn dòng mẹo theo nhóm, thẻ hội viên không ghi nhóm.
+- **Room 101 Sàn tập theo Sổ quản lý học tập GDTC v10.1 (slide 5)**: b1 Khởi động = 3 phần, 17 động tác (Khớp xương 6 · Cơ bắp 6 · Tim mạch 5; "Đập tay (cổ vũ)" = jumping jack). b2 Ngực – Vai – Tay: chống đẩy cơ bản ★★, chống đẩy tay chạm gối ★★★ (nam), hít đất khuỵu gối ★★★. b3 Bụng – Lưng: plank ★★, gập bụng nâng chân ★★★, superman ★★★. b4 Chân – Hông: squat cơ bản ★★, squat tạ vôi 20 kg ★★★ (bỏ bước lunge). Lời hướng dẫn viết lại theo sổ. **Bỏ bài Tim mạch (b5).**
+- Mỗi bài b1–b4 chỉ còn **1 hoạt động "Xem cách làm"**, cuối có khung **Ghi lại buổi tập** (thay "Tìm điểm chưa đúng", "Tập thử cùng Shin"): số cái hoặc số giây × số hiệp mỗi động tác (khởi động: phần đã làm + số phút), cảm nhận, máy tự ghi ngày giờ; hiện lần trước, kỷ lục, mốc lớp; danh sách các buổi đã ghi. Lưu buổi tập xong là bấm Hoàn thành được ngay. Nữ không thấy ô chống đẩy tay chạm gối. Sổ tay › Thẻ hội viên có "Nhật ký tập Sàn tập", thể thao, sức khỏe.
+- **Video YouTube phát trong app** (chạm hình mới tải, kèm "Mở trên YouTube"): Push up, Chống đẩy tay chạm gối, Plank, Nằm đá bụng dưới (gập bụng nâng chân), Squat, Khởi động. Động tác chưa có video giữ nút mở kênh THECHAT_SUCKHOE.
+- **Khung chờ hình thầy gửi**: `frames[].im` + `TC_IMG` (content.js), hình đặt ở `tc01/img/<mã>.webp`; chưa có hình thì giữ hình vẽ. 6 tư thế vẽ mới (toeTouch, climb, jog, buttKick, sumoUp, sumoLow) và tạ vôi `TC_MARK.wtUp/wtLow`.
+- Buổi tập 10 phút: phần khởi động đổi sang Khớp xương (6 × 20 giây). Hồ sơ gửi thầy cô (`extra.mem`): giới, chiều cao, cân nặng, thể thao, sức khỏe; `extra.logs` = số buổi đã ghi.
+- Dữ liệu cũ giữ nguyên: bài đã xong, XP, nghề đã chọn, số đo; học viên cũ chưa trả lời thể thao thì Sổ tay ghi "Chưa trả lời" (sửa ở Sửa thẻ hội viên). TC01 còn 92 hoạt động (bỏ 11).
+- Kiểm 390/1280: lễ tân 3 bước, Room 101 cả 4 bài, ghi lại (cái, giây, khởi động), video, đục lỗ, Room 202 hỏi nghề + đổi nghề, Bếp d5 hỏi nghề, Học tiếp n1a, học viên cũ PS1.4.0, học viên nữ, demo, Sổ tay, Buổi tập 10 phút: không lỗi JS. tc01/*.js qua acorn ES5. Chưa thử: video và ảnh xem trước YouTube trên mạng thật, iPhone đời cũ.
+
+Tệp đổi: tc01/content.js, tc01/engine.js, tc01/art.js, tc01/tc01.css, tc01/index.html, config.js (APP_VER, TC01 ver, total 92), sw.js (VERSION), mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới (thư mục `tc01/img/` sẽ có ở đợt chèn hình).
+
+## PS1.4.0 · 24/11/2026 · Hồ sơ học tập gửi thầy cô (tệp JSON) · giai đoạn 1
+- Trang chủ có nút **Gửi hồ sơ cho thầy cô**: thẻ Khóa học (cuối trang, trên Hướng dẫn) và Sổ tay › Cài đặt. Một tập tin `Proskills_HoSo_<tên>_<lớp>_<ngày>.json` gồm bài làm mọi khóa và Shin Routine; tải xong mở Teams với tin nhắn soạn sẵn (học viên tự đính kèm tệp, như gửi PDF). Chưa chọn thầy cô thì chọn ngay trong hộp thoại. Không có màn xem trước (thầy chốt).
+- Lõi (core.js) tự ghi thời gian trên mọi trang: phút mở app, phút có thao tác, số lần vào học theo ngày; phút có thao tác theo giờ trong ngày; thời gian từng hoạt động, số lần gõ, số lần dán (kể cả dán bị chặn). Khóa lưu `ps.trk`. Không ghi ở bản demo.
+- Khuôn chung `PS.evidence(ID, ev)`: mỗi khóa tự dịch bài làm (câu hỏi bằng chữ thật, ý gợi ý, ý đã chọn, chữ tự viết, cờ dùng nguyên câu gợi ý). Trang thầy cô không cần biết nội dung khóa, nên sửa khóa không phải sửa trang thầy cô.
+- Đã có bộ dịch: **CD01** (CD01.2.0, mọi ga và Ga Ước Mơ; điểm then chốt: mục tiêu đầu khóa, nghề chính, RIASEC, diện, điều lo nhất, thói quen hứa…) và **Shin Routine** (thẻ, công thức, bậc, dấu từng ngày, ghi bù, lý do chưa làm, ghi chú, memo, bài học, thắng nhỏ). **Không gửi tâm trạng** ở Check-in Shin. CD02, HP05, TC01: tạm gửi tóm tắt (tiến độ, thời gian, dữ liệu khóa báo về trang chủ), bộ dịch làm ở giai đoạn 3.
+- Học viên đang học dở: mở CD01 hoặc Shin một lần sau khi cập nhật là có hồ sơ chi tiết; nếu chưa, hộp thoại gửi nhắc tên khóa cần mở.
+- Mã kiểm tra `sig` (FNV-1a) để trang thầy cô phát hiện tệp bị sửa tay. Chỉ chặn sửa vội, không phải bảo mật.
+- Kiểm 390/1280: trang chủ (thẻ Khóa học, Cài đặt, hộp thoại, chưa chọn thầy cô, link Teams), CD01 có bài làm đủ 18 chặng, Shin có thẻ và ghi chú, mở CD02, HP05, TC01, demo CD02: không lỗi JS; đếm giờ chặng a21 đúng; mã kiểm tra tính lại khớp; tệp mẫu ~22 KB. config.js, core.js, hub.js, cd01/engine.js, routine/proskills.js qua acorn ES5.
+
+Tệp đổi: core/core.js (mục PS1.4.0 cuối tệp, icon `send`, `N.trk` trong PS.nav, hàng Cài đặt trang chủ), hub/hub.js (`hsrHTML`, `hsSend`), hub/hub.css (`.hsr`), cd01/engine.js (bộ dịch `evBuild`, `trk` cho PS.nav), cd01/content.js (CD_VER), routine/proskills.js (`evShin`), config.js (APP_VER, `ev: 1`, CD01 ver), sw.js (VERSION), mọi index.html (?v=), CHANGELOG.md, AGENTS.md.
+File cần xóa trên GitHub: không có. Không có tệp mới.
+
 ## PS1.3.70 · 24/11/2026 · Khối gợi ý Shin Routine trong khóa học hiện Shin của chính học viên
 - Khối “Rèn mỗi ngày cùng Shin” trong CD01 (Ga 6), CD02 (các bến) và TC01 (từng bài) hiện đúng Shin của học viên như trang chủ: lớn theo số ngày ghi nhận (Trứng → Gà con → Gà choai → Gà lớn), mặc trang phục học viên chọn ở Tủ đồ của Shin, vẫy cánh chào.
 - Học viên chưa mở Shin Routine lần nào: vẫn hiện hình đại diện gà con (routine/icon-192.png). Bản demo giáo viên CD02: Shin Gà lớn, Khăn HLV.

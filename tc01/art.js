@@ -151,12 +151,24 @@ var TC_ART = {
   }
 };
 
+/* TC01.2.0: tư thế thêm cho khởi động (slide 5) và squat tạ vôi */
+(function(){var NP={
+"toeTouch":{"v":"s","h":[134,142],"n":[125.5,129.3],"p":[98,92],"f":"r","L":[[[96,92],[104,129],[110,164],[124,170]],[[125.5,129.3],[126,153],[128,169]],[[98,92],[107,129],[113,164],[127,170]],[[125.5,129.3],[129,153],[132,169]]]},
+"climb":{"v":"s","h":[184.3,108.5],"n":[170,114],"p":[124.3,131.5],"f":"r","L":[[[121.3,131.5],[83.2,146.1],[47,160],[39,170]],[[170,114],[175,141],[176,170]],[[124.3,131.5],[162,146],[130,164],[124,167]],[[170,114],[170,141],[171,170]]]},
+"jog":{"v":"s","h":[121,23],"n":[119,38],"p":[118,86],"f":"r","L":[[[118,86],[119,126],[118,164],[132,170]],[[119,38],[134,58],[146,44]],[[118,86],[152,104],[146,142],[157,147]],[[119,38],[106,60],[108,82]]]},
+"buttKick":{"v":"s","h":[121,23],"n":[119,38],"p":[118,86],"f":"r","L":[[[118,86],[119,126],[118,164],[132,170]],[[119,38],[134,58],[146,44]],[[118,86],[121,126],[88,108],[84,100]],[[119,38],[106,60],[108,82]]]},
+"sumoUp":{"v":"f","h":[120,31],"n":[120,46],"p":[120,94],"f":"c","L":[[[113,94],[89.2,126.1],[86,164],[78,170]],[[127,94],[150.8,126.1],[154,164],[162,170]],[[107,50],[104,77],[114,100]],[[133,50],[136,77],[126,100]]]},
+"sumoLow":{"v":"f","h":[120,63],"n":[120,78],"p":[120,124],"f":"c","L":[[[113,124],[84,134],[86,164],[78,170]],[[127,124],[156,134],[154,164],[162,170]],[[107,82],[106,108],[114,130]],[[133,82],[134,108],[126,130]]]}
+};for(var k in NP)if(NP.hasOwnProperty(k))POSES[k]=NP[k];})();
+
 /* ---------- vật vẽ thêm trên hình người tập (Góc nghề): frames[].mk / rounds[].mk = tên trong TC_MARK, hệ 240×180 ---------- */
 function tcBox(x,y,w,h){ return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="#E2C9A0" stroke="#A9834F" stroke-width="2"/><path d="M'+x+' '+(y+h*0.3)+'h'+w+'" stroke="#C7A56F" stroke-width="3"/><path d="M'+(x+w/2)+' '+y+'v'+(h*0.3)+'" stroke="#C7A56F" stroke-width="3"/>'; }
 var TC_MARK = {
   boxLow: tcBox(146,132,36,38),
   boxUp: tcBox(132,60,36,36),
   boxBad: tcBox(167,140,34,30),
+  wtUp: '<g><rect x="105" y="102" width="30" height="20" rx="7" fill="#A7B0AA" stroke="#6E7A73" stroke-width="2"/><path d="M111 102v-5h18v5" stroke="#6E7A73" stroke-width="3" fill="none" stroke-linecap="round"/><text x="120" y="115" font-size="8" font-weight="700" text-anchor="middle" fill="#4E5A53">20</text></g>',
+  wtLow: '<g><rect x="105" y="132" width="30" height="20" rx="7" fill="#A7B0AA" stroke="#6E7A73" stroke-width="2"/><path d="M111 132v-5h18v5" stroke="#6E7A73" stroke-width="3" fill="none" stroke-linecap="round"/><text x="120" y="145" font-size="8" font-weight="700" text-anchor="middle" fill="#4E5A53">20</text></g>',
   chair: '<g fill="#B9A27A" stroke="#7D6A47" stroke-width="2"><rect x="38" y="118" width="56" height="7" rx="2"/><rect x="38" y="72" width="7" height="46" rx="2"/><path d="M42 125v45M88 125v45" stroke-width="4"/></g>',
   boxHigh: tcBox(124,2,46,46)+'<ellipse cx="158" cy="172" rx="22" ry="3.6" fill="#A9D3EC" opacity=".9"/><path d="M146 171q6-2 10 0M162 172q5-2 9 0" stroke="#fff" stroke-width="1.2" fill="none"/>'
 };
