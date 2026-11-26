@@ -247,10 +247,54 @@
       fire: W.streak(), recDays: Object.keys(rec).length, mastered: mastered, habits: all.length, mine: mine, lib: lib, dn: dn };
     var prev = PS.summary(ID), pd = prev && prev.extra ? +prev.extra.recDays || 0 : -1;
     PS.report(ID, { xp: 0, ins: 0, done: x.recDays, total: 0, days: minutes(), extra: x, ver: W.APP_VER });
+    evSave(); /* PS1.4.0 */
     /* PS1.3.36: Shin lớn lên khi số ngày ghi nhận qua mốc (không mừng lần báo đầu tiên trên máy) */
     if (W.PSShin && pd >= 0 && W.PSShin.stageOf(x.recDays) > W.PSShin.stageOf(pd)) { grewUp(W.PSShin.stageOf(pd), W.PSShin.stageOf(x.recDays), x.recDays); try { W.render(); } catch (er) {} }
     door(x);
   }
+
+  /* ---------- PS1.4.0 · hồ sơ gửi thầy cô (khuôn chung, xem core.js) ----------
+     Thẻ thói quen (công thức, bậc, trạng thái, dấu từng ngày, lý do chưa làm), ghi chú khi đóng dấu, memo cuối ngày,
+     bài học, thắng nhỏ mỗi tuần. KHÔNG gửi tâm trạng (S.mood), thầy chốt từ trước. Giãn 60 giây, lưu ngay khi rời trang. */
+  var EV_AT = 0;
+  function fnc(n) { return typeof W[n] === 'function' ? W[n] : null; }
+  function evShin() {
+    var S = W.S, HM = W.HMAP || {}, items = [], habits = [], LV = W.LV_NAME || [], RS = {}, i;
+    (W.REASONS || []).forEach(function (r) { RS[r[0]] = r[1]; });
+    var nm = function (id) { try { return (fnc('hname') || fnc('sname'))(id); } catch (e) { return id; } };
+    (S.order || []).forEach(function (id) {
+      var u = S.habits[id], x = HM[id]; if (!u || !x) return;
+      var marks = {}, why = {}, bf = 0, d, m;
+      for (d in S.log) if (S.log.hasOwnProperty(d)) { m = (S.log[d] || {})[id]; if (m) { marks[d] = m; if ((S.bf[d] || {})[id]) { marks[d] = m + '*'; bf++; } } }
+      for (d in S.why) if (S.why.hasOwnProperty(d)) { m = (S.why[d] || {})[id]; if (m) why[RS[m] || m] = (why[RS[m] || m] || 0) + 1; }
+      var cnt = 0; try { cnt = fnc('dayCount') ? W.dayCount(id) : 0; } catch (e) {}
+      habits.push({ id: id, n: nm(id), custom: x.custom ? 1 : 0, myWhy: x.custom ? (x.myWhy || '') : '', dip: x.cond ? 1 : 0,
+        st: u.master ? 'Thành nếp' : (S.slots.indexOf(id) < 0 ? 'Đã cất' : (u.status === 'pause' ? 'Tạm dừng' : (u.status === 'keep' ? 'Đang duy trì' : 'Đang rèn'))),
+        lv: u.lv || 1, lvName: LV[u.lv || 1] || '', since: u.since || '', lvSince: u.lvSince || '', count: cnt, bf: bf,
+        f: { khi: u.anchor || '', se: u.act || '', tro: u.who || '' }, after: u.after && HM[u.after] ? nm(u.after) : '', marks: marks, why: why });
+      for (d in S.notes) if (S.notes.hasOwnProperty(d) && (S.notes[d] || {})[id]) items.push({ a: id, at: d, q: nm(id), k: 'note', own: S.notes[d][id], mark: ((S.log[d] || {})[id] || '') + ((S.bf[d] || {})[id] ? '*' : '') });
+    });
+    Object.keys(S.ci || {}).sort().forEach(function (d) { var c = S.ci[d]; if (c && c.note) items.push({ a: '@memo', at: d, q: (W.PROMPTS || [])[c.p || 0] || 'Memo cuối ngày', k: 'note', own: c.note }); });
+    var LM = W.LMAP || {};
+    Object.keys(S.les || {}).forEach(function (id) { var l = LM[id], r = S.les[id]; if (!r) return; items.push({ a: '@les', at: r.d || '', q: l ? 'Bài ' + l.n + '. ' + l.t : id, k: 'write', own: r.w || '' }); });
+    Object.keys(S.week || {}).sort().forEach(function (k) { var w = S.week[k]; if (w && w.win) items.push({ a: '@week', at: k, q: 'Thắng nhỏ tuần ' + k + (w.buddy ? ' · bạn cùng tiến: ' + w.buddy : ''), k: 'write', own: w.win }); });
+    items.sort(function (a, b) { return a.at < b.at ? -1 : (a.at > b.at ? 1 : 0); });
+    var st = { created: S.created || '', fire: 0, ci: Object.keys(S.ci || {}).length, opens: Object.keys(S.opens || {}).length, stamps: 0, recDays: 0, mastered: 0 };
+    try { st.fire = W.streak(); st.stamps = W.totalStamps(); var C = W.r2Calc() || {}; st.recDays = Object.keys(C.rec || {}).length; } catch (e) {}
+    for (i = 0; i < habits.length; i++) if (habits[i].st === 'Thành nếp') st.mastered++;
+    return { v: 1, kind: 'routine', ver: W.APP_VER || '', units: [['@', 'Shin Routine']], acts: [], items: items, habits: habits, stats: st,
+      legend: { y: 'Làm rồi', p: 'Một phần', n: 'Chưa làm', x: 'Không gặp dịp', '*': 'ghi bù' },
+      facts: [['fire', 'Lửa', st.fire], ['recDays', 'Số ngày ghi nhận', st.recDays], ['ci', 'Số ngày check-in', st.ci], ['mastered', 'Thẻ thành nếp', st.mastered], ['created', 'Bắt đầu', st.created]] };
+  }
+  function evSave(force) {
+    var S = W.S;
+    if (!S || W.DEMO || W.PS_NOSAVE || W.SAVE_BLOCK || W.LOAD_ISSUE32 || !PS.evidence) return;
+    if (!force && Date.now() - EV_AT < 60000) return;
+    EV_AT = Date.now();
+    try { PS.evidence(ID, evShin()); } catch (e) {}
+  }
+  W.addEventListener('pagehide', function () { evSave(true); });
+  D.addEventListener('visibilitychange', function () { if (D.visibilityState === 'hidden') evSave(true); });
   var baseSave = W.save;
   W.save = function () { var r = baseSave.apply(this, arguments); queue(); return r; };
   W.addEventListener('ps:change', function (e) {
